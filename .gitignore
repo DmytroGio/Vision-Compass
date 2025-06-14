@@ -1,0 +1,25 @@
+# Ignore Visual Studio temporary files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build folders
+/Debug/
+/Release/
+/build/
+/out/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Compiled
+*.exe
+*.dll
+*.obj
+*.pdb
+*.lib
