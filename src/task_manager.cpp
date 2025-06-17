@@ -9,33 +9,55 @@ void TaskManager::loadFromFile(const std::string& filename)
 	if (!file.is_open()) return;
 
 	Task task;
-	while (file >> task.id >> task.completed) {
-		file.ignore(); //space
-		std::getline(file, task.description);
-		tasks.push_back(task);
-		nextId = std::max(nextId, task.id + 1);
-	}
+    int priorityInt;
+    while (file >> task.id >> task.completed >> priorityInt) {
+        task.priority = static_cast<Priority>(priorityInt);
+        file.ignore();
+        std::getline(file, task.description);
+        tasks.push_back(task);
+        nextId = std::max(nextId, task.id + 1);
+    }
 }
 
 void TaskManager::saveToFile(const std::string& filename)
 {
 	std::ofstream file(filename);
 	for (const auto& task : tasks) {
-		file << task.id << " " << task.completed << " " << task.description << "\n";
+        file << task.id << " " << task.completed << " " << static_cast<int>(task.priority) << " " << task.description << "\n";
 	}
 }
 
-void TaskManager::addTask(const std::string& description)
+void TaskManager::editTask(int id, const std::string& newDescription)
 {
-	tasks.push_back({ nextId++, description, false });
+    for (auto& task : tasks) {
+        if (task.id == id) {
+            task.description = newDescription;
+            break;
+        }
+    }
+}
+
+void TaskManager::addTask(const std::string& description, Priority priority = Priority::Medium)
+{
+    tasks.push_back({ nextId++, description, false, priority });
 }
 
 void TaskManager::listTasks() const
 {
-	for (const auto& task : tasks) {
-		std::cout << "[" << (task.completed ? "x" : " ") << "] "
-			<< task.id << ": " << task.description << "\n";
-	}
+    auto priorityToString = [](Priority p) {
+        switch (p) {
+            case Priority::Low: return "Low";
+            case Priority::Medium: return "Medium";
+            case Priority::High: return "High";
+            default: return "Unknown";
+        }
+    };
+
+    for (const auto& task : tasks) {
+        std::cout << "[" << (task.completed ? "x" : " ") << "] "
+                  << task.id << ": " << task.description
+                  << " (Priority: " << priorityToString(task.priority) << ")\n";
+    }
 }
 
 void TaskManager::completeTask(int id)
