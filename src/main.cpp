@@ -3,13 +3,18 @@
 
 void printHelp() {
     std::cout << "Commands:\n"
-              << " add <description> /p <priority>  Add a task (priority: Low, Medium, High)\n"
-		      << " edit <id> <description>          Edit a task\n"
-              << " list                             Show tasks\n"
-              << " done <id>                        Mark task as done\n"
-              << " del <id>                         Delete task\n"
-              << " help                             Show help\n"
-              << " exit                             Exit program\n";
+        << " add <description> /p <priority> /d <YYYY-MM-DD>    Add a task (priority: Low, Medium, High)\n"
+        << " edit <id> <description>                            Edit a task\n"
+        << " list                                               Show tasks sorted by priority\n"
+        << " listp <priority>                                   List tasks by priority (Low, Medium, High)\n"
+        << " listd                                              Show tasks sorted by due date\n"
+        << " listdate <YYYY-MM-DD>                              List tasks by due date\n"
+        << " listrange <start> <end>                            List tasks by date range\n"
+        << " done <id>                                          Mark task as done\n"
+        << " del <id>                                           Delete task\n"
+        << " help                                               Show help\n"
+        << " exit                                               Exit program\n";
+
 }
 
 int main()
@@ -27,30 +32,31 @@ int main()
 
         if (command._Starts_with("add ")) {
             size_t priorityPos = command.find(" /p ");
-            if (priorityPos != std::string::npos) {
+            size_t dueDatePos = command.find(" /d ");
+            if (priorityPos != std::string::npos && dueDatePos != std::string::npos) {
                 std::string description = command.substr(4, priorityPos - 4);
-                std::string priorityStr = command.substr(priorityPos + 4);
+                std::string priorityStr = command.substr(priorityPos + 4, dueDatePos - (priorityPos + 4));
+                std::string dueDate = command.substr(dueDatePos + 4);
 
                 Priority priority;
-                if (priorityStr == "Low") {
-                    priority = Priority::Low;
-                } else if (priorityStr == "Medium") {
-                    priority = Priority::Medium;
-                } else if (priorityStr == "High") {
-                    priority = Priority::High;
-                } else {
+                if (priorityStr == "Low") priority = Priority::Low;
+                else if (priorityStr == "Medium") priority = Priority::Medium;
+                else if (priorityStr == "High") priority = Priority::High;
+                else {
                     std::cout << "Invalid priority. Use: Low, Medium, or High.\n";
                     continue;
                 }
 
-                manager.addTask(description, priority);
+                manager.addTask(description, priority, dueDate);
             } else {
-                std::cout << "Invalid add command format. Use: add <description> /p <priority>\n";
+                std::cout << "Invalid add command format. Use: add <description> /p <priority> /d <YYYY-MM-DD>\n";
             }
         }
         else if (command == "list") {
+            manager.sortByPriority();
             manager.listTasks();
 		}
+
 		else if (command._Starts_with("edit ")) {
 			size_t spacePos = command.find(' ', 5);
 			if (spacePos != std::string::npos) {
@@ -67,6 +73,39 @@ int main()
         }
         else if (command._Starts_with("del ")) {
             manager.deleteTask(std::stoi(command.substr(4)));
+        }
+        else if (command._Starts_with("listp ")) {
+            std::string priorityStr = command.substr(6);
+            Priority priority;
+            if (priorityStr == "Low") {
+                priority = Priority::Low;
+            } else if (priorityStr == "Medium") {
+                priority = Priority::Medium;
+            } else if (priorityStr == "High") {
+                priority = Priority::High;
+            } else {
+                std::cout << "Invalid priority. Use: Low, Medium, or High.\n";
+                continue;
+            }
+            manager.listTasksByPriority(priority);
+        }
+        else if (command == "listd") {
+            manager.sortByDueDate();
+            manager.listTasks();
+        }
+        else if (command._Starts_with("listdate ")) {
+            std::string dueDate = command.substr(9);
+            manager.listTasksByDueDate(dueDate);
+        }
+        else if (command._Starts_with("listrange ")) {
+            size_t spacePos = command.find(' ', 10);
+            if (spacePos != std::string::npos) {
+                std::string startDate = command.substr(10, spacePos - 10);
+                std::string endDate = command.substr(spacePos + 1);
+                manager.listTasksByDateRange(startDate, endDate);
+            } else {
+                std::cout << "Invalid listrange command format. Use: listrange <start> <end>\n";
+            }
         }
         else if (command == "help") {
             printHelp();
