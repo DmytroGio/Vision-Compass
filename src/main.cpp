@@ -12,9 +12,27 @@ void printHelp() {
         << " listrange <start> <end>                            List tasks by date range\n"
         << " done <id>                                          Mark task as done\n"
         << " del <id>                                           Delete task\n"
+        << " search <keyword>                                   Search tasks by keyword\n"
+        << " undo                                               Undo last action <-\n"
+        << " redo                                               Redo last undone action ->\n"
         << " help                                               Show help\n"
         << " exit                                               Exit program\n";
 
+}
+
+bool isValidDateFormat(const std::string& date) {
+    if (date.size() != 10) return false;
+    if (date[4] != '-' || date[7] != '-') return false;
+    for (size_t i = 0; i < date.size(); ++i) {
+        if (i == 4 || i == 7) continue;
+        if (!isdigit(date[i])) return false;
+    }
+
+    int month = std::stoi(date.substr(5, 2));
+    int day = std::stoi(date.substr(8, 2));
+    if (month < 1 || month > 12) return false;
+    if (day < 1 || day > 31) return false;
+    return true;
 }
 
 int main()
@@ -37,6 +55,11 @@ int main()
                 std::string description = command.substr(4, priorityPos - 4);
                 std::string priorityStr = command.substr(priorityPos + 4, dueDatePos - (priorityPos + 4));
                 std::string dueDate = command.substr(dueDatePos + 4);
+
+                if (!isValidDateFormat(dueDate)) {
+                    std::cout << "Invalid date format. Use YYYY-MM-DD.\n";
+                    continue;
+                }
 
                 Priority priority;
                 if (priorityStr == "Low") priority = Priority::Low;
@@ -106,6 +129,20 @@ int main()
             } else {
                 std::cout << "Invalid listrange command format. Use: listrange <start> <end>\n";
             }
+        }
+        else if (command._Starts_with("search ")) {
+            std::string keyword = command.substr(7);
+            if (keyword.empty()) {
+                std::cout << "Please provide a keyword to search for.\n";
+                continue;
+            }
+            manager.searchTasks(keyword);
+        }
+        else if (command == "undo") {
+            manager.undo();
+        }
+        else if (command == "redo") {
+            manager.redo();
         }
         else if (command == "help") {
             printHelp();

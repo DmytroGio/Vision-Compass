@@ -41,6 +41,7 @@ void TaskManager::editTask(int id, const std::string& newDescription)
 
 void TaskManager::addTask(const std::string& description, Priority priority, const std::string& dueDate)
 {
+    saveStateForUndo();
     tasks.push_back({ nextId++, description, false, priority, dueDate });
 }
 
@@ -61,6 +62,7 @@ void TaskManager::listTasks() const
 
 void TaskManager::completeTask(int id)
 {
+    saveStateForUndo();
 	for (auto& task : tasks) {
 		if (task.id == id) {
 			task.completed = true;
@@ -71,6 +73,7 @@ void TaskManager::completeTask(int id)
 
 void TaskManager::deleteTask(int id)
 {
+    saveStateForUndo();
 	tasks.erase(std::remove_if(tasks.begin(), tasks.end(),
 		[id](const Task& task) { return task.id == id; }), tasks.end());
 }
@@ -138,5 +141,48 @@ void TaskManager::listTasksByDateRange(const std::string& startDate, const std::
             std::cout << ", Due: " << task.dueDate << ")\n";
         }
     }
+}
+
+void TaskManager::searchTasks(const std::string& keyword) const
+{
+    for (const auto& task : tasks) {
+        if (task.description.find(keyword) != std::string::npos) {
+            std::cout << "[" << (task.completed ? "x" : " ") << "] "
+                      << task.id << ": " << task.description
+                      << " (Priority: ";
+            switch (task.priority) {
+                case Priority::Low: std::cout << "Low"; break;
+                case Priority::Medium: std::cout << "Medium"; break;
+                case Priority::High: std::cout << "High"; break;
+            }
+            std::cout << ", Due: " << task.dueDate << ")\n";
+        }
+    }
+}
+
+void TaskManager::saveStateForUndo() {
+    undoStack.push(tasks);
+    // Clear redo stack on new action
+    while (!redoStack.empty()) redoStack.pop();
+}
+
+void TaskManager::undo() {
+    if (undoStack.empty()) {
+        std::cout << "Nothing to undo.\n";
+        return;
+    }
+    redoStack.push(tasks);
+    tasks = undoStack.top();
+    undoStack.pop();
+}
+
+void TaskManager::redo() {
+    if (redoStack.empty()) {
+        std::cout << "Nothing to redo.\n";
+        return;
+    }
+    undoStack.push(tasks);
+    tasks = redoStack.top();
+    redoStack.pop();
 }
 

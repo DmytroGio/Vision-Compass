@@ -1,6 +1,7 @@
 #pragma once  
 #include <string>  
 #include <vector>  
+#include <stack>
 
 enum class Priority { Low, Medium, High };  
 
@@ -29,7 +30,16 @@ public:
    void listTasksByDueDate(const std::string& dueDate) const;
    void listTasksByDateRange(const std::string& startDate, const std::string& endDate) const;
 
+   void searchTasks(const std::string& keyword) const;
+
+   void saveStateForUndo();
+
+   void undo();
+   void redo();
+
 private:  
    std::vector<Task> tasks;  
    int nextId = 1;  
+   std::stack<std::vector<Task>> undoStack;
+   std::stack<std::vector<Task>> redoStack;
 };
