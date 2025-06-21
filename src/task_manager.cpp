@@ -2,31 +2,48 @@
 #include <fstream>
 #include <iostream>
 #include <algorithm>
+#include <json.hpp>
+using nlohmann::json;
 
 void TaskManager::loadFromFile(const std::string& filename)
 {
-	tasks.clear();
-	std::ifstream file(filename);
-	if (!file.is_open()) return;
+    tasks.clear();
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Warning: Could not open file '" << filename << "' for reading. Starting with an empty task list.\n";
+        return;
+    }
 
-	Task task;
-    int priorityInt;
-    while (file >> task.id >> task.completed >> priorityInt >> task.dueDate) {
-        task.priority = static_cast<Priority>(priorityInt);
-        file.ignore();
-        std::getline(file, task.description);
-        tasks.push_back(task);
-        nextId = std::max(nextId, task.id + 1);
+    try {
+        json j;
+        file >> j;
+        tasks = j.get<std::vector<Task>>();
+        // Update nextId to ensure unique IDs
+        for (const auto& task : tasks)
+            nextId = std::max(nextId, task.id + 1);
+    } catch (const json::parse_error& e) {
+        std::cerr << "Error: Failed to parse JSON in '" << filename << "': " << e.what() << "\n";
+        tasks.clear();
+    } catch (const std::exception& e) {
+        std::cerr << "Error: Exception while loading tasks: " << e.what() << "\n";
+        tasks.clear();
     }
 }
 
 void TaskManager::saveToFile(const std::string& filename)
 {
-	std::ofstream file(filename);
-	for (const auto& task : tasks) {
-        file << task.id << " " << task.completed << " " << static_cast<int>(task.priority)
-             << " " << task.dueDate << " " << task.description << "\n";
-	}
+    std::ofstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file '" << filename << "' for writing.\n";
+        return;
+    }
+
+    try {
+        json j = tasks;
+        file << j.dump(4); // pretty print with 4 spaces
+    } catch (const std::exception& e) {
+        std::cerr << "Error: Exception while saving tasks: " << e.what() << "\n";
+    }
 }
 
 void TaskManager::editTask(int id, const std::string& newDescription)

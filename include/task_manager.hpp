@@ -2,6 +2,8 @@
 #include <string>  
 #include <vector>  
 #include <stack>
+#include <json.hpp>
+using nlohmann::json;
 
 enum class Priority { Low, Medium, High };  
 
@@ -11,6 +13,26 @@ struct Task {
    bool completed = false;
    Priority priority = Priority::Low;
    std::string dueDate;
+
+   // JSON serialization
+   friend void to_json(json& j, const Task& t) {
+       j = json{
+           {"id", t.id},
+           {"description", t.description},
+           {"completed", t.completed},
+           {"priority", static_cast<int>(t.priority)},
+           {"dueDate", t.dueDate}
+       };
+   }
+   friend void from_json(const json& j, Task& t) {
+       j.at("id").get_to(t.id);
+       j.at("description").get_to(t.description);
+       j.at("completed").get_to(t.completed);
+       int p;
+       j.at("priority").get_to(p);
+       t.priority = static_cast<Priority>(p);
+       j.at("dueDate").get_to(t.dueDate);
+   }
 };  
 
 class TaskManager {  

@@ -1,5 +1,6 @@
 #include "task_manager.hpp"
 #include <iostream>
+#include <fstream>
 
 void printHelp() {
     std::cout << "Commands:\n"
@@ -38,7 +39,22 @@ bool isValidDateFormat(const std::string& date) {
 int main()
 {
     TaskManager manager;
-    const std::string filename = "tasks.txt";
+    const std::string filename = "tasks.json";
+
+    // Auto-create tasks.json if it does not exist
+    std::ifstream infile(filename);
+    if (!infile.good()) {
+        std::ofstream outfile(filename);
+        if (outfile.is_open()) {
+            outfile << "[]";
+            outfile.close();
+            std::cout << "Created new empty " << filename << " file.\n";
+        }
+        else {
+            std::cerr << "Error: Could not create " << filename << ".\n";
+        }
+    }
+
     manager.loadFromFile(filename);
 
     std::string command;
