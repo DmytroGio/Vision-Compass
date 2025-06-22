@@ -36,6 +36,40 @@ bool isValidDateFormat(const std::string& date) {
     return true;
 }
 
+bool promptLoginOrRegister(TaskManager& manager) {
+    std::string choice;
+    while (true) {
+        std::cout << "Login (l) or Register (r)? ";
+        std::getline(std::cin, choice);
+        if (choice == "l") {
+            std::string username, password;
+            std::cout << "Username: ";
+            std::getline(std::cin, username);
+            std::cout << "Password: ";
+            std::getline(std::cin, password);
+            if (manager.loginUser(username, password)) {
+                std::cout << "Login successful. Welcome, " << username << "!\n";
+                return true;
+            } else {
+                std::cout << "Login failed. Try again.\n";
+            }
+        } else if (choice == "r") {
+            std::string username, password;
+            std::cout << "Choose a username: ";
+            std::getline(std::cin, username);
+            std::cout << "Choose a password: ";
+            std::getline(std::cin, password);
+            if (manager.registerUser(username, password)) {
+                std::cout << "Registration successful. You can now log in.\n";
+            } else {
+                std::cout << "Username already exists. Try again.\n";
+            }
+        } else {
+            std::cout << "Invalid choice. Enter 'l' to login or 'r' to register.\n";
+        }
+    }
+}
+
 int main()
 {
     TaskManager manager;
@@ -46,7 +80,7 @@ int main()
     if (!infile.good()) {
         std::ofstream outfile(filename);
         if (outfile.is_open()) {
-            outfile << "[]";
+            outfile << R"({"last_id":0,"tasks":[],"users":[]})";
             outfile.close();
             std::cout << "Created new empty " << filename << " file.\n";
         }
@@ -56,6 +90,9 @@ int main()
     }
 
     manager.loadFromFile(filename);
+
+    // User authentication
+    promptLoginOrRegister(manager);
 
     std::string command;
     printHelp();

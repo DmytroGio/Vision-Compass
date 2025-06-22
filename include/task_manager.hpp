@@ -3,42 +3,44 @@
 #include <vector>  
 #include <stack>
 #include <json.hpp>
+#include "user.hpp"
 using nlohmann::json;
 
 enum class Priority { Low, Medium, High };  
 
-struct Task {  
-   int id = 0;  
-   std::string description;  
-   bool completed = false;
-   Priority priority = Priority::Low;
-   std::string dueDate;
+struct Task {
+    int id;
+    std::string description;
+    Priority priority;
+    std::string dueDate;
+    bool completed;
 
-   // JSON serialization
-   friend void to_json(json& j, const Task& t) {
-       j = json{
-           {"id", t.id},
-           {"description", t.description},
-           {"completed", t.completed},
-           {"priority", static_cast<int>(t.priority)},
-           {"dueDate", t.dueDate}
-       };
-   }
-   friend void from_json(const json& j, Task& t) {
-       j.at("id").get_to(t.id);
-       j.at("description").get_to(t.description);
-       j.at("completed").get_to(t.completed);
-       int p;
-       j.at("priority").get_to(p);
-       t.priority = static_cast<Priority>(p);
-       j.at("dueDate").get_to(t.dueDate);
-   }
-};  
+    static Task from_json(const nlohmann::json& j) {
+        Task t;
+        t.id = j.at("id").get<int>();
+        t.description = j.at("description").get<std::string>();
+        t.priority = static_cast<Priority>(j.at("priority").get<int>());
+        t.dueDate = j.at("dueDate").get<std::string>();
+        t.completed = j.at("completed").get<bool>();
+        return t;
+    }
+
+    nlohmann::json to_json() const {
+        return {
+            {"id", id},
+            {"description", description},
+            {"priority", static_cast<int>(priority)},
+            {"dueDate", dueDate},
+            {"completed", completed}
+        };
+    }
+};
 
 class TaskManager {  
 public:  
-   void loadFromFile(const std::string& filename);  
-   void saveToFile(const std::string& filename);  
+   TaskManager();
+   void loadFromFile(const std::string& filename);
+   void saveToFile(const std::string& filename) const; 
 
    void editTask(int id, const std::string& newDescription); 
    void addTask(const std::string& description, Priority priority, const std::string& dueDate);
@@ -59,9 +61,18 @@ public:
    void undo();
    void redo();
 
+
+   bool registerUser(const std::string& username, const std::string& password);
+   bool loginUser(const std::string& username, const std::string& password);
+   std::string getCurrentUser() const;
+
 private:  
+    std::vector<User> users;
+    std::string currentUser;
+
    std::vector<Task> tasks;  
    int nextId = 1;  
    std::stack<std::vector<Task>> undoStack;
    std::stack<std::vector<Task>> redoStack;
+   int lastId = 0; // <-- Add this line
 };

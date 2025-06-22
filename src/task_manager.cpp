@@ -3,47 +3,64 @@
 #include <iostream>
 #include <algorithm>
 #include <json.hpp>
-using nlohmann::json;
+#include <string>
+#include <functional>
+using json = nlohmann::json;
 
-void TaskManager::loadFromFile(const std::string& filename)
-{
-    tasks.clear();
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "Warning: Could not open file '" << filename << "' for reading. Starting with an empty task list.\n";
-        return;
+// Define the simpleHash function
+std::string simpleHash(const std::string& input) {
+    std::hash<std::string> hasher;
+    return std::to_string(hasher(input));
+}
+
+TaskManager::TaskManager() : lastId(0) {}
+
+void TaskManager::loadFromFile(const std::string& filename) {
+    std::ifstream in(filename);
+    if (!in.is_open()) return;
+
+    json j;
+    in >> j;
+
+    // Handle migration from old format (array)
+    if (j.is_array()) {
+        tasks.clear();
+        for (const auto& item : j) {
+            Task t = Task::from_json(item);
+            tasks.push_back(t);
+            if (t.id > lastId) lastId = t.id;
+        }
+        users.clear();
     }
-
-    try {
-        json j;
-        file >> j;
-        tasks = j.get<std::vector<Task>>();
-        // Update nextId to ensure unique IDs
-        for (const auto& task : tasks)
-            nextId = std::max(nextId, task.id + 1);
-    } catch (const json::parse_error& e) {
-        std::cerr << "Error: Failed to parse JSON in '" << filename << "': " << e.what() << "\n";
+    else {
+        lastId = j.value("last_id", 0);
         tasks.clear();
-    } catch (const std::exception& e) {
-        std::cerr << "Error: Exception while loading tasks: " << e.what() << "\n";
-        tasks.clear();
+        for (const auto& item : j["tasks"]) {
+            Task t = Task::from_json(item);
+            tasks.push_back(t);
+        }
+        users.clear();
+        if (j.contains("users")) {
+            for (const auto& item : j["users"]) {
+                users.push_back(User::from_json(item));
+            }
+        }
     }
 }
 
-void TaskManager::saveToFile(const std::string& filename)
-{
-    std::ofstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "Error: Could not open file '" << filename << "' for writing.\n";
-        return;
+void TaskManager::saveToFile(const std::string& filename) const {
+    json j;
+    j["last_id"] = lastId;
+    j["tasks"] = json::array();
+    for (const auto& t : tasks) {
+        j["tasks"].push_back(t.to_json());
     }
-
-    try {
-        json j = tasks;
-        file << j.dump(4); // pretty print with 4 spaces
-    } catch (const std::exception& e) {
-        std::cerr << "Error: Exception while saving tasks: " << e.what() << "\n";
+    j["users"] = json::array();
+    for (const auto& u : users) {
+        j["users"].push_back(u.to_json());
     }
+    std::ofstream out(filename);
+    out << j.dump(4);
 }
 
 void TaskManager::editTask(int id, const std::string& newDescription)
@@ -58,8 +75,14 @@ void TaskManager::editTask(int id, const std::string& newDescription)
 
 void TaskManager::addTask(const std::string& description, Priority priority, const std::string& dueDate)
 {
-    saveStateForUndo();
-    tasks.push_back({ nextId++, description, false, priority, dueDate });
+    lastId++; // Increment persistent ID
+    Task t;
+    t.id = lastId;
+    t.description = description;
+    t.priority = priority;
+    t.dueDate = dueDate;
+    t.completed = false;
+    tasks.push_back(t);
 }
 
 void TaskManager::listTasks() const
@@ -201,5 +224,30 @@ void TaskManager::redo() {
     undoStack.push(tasks);
     tasks = redoStack.top();
     redoStack.pop();
+}
+
+bool TaskManager::registerUser(const std::string& username, const std::string& password) {
+    for (const auto& user : users) {
+        if (user.username == username) return false; // Already exists
+    }
+    User u;
+    u.username = username;
+    u.passwordHash = simpleHash(password);
+    users.push_back(u);
+    return true;
+}
+
+bool TaskManager::loginUser(const std::string& username, const std::string& password) {
+    for (const auto& user : users) {
+        if (user.username == username && user.passwordHash == simpleHash(password)) {
+            currentUser = username;
+            return true;
+        }
+    }
+    return false;
+}
+
+std::string TaskManager::getCurrentUser() const {
+    return currentUser;
 }
 
