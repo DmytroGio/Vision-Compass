@@ -1,6 +1,11 @@
 #include "task_manager.hpp"
+#include "gui.hpp" // Uncomment if you want to use the GUI functionality
 #include <iostream>
 #include <fstream>
+#include <string>
+
+// Forward declaration for the GUI function
+int run_gui();
 
 void printHelp() {
     std::cout << "Commands:\n"
@@ -70,8 +75,13 @@ bool promptLoginOrRegister(TaskManager& manager) {
     }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+    // Optionally, launch GUI if argument is passed
+    if (argc > 1 && std::string(argv[1]) == "--gui") {
+        return run_gui();
+    }
+
     TaskManager manager;
     const std::string filename = "tasks.json";
 
