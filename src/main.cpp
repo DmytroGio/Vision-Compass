@@ -77,10 +77,11 @@ bool promptLoginOrRegister(TaskManager& manager) {
 
 int main(int argc, char* argv[])
 {
+    run_gui();
     // Optionally, launch GUI if argument is passed
-    if (argc > 1 && std::string(argv[1]) == "--gui") {
+    /*if (argc > 1 && std::string(argv[1]) == "--gui") {
         return run_gui();
-    }
+    }*/
 
     TaskManager manager;
     const std::string filename = "tasks.json";
@@ -219,5 +220,6 @@ int main(int argc, char* argv[])
     }
 
     manager.saveToFile(filename);
+    return run_gui();
     return 0;
 }
