@@ -1,0 +1,13 @@
+{
+    "last_id": 1,
+    "tasks": [
+        {
+            "completed": false,
+            "description": "Make some code",
+            "dueDate": "2022-06-26",
+            "id": 1,
+            "priority": 0
+        }
+    ],
+    "users": []
+}

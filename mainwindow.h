@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "task_manager.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -17,7 +18,13 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_addTaskButton_clicked();
+
 private:
+    void updateTaskList();
     Ui::MainWindow *ui;
+    TaskManager manager;
 };
+
 #endif // MAINWINDOW_H

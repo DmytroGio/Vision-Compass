@@ -1,27 +1,29 @@
 # This file is used to ignore files which are generated
 # ----------------------------------------------------------------------------
 
+# Temporary and backup files
 *~
 *.autosave
+*.orig
+*.rej
+.#*
+*.*#
+tags
+.DS_Store
+.directory
+Thumbs.db
+*.flc # xemacs temporary files
+.*.swp # Vim temporary files
+
+# Qt generated files
 *.a
 *.core
 *.moc
 *.o
 *.obj
-*.orig
-*.rej
-*.so
-*.so.*
 *_pch.h.cpp
 *_resource.rc
 *.qm
-.#*
-*.*#
-core
-!core/
-tags
-.DS_Store
-.directory
 *.debug
 Makefile*
 *.prl
@@ -29,54 +31,77 @@ Makefile*
 moc_*.cpp
 ui_*.h
 qrc_*.cpp
-Thumbs.db
 *.res
 *.rc
 /.qmake.cache
 /.qmake.stash
+core # Это может быть также именем директории, если это так, то нужно !core/
 
-# qtcreator generated files
+# Qt Creator specific generated files (for when you open the project in Qt Creator)
 *.pro.user*
 *.qbs.user*
-CMakeLists.txt.user*
+CMakeLists.txt.user* # Qt Creator's user-specific CMake settings
 
-# xemacs temporary files
-*.flc
+# Visual Studio specific generated files and directories
+# --- General VS files ---
+*.sln               # Visual Studio Solution files
+*.suo               # Visual Studio User Options
+*.user              # User-specific project settings
+*.aps               # Microsoft Visual C++ resources
+*.bsc               # Browse information files
+*.cco
+*.ncb               # No compile browser file (VS 2008 and earlier)
+*.opendb
+*.opensdf           # Visual Studio SDF (SQL Server Compact Edition) files
+*.pdb               # Program Database files (debug info)
+*.ipch              # Precompiled header files (newer VS versions)
+*.aps               # Resource editor working files
 
-# Vim temporary files
-.*.swp
+# --- Visual Studio Project files ---
+*.vcxproj           # Visual C++ Project files
+#*.vcxproj.filters  # Filters for solution explorer (often useful to commit for organization, uncomment to ignore)
+*.vcxproj.user      # User-specific project settings
+*.rcproj            # Resource compilation project (rare)
+*.vcp               # Pre-compiled header info
+*.idl               # IDL files
+*.exp               # Export files
 
-# Visual Studio generated files
-*.ib_pdb_index
-*.idb
-*.ilk
-*.pdb
-*.sln
-*.suo
-*.vcproj
-*vcproj.*.*.user
-*.ncb
-*.sdf
-*.opensdf
-*.vcxproj
-*vcxproj.*
+# --- Visual Studio Build Output Directories (crucial for CMake-based VS projects) ---
+# When you open a CMake project in VS, it builds in an 'out' directory by default.
+# The actual name can vary, but commonly includes the build type (Debug, Release, etc.)
+# We ignore the entire 'out' directory where VS places its build artifacts and generated project files.
+/out/
 
-# MinGW generated files
+# --- Other VS/Windows specific files ---
+*.vs/               # .vs folder created by Visual Studio for project settings/cache
+*.vc                # Visual C++ cache files
+*.sdf               # Visual C++ CodeSense database (older VS)
+*.idb               # Intermediate Debugging Information
+*.ilk               # Incremental Linker files
+*.tlog              # Build log files
+*.log               # General log files
+
+
+# MinGW generated files (if you also use MinGW with VS, though less common)
 *.Debug
 *.Release
 
 # Python byte code
 *.pyc
 
-# Binaries
+# Binaries and libraries (cross-platform)
 # --------
 *.dll
 *.exe
+*.so
+*.so.*
+*.a
+*.lib # Static libraries (from VS/MSVC)
 
-# Directories with generated files
+# Directories with generated files (cross-platform and build-system specific)
 .moc/
 .obj/
 .pch/
 .rcc/
 .uic/
-/build*/
+/build*/ # Matches any directory starting with 'build' at the root level, e.g., 'build', 'build-debug', 'build-release'

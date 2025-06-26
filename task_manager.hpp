@@ -40,8 +40,9 @@ class TaskManager {
 public:  
    TaskManager();
    void loadFromFile(const std::string& filename);
-   void saveToFile(const std::string& filename) const; 
+   void saveToFile(const std::string& filename) const;
 
+   const std::vector<Task>& getTasks() const { return tasks; }
    void editTask(int id, const std::string& newDescription); 
    void addTask(const std::string& description, Priority priority, const std::string& dueDate);
    void listTasks() const;  
