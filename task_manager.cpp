@@ -1,19 +1,62 @@
 #include "task_manager.hpp"
 #include <fstream>
-#include <iostream>
 #include <algorithm>
-#include "json.hpp"
-#include <string>
-#include <functional>
 using json = nlohmann::json;
 
-// Define the simpleHash function
-std::string simpleHash(const std::string& input) {
-    std::hash<std::string> hasher;
-    return std::to_string(hasher(input));
+// --- Goal ---
+Goal Goal::from_json(const json& j) {
+    Goal g;
+    g.id = j.value("id", 0);
+    g.description = j.value("description", "");
+    g.targetDate = j.value("targetDate", "");
+    return g;
+}
+json Goal::to_json() const {
+    return { {"id", id}, {"description", description}, {"targetDate", targetDate} };
 }
 
-TaskManager::TaskManager() : lastId(0) {}
+// --- Milestone ---
+Milestone Milestone::from_json(const json& j) {
+    Milestone m;
+    m.id = j.value("id", 0);
+    m.description = j.value("description", "");
+    m.startDate = j.value("startDate", "");
+    m.endDate = j.value("endDate", "");
+    m.goalId = j.value("goalId", 0);
+    return m;
+}
+json Milestone::to_json() const {
+    return { {"id", id}, {"description", description}, {"startDate", startDate}, {"endDate", endDate}, {"goalId", goalId} };
+}
+
+// --- Task ---
+Task Task::from_json(const json& j) {
+    Task t;
+    t.id = j.value("id", 0);
+    t.description = j.value("description", "");
+    t.priority = static_cast<Priority>(j.value("priority", 0));
+    t.dueDate = j.value("dueDate", "");
+    t.completed = j.value("completed", false);
+    t.milestoneId = j.value("milestoneId", 0);
+    return t;
+}
+json Task::to_json() const {
+    return {
+        {"id", id},
+        {"description", description},
+        {"priority", static_cast<int>(priority)},
+        {"dueDate", dueDate},
+        {"completed", completed},
+        {"milestoneId", milestoneId}
+    };
+}
+
+// --- TaskManager ---
+TaskManager::TaskManager()
+    : lastGoalId(0), lastMilestoneId(0), lastTaskId(0)
+{
+    goal = {0, "", ""};
+}
 
 void TaskManager::loadFromFile(const std::string& filename) {
     std::ifstream in(filename);
@@ -22,232 +65,122 @@ void TaskManager::loadFromFile(const std::string& filename) {
     json j;
     in >> j;
 
-    // Handle migration from old format (array)
-    if (j.is_array()) {
-        tasks.clear();
-        for (const auto& item : j) {
-            Task t = Task::from_json(item);
-            tasks.push_back(t);
-            if (t.id > lastId) lastId = t.id;
-        }
-        users.clear();
+    lastGoalId = j.value("lastGoalId", 0);
+    lastMilestoneId = j.value("lastMilestoneId", 0);
+    lastTaskId = j.value("lastTaskId", 0);
+
+    // Goal
+    if (j.contains("goal")) {
+        goal = Goal::from_json(j["goal"]);
+    } else {
+        goal = {0, "", ""};
     }
-    else {
-        lastId = j.value("last_id", 0);
-        tasks.clear();
-        for (const auto& item : j["tasks"]) {
-            Task t = Task::from_json(item);
-            tasks.push_back(t);
-        }
-        users.clear();
-        if (j.contains("users")) {
-            for (const auto& item : j["users"]) {
-                users.push_back(User::from_json(item));
-            }
-        }
+
+    // Milestones
+    milestones.clear();
+    for (const auto& m : j["milestones"]) {
+        milestones.push_back(Milestone::from_json(m));
+    }
+    // Tasks
+    tasks.clear();
+    for (const auto& t : j["tasks"]) {
+        tasks.push_back(Task::from_json(t));
     }
 }
 
 void TaskManager::saveToFile(const std::string& filename) const {
     json j;
-    j["last_id"] = lastId;
+    j["lastGoalId"] = lastGoalId;
+    j["lastMilestoneId"] = lastMilestoneId;
+    j["lastTaskId"] = lastTaskId;
+    j["goal"] = goal.to_json();
+    j["milestones"] = json::array();
+    for (const auto& m : milestones) j["milestones"].push_back(m.to_json());
     j["tasks"] = json::array();
-    for (const auto& t : tasks) {
-        j["tasks"].push_back(t.to_json());
-    }
-    j["users"] = json::array();
-    for (const auto& u : users) {
-        j["users"].push_back(u.to_json());
-    }
+    for (const auto& t : tasks) j["tasks"].push_back(t.to_json());
     std::ofstream out(filename);
     out << j.dump(4);
 }
 
-void TaskManager::editTask(int id, const std::string& newDescription)
-{
-    for (auto& task : tasks) {
-        if (task.id == id) {
-            task.description = newDescription;
+// --- Goal ---
+void TaskManager::setGoal(const Goal& g) {
+    goal = g;
+    if (goal.id == 0) {
+        lastGoalId++;
+        goal.id = lastGoalId;
+    }
+}
+Goal TaskManager::getGoal() const {
+    return goal;
+}
+
+// --- Milestone ---
+void TaskManager::addMilestone(const Milestone& m) {
+    Milestone ms = m;
+    lastMilestoneId++;
+    ms.id = lastMilestoneId;
+    ms.goalId = goal.id;
+    milestones.push_back(ms);
+}
+void TaskManager::editMilestone(int id, const Milestone& m) {
+    for (auto& ms : milestones) {
+        if (ms.id == id) {
+            ms.description = m.description;
+            ms.startDate = m.startDate;
+            ms.endDate = m.endDate;
             break;
         }
     }
 }
+std::vector<Milestone> TaskManager::getMilestones() const {
+    return milestones;
+}
+Milestone TaskManager::getMilestoneById(int id) const {
+    for (const auto& m : milestones)
+        if (m.id == id) return m;
+    return {0, "", "", "", 0};
+}
 
-void TaskManager::addTask(const std::string& description, Priority priority, const std::string& dueDate)
-{
-    lastId++; // Increment persistent ID
+// --- Task ---
+void TaskManager::addTask(const std::string& description, Priority priority, const std::string& dueDate, int milestoneId) {
+    lastTaskId++;
     Task t;
-    t.id = lastId;
+    t.id = lastTaskId;
     t.description = description;
     t.priority = priority;
     t.dueDate = dueDate;
     t.completed = false;
+    t.milestoneId = milestoneId;
     tasks.push_back(t);
 }
-
-void TaskManager::listTasks() const
-{
-    for (const auto& task : tasks) {
-        std::cout << "[" << (task.completed ? "x" : " ") << "] "
-                  << task.id << ": " << task.description
-                  << " (Priority: ";
-        switch (task.priority) {
-            case Priority::Low: std::cout << "Low"; break;
-            case Priority::Medium: std::cout << "Medium"; break;
-            case Priority::High: std::cout << "High"; break;
-        }
-        std::cout << ", Due: " << task.dueDate << ")\n";
-    }
-}
-
-void TaskManager::completeTask(int id)
-{
-    saveStateForUndo();
-	for (auto& task : tasks) {
-		if (task.id == id) {
-			task.completed = true;
-			break;
-		}
-	}
-}
-
-void TaskManager::deleteTask(int id)
-{
-    saveStateForUndo();
-	tasks.erase(std::remove_if(tasks.begin(), tasks.end(),
-		[id](const Task& task) { return task.id == id; }), tasks.end());
-}
-
-void TaskManager::sortByPriority()
-{
-    std::sort(tasks.begin(), tasks.end(), [](const Task& a, const Task& b) {
-        return static_cast<int>(a.priority) > static_cast<int>(b.priority);
-    });
-}
-
-void TaskManager::listTasksByPriority(Priority priority) const
-{
-    for (const auto& task : tasks) {
-        if (task.priority == priority) {
-            std::cout << "[" << (task.completed ? "x" : " ") << "] "
-                      << task.id << ": " << task.description
-                      << " (Priority: ";
-            switch (task.priority) {
-                case Priority::Low: std::cout << "Low"; break;
-                case Priority::Medium: std::cout << "Medium"; break;
-                case Priority::High: std::cout << "High"; break;
-            }
-            std::cout << ")\n";
+void TaskManager::editTask(int id, const std::string& newDescription, Priority prio, const std::string& dueDate, int milestoneId) {
+    for (auto& t : tasks) {
+        if (t.id == id) {
+            t.description = newDescription;
+            t.priority = prio;
+            t.dueDate = dueDate;
+            t.milestoneId = milestoneId;
+            break;
         }
     }
 }
-
-void TaskManager::sortByDueDate()
-{
-    std::sort(tasks.begin(), tasks.end(), [](const Task& a, const Task& b) {
-        return a.dueDate < b.dueDate;
-    });
-}
-
-void TaskManager::listTasksByDueDate(const std::string& dueDate) const
-{
-    for (const auto& task : tasks) {
-        if (task.dueDate == dueDate) {
-            std::cout << "[" << (task.completed ? "x" : " ") << "] "
-                      << task.id << ": " << task.description
-                      << " (Priority: ";
-            switch (task.priority) {
-                case Priority::Low: std::cout << "Low"; break;
-                case Priority::Medium: std::cout << "Medium"; break;
-                case Priority::High: std::cout << "High"; break;
-            }
-            std::cout << ", Due: " << task.dueDate << ")\n";
+void TaskManager::completeTask(int id) {
+    for (auto& t : tasks)
+        if (t.id == id) {
+            t.completed = true;
+            break;
         }
-    }
 }
-
-void TaskManager::listTasksByDateRange(const std::string& startDate, const std::string& endDate) const
-{
-    for (const auto& task : tasks) {
-        if (task.dueDate >= startDate && task.dueDate <= endDate) {
-            std::cout << "[" << (task.completed ? "x" : " ") << "] "
-                      << task.id << ": " << task.description
-                      << " (Priority: ";
-            switch (task.priority) {
-                case Priority::Low: std::cout << "Low"; break;
-                case Priority::Medium: std::cout << "Medium"; break;
-                case Priority::High: std::cout << "High"; break;
-            }
-            std::cout << ", Due: " << task.dueDate << ")\n";
-        }
-    }
+void TaskManager::deleteTask(int id) {
+    tasks.erase(std::remove_if(tasks.begin(), tasks.end(),
+                               [id](const Task& t){ return t.id == id; }), tasks.end());
 }
-
-void TaskManager::searchTasks(const std::string& keyword) const
-{
-    for (const auto& task : tasks) {
-        if (task.description.find(keyword) != std::string::npos) {
-            std::cout << "[" << (task.completed ? "x" : " ") << "] "
-                      << task.id << ": " << task.description
-                      << " (Priority: ";
-            switch (task.priority) {
-                case Priority::Low: std::cout << "Low"; break;
-                case Priority::Medium: std::cout << "Medium"; break;
-                case Priority::High: std::cout << "High"; break;
-            }
-            std::cout << ", Due: " << task.dueDate << ")\n";
-        }
-    }
+std::vector<Task> TaskManager::getTasks() const {
+    return tasks;
 }
-
-void TaskManager::saveStateForUndo() {
-    undoStack.push(tasks);
-    // Clear redo stack on new action
-    while (!redoStack.empty()) redoStack.pop();
+std::vector<Task> TaskManager::getTasksForMilestone(int milestoneId) const {
+    std::vector<Task> result;
+    for (const auto& t : tasks)
+        if (t.milestoneId == milestoneId) result.push_back(t);
+    return result;
 }
-
-void TaskManager::undo() {
-    if (undoStack.empty()) {
-        std::cout << "Nothing to undo.\n";
-        return;
-    }
-    redoStack.push(tasks);
-    tasks = undoStack.top();
-    undoStack.pop();
-}
-
-void TaskManager::redo() {
-    if (redoStack.empty()) {
-        std::cout << "Nothing to redo.\n";
-        return;
-    }
-    undoStack.push(tasks);
-    tasks = redoStack.top();
-    redoStack.pop();
-}
-
-bool TaskManager::registerUser(const std::string& username, const std::string& password) {
-    for (const auto& user : users) {
-        if (user.username == username) return false; // Already exists
-    }
-    User u;
-    u.username = username;
-    u.passwordHash = simpleHash(password);
-    users.push_back(u);
-    return true;
-}
-
-bool TaskManager::loginUser(const std::string& username, const std::string& password) {
-    for (const auto& user : users) {
-        if (user.username == username && user.passwordHash == simpleHash(password)) {
-            currentUser = username;
-            return true;
-        }
-    }
-    return false;
-}
-
-std::string TaskManager::getCurrentUser() const {
-    return currentUser;
-}
-

@@ -19,12 +19,20 @@ public:
     ~MainWindow();
 
 private slots:
+    void on_addGoalButton_clicked();
+    void on_editGoalButton_clicked();
+    void on_addMilestoneButton_clicked();
+    void on_milestoneListWidget_currentRowChanged(int row);
     void on_addTaskButton_clicked();
 
 private:
+    void updateGoalView();
+    void updateMilestoneList();
     void updateTaskList();
+
     Ui::MainWindow *ui;
     TaskManager manager;
+    int currentMilestoneId; // 0 - не выбран этап
 };
 
 #endif // MAINWINDOW_H

@@ -1,13 +1,21 @@
 {
-    "last_id": 1,
+    "goal": {
+        "description": "My 1 Main Goal",
+        "id": 3,
+        "targetDate": "2030-06-20"
+    },
+    "lastGoalId": 3,
+    "lastMilestoneId": 0,
+    "lastTaskId": 0,
+    "milestones": [],
     "tasks": [
         {
             "completed": false,
             "description": "Make some code",
             "dueDate": "2022-06-26",
             "id": 1,
+            "milestoneId": 0,
             "priority": 0
         }
-    ],
-    "users": []
+    ]
 }
