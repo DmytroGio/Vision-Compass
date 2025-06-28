@@ -1,18 +1,22 @@
-# 📝 Task Manager (Qt + C++)
+# 🧭 Vision Compass (Qt + C++)
 
-A simple cross-platform **task manager** written in C++ with a Qt-based graphical interface.
+A minimalist, cross-platform **goal and task navigation tool** built with C++ and Qt.
+
+**Vision Compass** helps you align your daily actions with long-term visions and core values. It’s more than a task manager — it’s your personal clarity dashboard.
 
 ---
 
 ## ✨ Features
 
-- ✅ Add tasks with description, priority, and due date
-- 📋 View all tasks in a convenient list
-- 📝 Mark tasks as completed
-- 🗑️ Delete tasks (planned)
-- 💾 Save/load tasks to/from `tasks.json`
-- 👤 User authentication (login & registration, planned for future UI)
-- 🖥️ Intuitive graphical user interface (Qt 6)
+- 🌟 Set your main long-term goal and edit it at any time
+- 🗂️ Organize medium-term milestones (no progress bar) under your main goal
+- 📋 Add tasks linked to specific milestones
+- 📅 Specify due dates and priorities for each task
+- ✅ Mark tasks as completed (planned)
+- 🧭 View your main goal, milestones, and related tasks in a clean, focused layout
+- 💾 All data saved/loaded from `tasks.json`
+- 🖥️ Fully English interface and codebase
+- 🔐 (Planned) User authentication (login & registration)
 
 ---
 
@@ -21,8 +25,8 @@ A simple cross-platform **task manager** written in C++ with a Qt-based graphica
 ### 🔧 With CMake (cross-platform)
 
 ```bash
-git clone https://github.com/DdmytroGio/task-manager-cli.git
-cd task-manager-cli
+git clone https://github.com/DdmytroGio/vision-compass.git
+cd vision-compass
 mkdir build && cd build
 cmake ..
 cmake --build .
@@ -30,7 +34,7 @@ cmake --build .
 
 ### 🧱 With Qt Creator (recommended)
 
-1. Open the `task-manager-cli.pro` or `CMakeLists.txt` in **Qt Creator** (Qt 6.9+ recommended)
+1. Open `vision-compass.pro` or `CMakeLists.txt` in **Qt Creator** (Qt 6.9+ recommended)
 2. Click **Configure Project**
 3. Click **Build** and then **Run**
 
@@ -38,10 +42,11 @@ cmake --build .
 
 ## 🚀 Usage
 
-- Start the application.  
-- Add tasks using the UI form (description, due date, priority).
-- Tasks are displayed in the list below the form.
-- Tasks are saved automatically in `tasks.json` (in the app directory).
+- Launch the application.
+- Set your main goal with a description and target date.
+- Add milestones (medium-term stages) under your goal.
+- Select a milestone to view and add tasks related to it (with description, due date, and priority).
+- All data is saved automatically in `tasks.json` in the app directory.
 
 ---
 
@@ -53,5 +58,10 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## 🗒️ Notes
 
-- CLI mode is now deprecated; all management happens via the Qt UI.
-- For development or issues, please open an [issue](https://github.com/DdmytroGio/task-manager-cli/issues).
+- The CLI mode is deprecated. All planning and task management happens via the Qt interface.
+- The UI and codebase are now fully in English.
+- Contributions and suggestions welcome — please open an [issue](https://github.com/DdmytroGio/vision-compass/issues).
+
+---
+
+> “A goal properly set is halfway reached.” – Zig Ziglar
