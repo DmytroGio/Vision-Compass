@@ -1,0 +1,10 @@
+# ninja log v6
+9	662	7728582964864080	task-manager_autogen/timestamp	7bc93693e2724ba9
+9	662	7728582964864080	task-manager_autogen/mocs_compilation.cpp	7bc93693e2724ba9
+9	662	7728582964864080	E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/task-manager_autogen/timestamp	7bc93693e2724ba9
+9	662	7728582964864080	E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/task-manager_autogen/mocs_compilation.cpp	7bc93693e2724ba9
+667	2936	7728582965424206	CMakeFiles/task-manager.dir/task-manager_autogen/mocs_compilation.cpp.obj	2cf479dc55a9d18
+668	2955	7728582965434216	CMakeFiles/task-manager.dir/main.cpp.obj	c9ef7cd9f537df9c
+669	3750	7728582965444216	CMakeFiles/task-manager.dir/mainwindow.cpp.obj	481a7cb735ebd1b8
+670	4795	7728582965454215	CMakeFiles/task-manager.dir/task_manager.cpp.obj	94640b72dffb8dfb
+4795	4923	7728583006709144	task-manager.exe	b5237a4475243bdc

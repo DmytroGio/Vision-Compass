@@ -1,0 +1,9 @@
+E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/CMakeFiles/task-manager.dir
+E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/CMakeFiles/edit_cache.dir
+E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/CMakeFiles/rebuild_cache.dir
+E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/CMakeFiles/list_install_components.dir
+E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/CMakeFiles/install.dir
+E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/CMakeFiles/install/local.dir
+E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/CMakeFiles/install/strip.dir
+E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/CMakeFiles/task-manager_autogen_timestamp_deps.dir
+E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/CMakeFiles/task-manager_autogen.dir
