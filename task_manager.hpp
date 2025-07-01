@@ -1,13 +1,10 @@
 #pragma once
 #include <string>
 #include <vector>
-//#include <stack>
 #include "json.hpp"
-//#include "user.hpp"
 using nlohmann::json;
 
-enum class Priority { Low, Medium, High };
-
+// Main goal structure
 struct Goal {
     int id;
     std::string description;
@@ -16,23 +13,24 @@ struct Goal {
     nlohmann::json to_json() const;
 };
 
-struct Milestone {
+// SubGoal structure (was Milestone)
+struct SubGoal {
     int id;
     std::string description;
     std::string startDate;
     std::string endDate;
     int goalId;
-    static Milestone from_json(const nlohmann::json&);
+    static SubGoal from_json(const nlohmann::json&);
     nlohmann::json to_json() const;
 };
 
+// Task structure WITHOUT priority field
 struct Task {
     int id;
     std::string description;
-    Priority priority;
     std::string dueDate;
     bool completed;
-    int milestoneId;
+    int subGoalId; // renamed from milestoneId
     static Task from_json(const nlohmann::json&);
     nlohmann::json to_json() const;
 };
@@ -48,26 +46,26 @@ public:
     void setGoal(const Goal& g);
     Goal getGoal() const;
 
-    // Milestones
-    void addMilestone(const Milestone& m);
-    void editMilestone(int id, const Milestone& m);
-    std::vector<Milestone> getMilestones() const;
-    Milestone getMilestoneById(int id) const;
+    // SubGoals
+    void addSubGoal(const SubGoal& sg);
+    void editSubGoal(int id, const SubGoal& sg);
+    std::vector<SubGoal> getSubGoals() const;
+    SubGoal getSubGoalById(int id) const;
 
     // Tasks
-    void addTask(const std::string& description, Priority priority, const std::string& dueDate, int milestoneId);
-    void editTask(int id, const std::string& newDescription, Priority prio, const std::string& dueDate, int milestoneId);
+    void addTask(const std::string& description, const std::string& dueDate, int subGoalId);
+    void editTask(int id, const std::string& newDescription, const std::string& dueDate, int subGoalId);
     void completeTask(int id);
     void deleteTask(int id);
     std::vector<Task> getTasks() const;
-    std::vector<Task> getTasksForMilestone(int milestoneId) const;
+    std::vector<Task> getTasksForSubGoal(int subGoalId) const;
 
 private:
     int lastGoalId;
-    int lastMilestoneId;
+    int lastSubGoalId;
     int lastTaskId;
 
     Goal goal;
-    std::vector<Milestone> milestones;
+    std::vector<SubGoal> subGoals;
     std::vector<Task> tasks;
 };

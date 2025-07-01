@@ -15,17 +15,17 @@ json Goal::to_json() const {
     return { {"id", id}, {"description", description}, {"targetDate", targetDate} };
 }
 
-// --- Milestone ---
-Milestone Milestone::from_json(const json& j) {
-    Milestone m;
-    m.id = j.value("id", 0);
-    m.description = j.value("description", "");
-    m.startDate = j.value("startDate", "");
-    m.endDate = j.value("endDate", "");
-    m.goalId = j.value("goalId", 0);
-    return m;
+// --- SubGoal ---
+SubGoal SubGoal::from_json(const json& j) {
+    SubGoal sg;
+    sg.id = j.value("id", 0);
+    sg.description = j.value("description", "");
+    sg.startDate = j.value("startDate", "");
+    sg.endDate = j.value("endDate", "");
+    sg.goalId = j.value("goalId", 0);
+    return sg;
 }
-json Milestone::to_json() const {
+json SubGoal::to_json() const {
     return { {"id", id}, {"description", description}, {"startDate", startDate}, {"endDate", endDate}, {"goalId", goalId} };
 }
 
@@ -34,26 +34,24 @@ Task Task::from_json(const json& j) {
     Task t;
     t.id = j.value("id", 0);
     t.description = j.value("description", "");
-    t.priority = static_cast<Priority>(j.value("priority", 0));
     t.dueDate = j.value("dueDate", "");
     t.completed = j.value("completed", false);
-    t.milestoneId = j.value("milestoneId", 0);
+    t.subGoalId = j.value("subGoalId", 0);
     return t;
 }
 json Task::to_json() const {
     return {
         {"id", id},
         {"description", description},
-        {"priority", static_cast<int>(priority)},
         {"dueDate", dueDate},
         {"completed", completed},
-        {"milestoneId", milestoneId}
+        {"subGoalId", subGoalId}
     };
 }
 
 // --- TaskManager ---
 TaskManager::TaskManager()
-    : lastGoalId(0), lastMilestoneId(0), lastTaskId(0)
+    : lastGoalId(0), lastSubGoalId(0), lastTaskId(0)
 {
     goal = {0, "", ""};
 }
@@ -66,7 +64,7 @@ void TaskManager::loadFromFile(const std::string& filename) {
     in >> j;
 
     lastGoalId = j.value("lastGoalId", 0);
-    lastMilestoneId = j.value("lastMilestoneId", 0);
+    lastSubGoalId = j.value("lastSubGoalId", 0);
     lastTaskId = j.value("lastTaskId", 0);
 
     // Goal
@@ -76,10 +74,10 @@ void TaskManager::loadFromFile(const std::string& filename) {
         goal = {0, "", ""};
     }
 
-    // Milestones
-    milestones.clear();
-    for (const auto& m : j["milestones"]) {
-        milestones.push_back(Milestone::from_json(m));
+    // SubGoals
+    subGoals.clear();
+    for (const auto& sg : j["subGoals"]) {
+        subGoals.push_back(SubGoal::from_json(sg));
     }
     // Tasks
     tasks.clear();
@@ -91,11 +89,11 @@ void TaskManager::loadFromFile(const std::string& filename) {
 void TaskManager::saveToFile(const std::string& filename) const {
     json j;
     j["lastGoalId"] = lastGoalId;
-    j["lastMilestoneId"] = lastMilestoneId;
+    j["lastSubGoalId"] = lastSubGoalId;
     j["lastTaskId"] = lastTaskId;
     j["goal"] = goal.to_json();
-    j["milestones"] = json::array();
-    for (const auto& m : milestones) j["milestones"].push_back(m.to_json());
+    j["subGoals"] = json::array();
+    for (const auto& sg : subGoals) j["subGoals"].push_back(sg.to_json());
     j["tasks"] = json::array();
     for (const auto& t : tasks) j["tasks"].push_back(t.to_json());
     std::ofstream out(filename);
@@ -114,52 +112,50 @@ Goal TaskManager::getGoal() const {
     return goal;
 }
 
-// --- Milestone ---
-void TaskManager::addMilestone(const Milestone& m) {
-    Milestone ms = m;
-    lastMilestoneId++;
-    ms.id = lastMilestoneId;
-    ms.goalId = goal.id;
-    milestones.push_back(ms);
+// --- SubGoal ---
+void TaskManager::addSubGoal(const SubGoal& sg) {
+    SubGoal s = sg;
+    lastSubGoalId++;
+    s.id = lastSubGoalId;
+    s.goalId = goal.id;
+    subGoals.push_back(s);
 }
-void TaskManager::editMilestone(int id, const Milestone& m) {
-    for (auto& ms : milestones) {
-        if (ms.id == id) {
-            ms.description = m.description;
-            ms.startDate = m.startDate;
-            ms.endDate = m.endDate;
+void TaskManager::editSubGoal(int id, const SubGoal& sg) {
+    for (auto& s : subGoals) {
+        if (s.id == id) {
+            s.description = sg.description;
+            s.startDate = sg.startDate;
+            s.endDate = sg.endDate;
             break;
         }
     }
 }
-std::vector<Milestone> TaskManager::getMilestones() const {
-    return milestones;
+std::vector<SubGoal> TaskManager::getSubGoals() const {
+    return subGoals;
 }
-Milestone TaskManager::getMilestoneById(int id) const {
-    for (const auto& m : milestones)
-        if (m.id == id) return m;
+SubGoal TaskManager::getSubGoalById(int id) const {
+    for (const auto& s : subGoals)
+        if (s.id == id) return s;
     return {0, "", "", "", 0};
 }
 
 // --- Task ---
-void TaskManager::addTask(const std::string& description, Priority priority, const std::string& dueDate, int milestoneId) {
+void TaskManager::addTask(const std::string& description, const std::string& dueDate, int subGoalId) {
     lastTaskId++;
     Task t;
     t.id = lastTaskId;
     t.description = description;
-    t.priority = priority;
     t.dueDate = dueDate;
     t.completed = false;
-    t.milestoneId = milestoneId;
+    t.subGoalId = subGoalId;
     tasks.push_back(t);
 }
-void TaskManager::editTask(int id, const std::string& newDescription, Priority prio, const std::string& dueDate, int milestoneId) {
+void TaskManager::editTask(int id, const std::string& newDescription, const std::string& dueDate, int subGoalId) {
     for (auto& t : tasks) {
         if (t.id == id) {
             t.description = newDescription;
-            t.priority = prio;
             t.dueDate = dueDate;
-            t.milestoneId = milestoneId;
+            t.subGoalId = subGoalId;
             break;
         }
     }
@@ -178,9 +174,9 @@ void TaskManager::deleteTask(int id) {
 std::vector<Task> TaskManager::getTasks() const {
     return tasks;
 }
-std::vector<Task> TaskManager::getTasksForMilestone(int milestoneId) const {
+std::vector<Task> TaskManager::getTasksForSubGoal(int subGoalId) const {
     std::vector<Task> result;
     for (const auto& t : tasks)
-        if (t.milestoneId == milestoneId) result.push_back(t);
+        if (t.subGoalId == subGoalId) result.push_back(t);
     return result;
 }
