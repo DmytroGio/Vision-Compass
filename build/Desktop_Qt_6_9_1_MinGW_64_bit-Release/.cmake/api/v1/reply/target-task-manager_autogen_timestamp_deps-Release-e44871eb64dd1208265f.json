@@ -14,6 +14,17 @@
 			}
 		]
 	},
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 0,
+			"id" : "task-manager_qmlimportscan::@6890427a1f51a3e7e1df"
+		},
+		{
+			"backtrace" : 0,
+			"id" : "task-manager-qml::@6890427a1f51a3e7e1df"
+		}
+	],
 	"id" : "task-manager_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
 	"isGeneratorProvided" : true,
 	"name" : "task-manager_autogen_timestamp_deps",

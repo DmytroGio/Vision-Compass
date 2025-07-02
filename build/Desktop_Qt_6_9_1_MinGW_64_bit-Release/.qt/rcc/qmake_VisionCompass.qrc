@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/VisionCompass">
+    <file alias="qmldir">E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/qmldir</file>
+  </qresource>
+</RCC>
+

@@ -1,0 +1,7 @@
+<!-- filepath: e:\Projects\C++\task-manager\resources.qrc -->
+<RCC>
+    <qresource prefix="/VisionCompass">
+        <file>Main.qml</file>
+        <file>Screen01.qml</file>
+    </qresource>
+</RCC>

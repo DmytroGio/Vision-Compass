@@ -1,0 +1,9 @@
+module VisionCompass
+linktarget task-manager-qmlplugin
+optional plugin task-manager-qmlplugin
+classname VisionCompassPlugin
+typeinfo task-manager-qml.qmltypes
+prefer :/VisionCompass/
+Main 1.0 Main.qml
+Screen01 1.0 Screen01.qml
+

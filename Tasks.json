@@ -1,0 +1,12 @@
+{
+    "lastGoalId": 1,
+    "lastSubGoalId": 0,
+    "lastTaskId": 0,
+    "goal": {
+        "id": 1,
+        "description": "My Test Goal from JSON",
+        "targetDate": "Test Goal Description from JSON"
+    },
+    "subGoals": [],
+    "tasks": []
+}

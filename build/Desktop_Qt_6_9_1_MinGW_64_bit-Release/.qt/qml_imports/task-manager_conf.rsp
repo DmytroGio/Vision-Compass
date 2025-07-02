@@ -1,0 +1,9 @@
+-rootPath
+E:/Projects/C++/task-manager
+-cmake-output
+-output-file
+E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.qt/qml_imports/task-manager_conf.cmake
+-importPath
+E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release
+-importPath
+C:/Qt/6.9.1/mingw_64/qml
