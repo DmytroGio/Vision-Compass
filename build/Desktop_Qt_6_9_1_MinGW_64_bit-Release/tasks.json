@@ -1,29 +1,12 @@
 {
-    "goal": {
-        "description": "Make a lot of money",
-        "id": 1,
-        "targetDate": "2030-06-18"
-    },
     "lastGoalId": 1,
-    "lastMilestoneId": 1,
-    "lastTaskId": 1,
-    "milestones": [
-        {
-            "description": "As Freelancer",
-            "endDate": "2027-06-13",
-            "goalId": 1,
-            "id": 1,
-            "startDate": "2026-01-30"
-        }
-    ],
-    "tasks": [
-        {
-            "completed": false,
-            "description": "Make programm",
-            "dueDate": "2025-06-30",
-            "id": 1,
-            "milestoneId": 1,
-            "priority": 2
-        }
-    ]
+    "lastSubGoalId": 0,
+    "lastTaskId": 0,
+    "goal": {
+        "id": 1,
+        "description": "My Test Goal from JSON",
+        "targetDate": "Test Goal Description from JSON"
+    },
+    "subGoals": [],
+    "tasks": []
 }

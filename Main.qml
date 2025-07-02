@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import com.visioncompass.data 1.0 // Import our C++ ViewModel
+import com.visioncompass.data 1.0
 
 ApplicationWindow {
     id: mainWindow
@@ -11,9 +11,7 @@ ApplicationWindow {
     title: "Vision Compass (QML)"
 
     // Make AppViewModel available in this QML file
-    AppViewModel {
-        id: appViewModel
-    }
+ 
 
     ColumnLayout {
         anchors.fill: parent
@@ -42,7 +40,7 @@ ApplicationWindow {
 
                     Text {
                         id: goalNameText
-                        text: appViewModel.currentGoalText // Связываем с ViewModel
+                        text: AppViewModel.currentGoalText // Use singleton directly
                         font.pointSize: 20
                         font.bold: true
                         color: "white"
@@ -52,7 +50,7 @@ ApplicationWindow {
                     }
                     Text {
                         id: goalDescriptionText
-                        text: appViewModel.currentGoalDescription // Связываем с ViewModel
+                        text: AppViewModel.currentGoalDescription // Use singleton directly
                         font.pointSize: 12
                         color: "white"
                         horizontalAlignment: Text.AlignHCenter

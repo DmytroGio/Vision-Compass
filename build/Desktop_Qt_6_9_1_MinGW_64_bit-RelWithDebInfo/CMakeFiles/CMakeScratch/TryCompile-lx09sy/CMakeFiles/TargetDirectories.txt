@@ -1,3 +1,0 @@
-E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-RelWithDebInfo/CMakeFiles/CMakeScratch/TryCompile-lx09sy/CMakeFiles/cmTC_ae4f9.dir
-E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-RelWithDebInfo/CMakeFiles/CMakeScratch/TryCompile-lx09sy/CMakeFiles/edit_cache.dir
-E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-RelWithDebInfo/CMakeFiles/CMakeScratch/TryCompile-lx09sy/CMakeFiles/rebuild_cache.dir

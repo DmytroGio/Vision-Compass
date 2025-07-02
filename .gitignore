@@ -104,4 +104,6 @@ CMakeLists.txt.user* # Qt Creator's user-specific CMake settings
 .pch/
 .rcc/
 .uic/
-/build*/ # Matches any directory starting with 'build' at the root level, e.g., 'build', 'build-debug', 'build-release'
+ # Matches any directory starting with 'build' at the root level, e.g., 'build', 'build-debug', 'build-release'
+**/build/
+**/build-*/
