@@ -51,7 +51,6 @@ public:
     void editSubGoal(int id, const SubGoal& sg);
     std::vector<SubGoal> getSubGoals() const;
     SubGoal getSubGoalById(int id) const;
-    void deleteSubGoal(int id);
 
     // Tasks
     void addTask(const std::string& description, const std::string& dueDate, int subGoalId);

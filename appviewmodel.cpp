@@ -131,9 +131,11 @@ void AppViewModel::deleteSubGoal(int id) {
             [id](const SubGoal& sg){ return sg.id == id; }),
         m_subGoals.end()
     );
-    m_taskManager.deleteSubGoal(id); // Call the implemented TaskManager method
+    // Optionally, update TaskManager if you have a setter or reload from m_subGoals
+    // TODO: Implement TaskManager::deleteSubGoal for proper data consistency
+
     saveData();
-    updateSubGoalListModel(); // This will fetch the updated list from TaskManager
+    updateSubGoalListModel();
     if (id == m_selectedSubGoalId) {
         m_selectedSubGoalId = 0;
         updateTasksListModel();
