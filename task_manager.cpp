@@ -138,6 +138,15 @@ SubGoal TaskManager::getSubGoalById(int id) const {
         if (s.id == id) return s;
     return {0, "", "", "", 0};
 }
+void TaskManager::deleteSubGoal(int id) {
+    // Remove the subgoal itself
+    subGoals.erase(std::remove_if(subGoals.begin(), subGoals.end(),
+                                  [id](const SubGoal& sg){ return sg.id == id; }), subGoals.end());
+
+    // Remove all tasks associated with this subgoal
+    tasks.erase(std::remove_if(tasks.begin(), tasks.end(),
+                               [id](const Task& t){ return t.subGoalId == id; }), tasks.end());
+}
 
 // --- Task ---
 void TaskManager::addTask(const std::string& description, const std::string& dueDate, int subGoalId) {
