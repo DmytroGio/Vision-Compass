@@ -7,7 +7,11 @@ ApplicationWindow {
     id: mainWindow
     visible: true
     width: 800
-    height: 750 // Increased height to accommodate both sections
+    height: 750
+    minimumWidth: 800
+    maximumWidth: 800
+    minimumHeight: 750
+    maximumHeight: 750
     title: "Vision Compass (QML)"
 
     // Make AppViewModel available in this QML file
@@ -17,17 +21,38 @@ ApplicationWindow {
         anchors.fill: parent
         spacing: 0
 
-        // --- Верхняя секция (Цели и Подцели) ---
-        Rectangle {
+        // --- Верхняя секция (половина большого круга) ---
+        Item {
             id: topSection
             Layout.fillWidth: true
-            Layout.preferredHeight: mainWindow.height / 2 // Верхняя половина
-            color: "#F3C44A" // Желтый фон для SubGoals
+            Layout.preferredHeight: mainWindow.height / 2
+
+            // Gray background
+            Rectangle {
+                anchors.fill: parent
+                color: "#282828"
+                z: 0
+            }
+
+            Canvas {
+                id: bigCircle
+                anchors.fill: parent
+                onPaint: {
+                    var ctx = getContext("2d");
+                    ctx.clearRect(0, 0, width, height);
+                    var radius = width > height ? width * 0.9 : height * 1.8;
+                    ctx.beginPath();
+                    ctx.arc(width / 2, 0, radius / 2, 0, Math.PI, false);
+                    ctx.closePath();
+                    ctx.fillStyle = "#F3C44A";
+                    ctx.fill();
+                }
+            }
 
             // Красный круг (Goal) - упрощенная версия
             Rectangle {
                 id: goalCircle
-                width: topSection.height * 0.7 // Примерный размер
+                width: topSection.height * 1 // Примерный размер
                 height: width
                 radius: width / 2
                 color: "#E95B5B" // Красный цвет
@@ -96,17 +121,17 @@ ApplicationWindow {
             id: bottomSection
             Layout.fillWidth: true
             Layout.fillHeight: true // Занимает оставшееся место
-            color: "#333333" // Темный фон для задач
+            color: "#282828" // Темный фон для задач
 
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 10
 
                 Text {
-                    text: "Задачи для выбранной подцели:"
-                    color: "white"
-                    font.pointSize: 16
-                    Layout.alignment: Qt.AlignHCenter
+                    text: "Sub-objective task list:"
+                    color: "#373737"
+                    font.pointSize: 12
+                    Layout.alignment: Qt.AlignLeft
                 }
 
                 // ListView для задач будет здесь

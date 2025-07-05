@@ -27,3 +27,8 @@ To see the global goals of life and plan according to them.
 ### New GUI in figma
 - Simplifying the overall design to minimalism
 - Preparing the design for integration
+
+## 2025-07-05
+### The process of integrating a beautiful design
+- Create simple options to modify objectives and sub-objectives
+- Connecting backend with frontend
