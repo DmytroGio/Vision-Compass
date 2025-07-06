@@ -32,3 +32,11 @@ To see the global goals of life and plan according to them.
 ### The process of integrating a beautiful design
 - Create simple options to modify objectives and sub-objectives
 - Connecting backend with frontend
+
+## 2025-07-06
+### Weekly Task: The process of integrating a beautiful design
+- Create a simple UI to modify objectives and sub-objectives
+- Design clean layout with inline editing and basic actions (add/edit/delete)
+- Implement reordering options (drag & drop or buttons)
+- Style interface for clarity and minimalism
+- Handle edge cases (empty fields, quick edits)
