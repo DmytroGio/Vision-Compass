@@ -1,12 +1,34 @@
 {
-    "lastGoalId": 1,
-    "lastSubGoalId": 0,
-    "lastTaskId": 0,
     "goal": {
-        "id": 1,
         "description": "My Test Goal from JSON",
+        "id": 1,
         "targetDate": "Test Goal Description from JSON"
     },
-    "subGoals": [],
+    "lastGoalId": 1,
+    "lastSubGoalId": 3,
+    "lastTaskId": 0,
+    "subGoals": [
+        {
+            "description": "My New SubGoal",
+            "endDate": "",
+            "goalId": 1,
+            "id": 1,
+            "startDate": ""
+        },
+        {
+            "description": "New Subgoal",
+            "endDate": "",
+            "goalId": 1,
+            "id": 2,
+            "startDate": ""
+        },
+        {
+            "description": "ааа",
+            "endDate": "",
+            "goalId": 1,
+            "id": 3,
+            "startDate": ""
+        }
+    ],
     "tasks": []
 }

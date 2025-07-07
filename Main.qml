@@ -15,7 +15,7 @@ ApplicationWindow {
     title: "Vision Compass (QML)"
 
     // Make AppViewModel available in this QML file
- 
+    // Create rectangle
 
     ColumnLayout {
         anchors.fill: parent
@@ -85,23 +85,122 @@ ApplicationWindow {
                 }
             }
 
-            // Отображение SubGoals (пока очень упрощенно, без позиционирования на дуге)
+            // Отображение SubGoals с использованием Repeater
             Row {
-                id: subGoalRow // Placeholder for actual SubGoal items
+                id: subGoalRow
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 20
                 padding: 10
 
-                // Пример отображения первого SubGoal, если есть
-                Text {
-                    text: appViewModel.subGoalsListModel.length > 0 ? appViewModel.subGoalsListModel[0].name : "No Subgoals"
-                    color: "black"
-                    font.pointSize: 14
+                Repeater {
+                    model: AppViewModel.subGoalsListModel // Используем модель данных
+
+                    delegate: Rectangle {
+                        width: 100
+                        height: 50
+                        radius: 10
+                        color: "#F3C44A" // Желтый цвет
+                        border.color: "gray"
+
+                        Text {
+                            text: modelData.name // Отображаем имя SubGoal
+                            anchors.centerIn: parent
+                            font.pointSize: 14
+                            color: "black"
+                        }
+
+                        // Кнопка удаления SubGoal (опционально)
+                        Button {
+                            id: removeSubGoalButton
+                            text: "X"
+                            anchors.right: parent.right
+                            anchors.top: parent.top
+                            anchors.margins: 5
+                            onClicked: {
+                                // Показываем диалог подтверждения удаления
+                                confirmationDialog.open()
+                                confirmationDialog.subGoalToRemove = modelData
+                            }
+                        }
+                    }
                 }
-                // В будущем здесь будет Repeater или ListView
             }
-            
+
+            // Диалог подтверждения удаления SubGoal
+            Dialog {
+                id: confirmationDialog
+                modal: true
+                title: "Подтверждение удаления"
+                width: 300
+                height: 150
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 10
+                    //padding: 10
+
+                    Text {
+                        text: "Вы хотите действительно удалить этот подцель?"
+                        font.pointSize: 14
+                        color: "#373737"
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    RowLayout {
+                        spacing: 10
+                        Button {
+                            text: "Да"
+                            onClicked: {
+                                // Удаляем SubGoal из модели
+                                AppViewModel.removeSubGoal(confirmationDialog.subGoalToRemove)
+                                confirmationDialog.close()
+                            }
+                        }
+                        Button {
+                            text: "Нет"
+                            onClicked: {
+                                confirmationDialog.close()
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Диалог добавления SubGoal
+            Dialog {
+                id: addSubGoalDialog
+                modal: true
+                title: "Add SubGoal"
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 10
+
+                    TextField {
+                        id: subGoalNameField
+                        placeholderText: "Enter Name of Subgoal"
+                        Layout.fillWidth: true
+                    }
+                    RowLayout {
+                        spacing: 10
+                        Button {
+                            text: "Add"
+                            onClicked: {
+                                if (subGoalNameField.text !== "") {
+                                    AppViewModel.addSubGoal(subGoalNameField.text)
+                                    addSubGoalDialog.close()
+                                }
+                            }
+                        }
+                        Button {
+                            text: "Cancel"
+                            onClicked: addSubGoalDialog.close()
+                        }
+                    }
+                }
+            }
+
             // Кнопка добавления SubGoal (справа сверху на желтой области)
             Button {
                 id: addSubGoalButtonTop
@@ -112,7 +211,9 @@ ApplicationWindow {
                 anchors.right: parent.right
                 anchors.margins: 10
                 font.pointSize: 20
-                // onClicked: // Логика будет добавлена позже
+                onClicked: {
+                    addSubGoalDialog.open()
+                }
             }
         }
 
@@ -146,7 +247,8 @@ ApplicationWindow {
                         color: "white"
                     }
                 }
-                 // Кнопка добавления Task (внизу по центру)
+
+                // Кнопка добавления Task (внизу по центру)
                 Button {
                     id: addTaskButtonBottom
                     text: "+"
@@ -154,7 +256,7 @@ ApplicationWindow {
                     Layout.preferredHeight: 60
                     Layout.alignment: Qt.AlignHCenter
                     font.pointSize: 24
-                    // onClicked: // Логика будет добавлена позже
+                    // onClicked: // Логика будет добавлена поз
                 }
             }
         }

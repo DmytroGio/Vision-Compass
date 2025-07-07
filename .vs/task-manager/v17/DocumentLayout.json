@@ -3,36 +3,15 @@
   "WorkspaceRootPath": "E:\\Projects\\C\u002B\u002B\\task-manager\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\Projects\\C\u002B\u002B\\task-manager\\Main.qml||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Main.qml||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\Projects\\C\u002B\u002B\\task-manager\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\Projects\\C\u002B\u002B\\task-manager\\json.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:json.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\Projects\\C\u002B\u002B\\task-manager\\devlog.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:devlog.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\Projects\\C\u002B\u002B\\task-manager\\CMakePresets.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CMakePresets.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\Projects\\C\u002B\u002B\\task-manager\\CMakeLists.txt.user||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CMakeLists.txt.user||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\Projects\\C\u002B\u002B\\task-manager\\CMakeLists.txt||{8B382828-6202-11D1-8870-0000F87579D2}|",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CMakeLists.txt||{8B382828-6202-11D1-8870-0000F87579D2}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\Projects\\C\u002B\u002B\\task-manager\\appviewmodel.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:appviewmodel.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|CMake Overview Pages||{B1CAA5B0-FEB1-4350-8AB9-F895876842F2}"
     }
   ],
   "DocumentGroupContainers": [
@@ -47,99 +26,38 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Main.qml",
-              "DocumentMoniker": "E:\\Projects\\C\u002B\u002B\\task-manager\\Main.qml",
-              "RelativeDocumentMoniker": "Main.qml",
-              "ToolTip": "E:\\Projects\\C\u002B\u002B\\task-manager\\Main.qml",
-              "RelativeToolTip": "Main.qml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAOAAAAAAAAAA==",
-              "Icon": "0d2e443f-6dbb-4001-99dc-9cd7d5c924e7.000003|",
-              "WhenOpened": "2025-07-03T17:31:52.318Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "main.cpp",
-              "DocumentMoniker": "E:\\Projects\\C\u002B\u002B\\task-manager\\main.cpp",
-              "RelativeDocumentMoniker": "main.cpp",
-              "ToolTip": "E:\\Projects\\C\u002B\u002B\\task-manager\\main.cpp",
-              "RelativeToolTip": "main.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-07-03T17:31:48.658Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "json.hpp",
-              "DocumentMoniker": "E:\\Projects\\C\u002B\u002B\\task-manager\\json.hpp",
-              "RelativeDocumentMoniker": "json.hpp",
-              "ToolTip": "E:\\Projects\\C\u002B\u002B\\task-manager\\json.hpp",
-              "RelativeToolTip": "json.hpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-07-03T17:31:46.798Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "devlog.md",
-              "DocumentMoniker": "E:\\Projects\\C\u002B\u002B\\task-manager\\devlog.md",
-              "RelativeDocumentMoniker": "devlog.md",
-              "ToolTip": "E:\\Projects\\C\u002B\u002B\\task-manager\\devlog.md",
-              "RelativeToolTip": "devlog.md",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2025-07-03T17:31:44.291Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
               "Title": "CMakePresets.json",
               "DocumentMoniker": "E:\\Projects\\C\u002B\u002B\\task-manager\\CMakePresets.json",
               "RelativeDocumentMoniker": "CMakePresets.json",
               "ToolTip": "E:\\Projects\\C\u002B\u002B\\task-manager\\CMakePresets.json",
               "RelativeToolTip": "CMakePresets.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-07-03T17:31:39.923Z"
+              "WhenOpened": "2025-07-07T13:36:32.297Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "CMakeLists.txt.user",
-              "DocumentMoniker": "E:\\Projects\\C\u002B\u002B\\task-manager\\CMakeLists.txt.user",
-              "RelativeDocumentMoniker": "CMakeLists.txt.user",
-              "ToolTip": "E:\\Projects\\C\u002B\u002B\\task-manager\\CMakeLists.txt.user",
-              "RelativeToolTip": "CMakeLists.txt.user",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003464|",
-              "WhenOpened": "2025-07-03T17:31:29.023Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "appviewmodel.h",
-              "DocumentMoniker": "E:\\Projects\\C\u002B\u002B\\task-manager\\appviewmodel.h",
-              "RelativeDocumentMoniker": "appviewmodel.h",
-              "ToolTip": "E:\\Projects\\C\u002B\u002B\\task-manager\\appviewmodel.h",
-              "RelativeToolTip": "appviewmodel.h",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-07-03T17:31:20.878Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 1,
               "Title": "CMakeLists.txt",
               "DocumentMoniker": "E:\\Projects\\C\u002B\u002B\\task-manager\\CMakeLists.txt",
               "RelativeDocumentMoniker": "CMakeLists.txt",
               "ToolTip": "E:\\Projects\\C\u002B\u002B\\task-manager\\CMakeLists.txt",
               "RelativeToolTip": "CMakeLists.txt",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
-              "WhenOpened": "2025-07-03T17:31:01.728Z"
+              "WhenOpened": "2025-07-07T13:14:00.873Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CMake Overview Pages",
+              "DocumentMoniker": "CMake Overview Pages",
+              "ToolTip": "CMake Overview Pages",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-07-07T13:13:43.836Z",
+              "EditorCaption": ""
             }
           ]
         }

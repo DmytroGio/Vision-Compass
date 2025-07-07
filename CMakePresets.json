@@ -1,22 +1,66 @@
 {
-  "version": 3,
-  "configurePresets": [
-    {
-      "hidden": true,
-      "name": "Qt",
-      "cacheVariables": {
-        "CMAKE_PREFIX_PATH": "$env{QTDIR}"
-      },
-      "vendor": {
-        "qt-project.org/Qt": {
-          "checksum": "wVa86FgEkvdCTVp1/nxvrkaemJc="
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "Qt-Base",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_PREFIX_PATH": "$env{QTDIR}"
+            },
+            "vendor": {
+                "qt-project.org/Qt": {
+                    "checksum": "wVa86FgEkvdCTVp1/nxvrkaemJc="
+                }
+            }
+        },
+        {
+            "name": "x64-Debug",
+            "displayName": "Debug (Visual Studio 2022)",
+            "description": "Sets Visual Studio 2022 generator, build and install directory for Debug.",
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "inherits": "Qt-Base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "x64-Release",
+            "displayName": "Release (Visual Studio 2022)",
+            "description": "Sets Visual Studio 2022 generator, build and install directory for Release.",
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "inherits": "Qt-Base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
         }
-      }
+    ],
+    "buildPresets": [
+        {
+            "name": "default",
+            "configurePreset": "x64-Debug"
+        },
+        {
+            "name": "release",
+            "configurePreset": "x64-Release"
+        }
+    ],
+    "vendor": {
+        "qt-project.org/Presets": {
+            "checksum": "67SmY24ZeVbebyKD0fGfIzb/bGI="
+        }
     }
-  ],
-  "vendor": {
-    "qt-project.org/Presets": {
-      "checksum": "67SmY24ZeVbebyKD0fGfIzb/bGI="
-    }
-  }
 }

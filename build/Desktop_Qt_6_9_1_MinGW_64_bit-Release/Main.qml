@@ -15,13 +15,13 @@ ApplicationWindow {
     title: "Vision Compass (QML)"
 
     // Make AppViewModel available in this QML file
- 
+    // Create rectangle
 
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
 
-        // --- Верхняя секция (половина большого круга) ---
+        // --- Top Section (half of a large circle) ---
         Item {
             id: topSection
             Layout.fillWidth: true
@@ -49,15 +49,15 @@ ApplicationWindow {
                 }
             }
 
-            // Красный круг (Goal) - упрощенная версия
+            // Red circle (Goal) - simplified version
             Rectangle {
                 id: goalCircle
-                width: topSection.height * 1 // Примерный размер
+                width: topSection.height * 1 // Approximate size
                 height: width
                 radius: width / 2
-                color: "#E95B5B" // Красный цвет
+                color: "#E95B5B" // Red color
                 anchors.horizontalCenter: parent.horizontalCenter
-                y: -height / 3 // Смещаем вверх, чтобы "обрезать"
+                y: -height / 3 // Shift upwards to "clip"
 
                 Column {
                     anchors.centerIn: parent
@@ -85,24 +85,123 @@ ApplicationWindow {
                 }
             }
 
-            // Отображение SubGoals (пока очень упрощенно, без позиционирования на дуге)
+            // Display SubGoals using Repeater
             Row {
-                id: subGoalRow // Placeholder for actual SubGoal items
+                id: subGoalRow
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 20
                 padding: 10
 
-                // Пример отображения первого SubGoal, если есть
-                Text {
-                    text: appViewModel.subGoalsListModel.length > 0 ? appViewModel.subGoalsListModel[0].name : "No Subgoals"
-                    color: "black"
-                    font.pointSize: 14
+                Repeater {
+                    model: AppViewModel.subGoalsListModel // Use data model
+
+                    delegate: Rectangle {
+                        width: 100
+                        height: 50
+                        radius: 10
+                        color: "#F3C44A" // Yellow color
+                        border.color: "gray"
+
+                        Text {
+                            text: modelData.name // Display SubGoal name
+                            anchors.centerIn: parent
+                            font.pointSize: 14
+                            color: "black"
+                        }
+
+                        // SubGoal delete button (optional)
+                        Button {
+                            id: removeSubGoalButton
+                            text: "X"
+                            anchors.right: parent.right
+                            anchors.top: parent.top
+                            anchors.margins: 5
+                            onClicked: {
+                                // Show delete confirmation dialog
+                                confirmationDialog.open()
+                                confirmationDialog.subGoalToRemove = modelData
+                            }
+                        }
+                    }
                 }
-                // В будущем здесь будет Repeater или ListView
             }
-            
-            // Кнопка добавления SubGoal (справа сверху на желтой области)
+
+            // SubGoal delete confirmation dialog
+            Dialog {
+                id: confirmationDialog
+                modal: true
+                title: "Delete Confirmation"
+                width: 300
+                height: 150
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 10
+                    //padding: 10
+
+                    Text {
+                        text: "Are you sure you want to delete this sub-goal?"
+                        font.pointSize: 14
+                        color: "#373737"
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    RowLayout {
+                        spacing: 10
+                        Button {
+                            text: "Yes"
+                            onClicked: {
+                                // Remove SubGoal from model
+                                AppViewModel.removeSubGoal(confirmationDialog.subGoalToRemove)
+                                confirmationDialog.close()
+                            }
+                        }
+                        Button {
+                            text: "No"
+                            onClicked: {
+                                confirmationDialog.close()
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Add SubGoal dialog
+            Dialog {
+                id: addSubGoalDialog
+                modal: true
+                title: "Add SubGoal"
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    spacing: 10
+
+                    TextField {
+                        id: subGoalNameField
+                        placeholderText: "Enter Name of Subgoal"
+                        Layout.fillWidth: true
+                    }
+                    RowLayout {
+                        spacing: 10
+                        Button {
+                            text: "Add"
+                            onClicked: {
+                                if (subGoalNameField.text !== "") {
+                                    AppViewModel.addSubGoal(subGoalNameField.text)
+                                    addSubGoalDialog.close()
+                                }
+                            }
+                        }
+                        Button {
+                            text: "Cancel"
+                            onClicked: addSubGoalDialog.close()
+                        }
+                    }
+                }
+            }
+
+            // Add SubGoal button (top right on yellow area)
             Button {
                 id: addSubGoalButtonTop
                 text: "+"
@@ -112,16 +211,18 @@ ApplicationWindow {
                 anchors.right: parent.right
                 anchors.margins: 10
                 font.pointSize: 20
-                // onClicked: // Логика будет добавлена позже
+                onClicked: {
+                    addSubGoalDialog.open()
+                }
             }
         }
 
-        // --- Нижняя секция (Задачи) ---
+        // --- Bottom Section (Tasks) ---
         Rectangle {
             id: bottomSection
             Layout.fillWidth: true
-            Layout.fillHeight: true // Занимает оставшееся место
-            color: "#282828" // Темный фон для задач
+            Layout.fillHeight: true // Occupies remaining space
+            color: "#282828" // Dark background for tasks
 
             ColumnLayout {
                 anchors.fill: parent
@@ -134,7 +235,7 @@ ApplicationWindow {
                     Layout.alignment: Qt.AlignLeft
                 }
 
-                // ListView для задач будет здесь
+                // ListView for tasks will be here
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -146,7 +247,8 @@ ApplicationWindow {
                         color: "white"
                     }
                 }
-                 // Кнопка добавления Task (внизу по центру)
+
+                // Add Task button (bottom center)
                 Button {
                     id: addTaskButtonBottom
                     text: "+"
@@ -154,7 +256,7 @@ ApplicationWindow {
                     Layout.preferredHeight: 60
                     Layout.alignment: Qt.AlignHCenter
                     font.pointSize: 24
-                    // onClicked: // Логика будет добавлена позже
+                    // onClicked: // Logic will be added later
                 }
             }
         }
