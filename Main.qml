@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import com.visioncompass.data 1.0
 
-ApplicationWindow {
+ApplicationWindow{
     id: mainWindow
     visible: true
     width: 800
@@ -14,14 +14,12 @@ ApplicationWindow {
     maximumHeight: 750
     title: "Vision Compass (QML)"
 
-    // Make AppViewModel available in this QML file
-    // Create rectangle
-
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
 
-        // --- Верхняя секция (половина большого круга) ---
+
+        // Top Section
         Item {
             id: topSection
             Layout.fillWidth: true
@@ -42,22 +40,22 @@ ApplicationWindow {
                     ctx.clearRect(0, 0, width, height);
                     var radius = width > height ? width * 0.9 : height * 1.8;
                     ctx.beginPath();
-                    ctx.arc(width / 2, 0, radius / 2, 0, Math.PI, false);
+                    ctx.arc(width/ 2, 0, radius / 2, 0, Math.PI, false);
                     ctx.closePath();
                     ctx.fillStyle = "#F3C44A";
                     ctx.fill();
                 }
             }
 
-            // Красный круг (Goal) - упрощенная версия
+            // Red Circle (Goal) - simple version
             Rectangle {
                 id: goalCircle
-                width: topSection.height * 1 // Примерный размер
+                width: topSection.height * 1
                 height: width
                 radius: width / 2
-                color: "#E95B5B" // Красный цвет
+                color: "#E95B5B"
                 anchors.horizontalCenter: parent.horizontalCenter
-                y: -height / 3 // Смещаем вверх, чтобы "обрезать"
+                y: -height / 3
 
                 Column {
                     anchors.centerIn: parent
@@ -65,7 +63,7 @@ ApplicationWindow {
 
                     Text {
                         id: goalNameText
-                        text: AppViewModel.currentGoalText // Use singleton directly
+                        text: AppViewModel.currentGoalText
                         font.pointSize: 20
                         font.bold: true
                         color: "white"
@@ -74,8 +72,8 @@ ApplicationWindow {
                         width: goalCircle.width * 0.8
                     }
                     Text {
-                        id: goalDescriptionText
-                        text: AppViewModel.currentGoalDescription // Use singleton directly
+                        id: doalDesctiptionText
+                        text: AppViewModel.currentGoalDescription
                         font.pointSize: 12
                         color: "white"
                         horizontalAlignment: Text.AlignHCenter
@@ -85,180 +83,172 @@ ApplicationWindow {
                 }
             }
 
-            // Отображение SubGoals с использованием Repeater
-            Row {
-                id: subGoalRow
+            // SubGoals with modern design
+            Rectangle {
+                id: subGoalsContainer
                 anchors.bottom: parent.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 20
-                padding: 10
-
-                Repeater {
-                    model: AppViewModel.subGoalsListModel // Используем модель данных
-
-                    delegate: Rectangle {
-                        width: 100
-                        height: 50
-                        radius: 10
-                        color: "#F3C44A" // Желтый цвет
-                        border.color: "gray"
-
-                        Text {
-                            text: modelData.name // Отображаем имя SubGoal
-                            anchors.centerIn: parent
-                            font.pointSize: 14
-                            color: "black"
-                        }
-
-                        // Кнопка удаления SubGoal (опционально)
-                        Button {
-                            id: removeSubGoalButton
-                            text: "X"
-                            anchors.right: parent.right
-                            anchors.top: parent.top
-                            anchors.margins: 5
-                            onClicked: {
-                                // Показываем диалог подтверждения удаления
-                                confirmationDialog.open()
-                                confirmationDialog.subGoalToRemove = modelData
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Диалог подтверждения удаления SubGoal
-            Dialog {
-                id: confirmationDialog
-                modal: true
-                title: "Подтверждение удаления"
-                width: 300
-                height: 150
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 20
+                height: 120
+                color: "transparent"
 
                 ColumnLayout {
                     anchors.fill: parent
                     spacing: 10
-                    //padding: 10
 
+
+                    // SubGoals section header
                     Text {
-                        text: "Вы хотите действительно удалить этот подцель?"
+                        text: "Sub Goals"
+                        color: "#1E1E1E"
                         font.pointSize: 14
-                        color: "#373737"
-                        horizontalAlignment: Text.AlignHCenter
+                        font.bold: true
+                        Layout.alignment: Qt.AlignLeft
                     }
 
-                    RowLayout {
-                        spacing: 10
-                        Button {
-                            text: "Да"
-                            onClicked: {
-                                // Удаляем SubGoal из модели
-                                AppViewModel.removeSubGoal(confirmationDialog.subGoalToRemove)
-                                confirmationDialog.close()
-                            }
-                        }
-                        Button {
-                            text: "Нет"
-                            onClicked: {
-                                confirmationDialog.close()
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Диалог добавления SubGoal
-            Dialog {
-                id: addSubGoalDialog
-                modal: true
-                title: "Add SubGoal"
-
-                ColumnLayout {
-                    anchors.fill: parent
-                    spacing: 10
-
-                    TextField {
-                        id: subGoalNameField
-                        placeholderText: "Enter Name of Subgoal"
+                    // Horizontal scroll for SubGoals
+                    ScrollView {
                         Layout.fillWidth: true
-                    }
-                    RowLayout {
-                        spacing: 10
-                        Button {
-                            text: "Add"
-                            onClicked: {
-                                if (subGoalNameField.text !== "") {
-                                    AppViewModel.addSubGoal(subGoalNameField.text)
-                                    addSubGoalDialog.close()
+                        Layout.fillHeight: true
+                        clip: true
+
+                        ListView {
+                            id: subGoalsList
+                            orientation: ListView.Horizontal
+                            model: AppViewModel.subGoalsListModel
+                            spacing: 15
+
+                            delegate: Rectangle {
+                                width: 180
+                                height: 80
+                                color: "#2D2D2D"
+                                radius: 15
+                                border.color: "#F3C44A"
+                                border.width: 2
+
+                                // Top color stripe
+                                Rectangle {
+                                    width: 4
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 5
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    color: "#F3C44A"
+                                    radius: 2
+                                }
+
+                                // Main Content of SubGoal
+                                RowLayout {
+                                    anchors.fill: parent
+                                    anchors.margins: 12
+                                    spacing: 10
+                                }
+
+                                // SubGoal Icon
+                                Rectangle {
+                                    width: 30
+                                    height: 30
+                                    color: "#F3C44A"
+                                    radius: 6
+
+                                    Text {
+                                        text: "◉"
+                                        anchors.centerIn: parent
+                                        font.pointSize: 14
+                                        color: "#1E1E1E"
+                                        font.bold: true
+                                    }
+                                }
+
+                                // SubGoal Text
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 2
+
+                                    Text {
+                                        text: modelData.name
+                                        color: "#FFFFFF"
+                                        font.pointSize: 12
+                                        font.bold: true
+                                        Layout.fillWidth: true
+                                        wrapMode: Text.WordWrap
+                                        maximumLineCount: 2
+                                        elide: Text.ElideRight
+                                    }
+
+                                    Text {
+                                        text: "Active"
+                                        color: "#F3C44A"
+                                        font.pointSize: 9
+                                        Layout.fillWidth: true
+                                    }
+                                }
+
+                                // Delete Button
+                                Rectangle {
+                                    width: 25
+                                    height: 25
+                                    color: "#E95B5B"
+                                    radius: 12
+
+                                    Text {
+                                        text: "x"
+                                        anchors.centerIn: parent
+                                        font.pointSize: 12
+                                        color: "#FFFFFF"
+                                        font.bold: true
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onClicked: {
+                                            confirmationDialog.open()
+                                            confirmationDialog.subGoalToRemove = modelData
+                                        }
+                                        hoverEnabled: true
+                                        onEntered: parent.color = "#F76B6B"
+                                        onExited: parent.color = "#E95B5B"
+                                    }
                                 }
                             }
-                        }
-                        Button {
-                            text: "Cancel"
-                            onClicked: addSubGoalDialog.close()
+
+                            // Hover effect
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onEntered: parent.color = "#353535"
+                                onExited: parent.color = "#2D2D2D"
+                                z: -1
+                            }
                         }
                     }
                 }
             }
-
-            // Кнопка добавления SubGoal (справа сверху на желтой области)
-            Button {
-                id: addSubGoalButtonTop
-                text: "+"
-                width: 50
-                height: 50
-                anchors.top: parent.top
-                anchors.right: parent.right
-                anchors.margins: 10
-                font.pointSize: 20
-                onClicked: {
-                    addSubGoalDialog.open()
-                }
-            }
         }
 
-        // --- Нижняя секция (Задачи) ---
-        Rectangle {
-            id: bottomSection
-            Layout.fillWidth: true
-            Layout.fillHeight: true // Занимает оставшееся место
-            color: "#282828" // Темный фон для задач
+        // SubGoal Delete Confirmation Dialog
 
-            ColumnLayout {
-                anchors.fill: parent
-                anchors.margins: 10
-
-                Text {
-                    text: "Sub-objective task list:"
-                    color: "#373737"
-                    font.pointSize: 12
-                    Layout.alignment: Qt.AlignLeft
-                }
-
-                // ListView для задач будет здесь
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    color: "#444444"
-                    border.color: "gray"
-                    Text {
-                        anchors.centerIn: parent
-                        text: "Task List Placeholder"
-                        color: "white"
-                    }
-                }
-
-                // Кнопка добавления Task (внизу по центру)
-                Button {
-                    id: addTaskButtonBottom
-                    text: "+"
-                    Layout.preferredWidth: 60
-                    Layout.preferredHeight: 60
-                    Layout.alignment: Qt.AlignHCenter
-                    font.pointSize: 24
-                    // onClicked: // Логика будет добавлена поз
-                }
-            }
-        }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
