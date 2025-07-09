@@ -30,7 +30,7 @@ ApplicationWindow {
             // Gray background
             Rectangle {
                 anchors.fill: parent
-                color: "#282828"
+                color: "#1E1E1E"
                 z: 0
             }
 
