@@ -120,6 +120,7 @@ void TaskManager::addSubGoal(const SubGoal& sg) {
     s.goalId = goal.id;
     subGoals.push_back(s);
 }
+
 void TaskManager::editSubGoal(int id, const SubGoal& sg) {
     for (auto& s : subGoals) {
         if (s.id == id) {
@@ -130,9 +131,27 @@ void TaskManager::editSubGoal(int id, const SubGoal& sg) {
         }
     }
 }
+
+void TaskManager::deleteSubGoal(int id) {
+    // Remove the subgoal
+    subGoals.erase(
+        std::remove_if(subGoals.begin(), subGoals.end(),
+                       [id](const SubGoal& sg){ return sg.id == id; }),
+        subGoals.end()
+        );
+
+    // Remove all tasks associated with this subgoal
+    tasks.erase(
+        std::remove_if(tasks.begin(), tasks.end(),
+                       [id](const Task& t){ return t.subGoalId == id; }),
+        tasks.end()
+        );
+}
+
 std::vector<SubGoal> TaskManager::getSubGoals() const {
     return subGoals;
 }
+
 SubGoal TaskManager::getSubGoalById(int id) const {
     for (const auto& s : subGoals)
         if (s.id == id) return s;
@@ -150,6 +169,7 @@ void TaskManager::addTask(const std::string& description, const std::string& due
     t.subGoalId = subGoalId;
     tasks.push_back(t);
 }
+
 void TaskManager::editTask(int id, const std::string& newDescription, const std::string& dueDate, int subGoalId) {
     for (auto& t : tasks) {
         if (t.id == id) {
@@ -160,6 +180,7 @@ void TaskManager::editTask(int id, const std::string& newDescription, const std:
         }
     }
 }
+
 void TaskManager::completeTask(int id) {
     for (auto& t : tasks)
         if (t.id == id) {
@@ -167,13 +188,16 @@ void TaskManager::completeTask(int id) {
             break;
         }
 }
+
 void TaskManager::deleteTask(int id) {
     tasks.erase(std::remove_if(tasks.begin(), tasks.end(),
                                [id](const Task& t){ return t.id == id; }), tasks.end());
 }
+
 std::vector<Task> TaskManager::getTasks() const {
     return tasks;
 }
+
 std::vector<Task> TaskManager::getTasksForSubGoal(int subGoalId) const {
     std::vector<Task> result;
     for (const auto& t : tasks)

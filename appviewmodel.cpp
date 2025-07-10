@@ -1,9 +1,10 @@
 #include "appviewmodel.h"
-#include <QDebug> // For logging/debugging
+#include <QDebug>
+#include <algorithm>
 
 AppViewModel::AppViewModel(QObject *parent) : QObject(parent)
 {
-    loadData(); // Load data when the ViewModel is created
+    loadData();
 }
 
 // --- Property Getters ---
@@ -12,9 +13,6 @@ QString AppViewModel::currentGoalText() const {
 }
 
 QString AppViewModel::currentGoalDescription() const {
-    // Assuming Goal struct might have a separate detailed description field later,
-    // or we can use targetDate for now if it's more relevant.
-    // For this example, let's use targetDate as a placeholder for a second line.
     return QString::fromStdString(m_currentGoal.targetDate);
 }
 
@@ -23,8 +21,8 @@ QVariantList AppViewModel::subGoalsListModel() const {
     for (const auto& sg : m_subGoals) {
         QVariantMap map;
         map.insert("id", sg.id);
-        map.insert("name", QString::fromStdString(sg.description));
-        // Add other SubGoal properties if needed in QML
+        map.insert("name", QString::fromStdString(sg.description)); // QML expects "name"
+        map.insert("description", QString::fromStdString(sg.description)); // Also provide "description"
         list.append(map);
     }
     return list;
@@ -35,9 +33,9 @@ QVariantList AppViewModel::currentTasksListModel() const {
     for (const auto& task : m_currentTasks) {
         QVariantMap map;
         map.insert("id", task.id);
-        map.insert("description", QString::fromStdString(task.description));
+        map.insert("name", QString::fromStdString(task.description)); // QML expects "name"
+        map.insert("description", QString::fromStdString(task.description)); // Also provide "description"
         map.insert("completed", task.completed);
-        // Add other Task properties if needed in QML (e.g., dueDate)
         list.append(map);
     }
     return list;
@@ -47,45 +45,52 @@ int AppViewModel::selectedSubGoalId() const {
     return m_selectedSubGoalId;
 }
 
+QString AppViewModel::selectedSubGoalName() const {
+    if (m_selectedSubGoalId == 0) return QString();
+
+    for (const auto& sg : m_subGoals) {
+        if (sg.id == m_selectedSubGoalId) {
+            return QString::fromStdString(sg.description);
+        }
+    }
+    return QString();
+}
+
 // --- Property Setters ---
-// These are primarily for QML to notify C++ of changes if direct binding is used.
-// For Goal, we'll use explicit setMainGoal method.
 void AppViewModel::setCurrentGoalText(const QString& text) {
     if (QString::fromStdString(m_currentGoal.description) != text) {
         m_currentGoal.description = text.toStdString();
-        // In a more robust system, you might have a temporary edit state
-        // and then an explicit save action. For now, let's assume direct change.
         m_taskManager.setGoal(m_currentGoal);
-        saveData(); // Auto-save
+        saveData();
         emit currentGoalChanged();
     }
 }
 
 void AppViewModel::setCurrentGoalDescription(const QString& description) {
     if (QString::fromStdString(m_currentGoal.targetDate) != description) {
-        m_currentGoal.targetDate = description.toStdString(); // Using targetDate as 'description line 2'
+        m_currentGoal.targetDate = description.toStdString();
         m_taskManager.setGoal(m_currentGoal);
-        saveData(); // Auto-save
+        saveData();
         emit currentGoalChanged();
     }
 }
-
 
 // --- Q_INVOKABLE Methods ---
 void AppViewModel::loadData() {
     m_taskManager.loadFromFile("tasks.json");
     updateGoalProperties();
     updateSubGoalListModel();
-    // Initially, no subgoal is selected, or select the first one if available
+
+    // Auto-select first subgoal if available
     if (!m_subGoals.empty()) {
-        // selectSubGoal(m_subGoals.front().id); // Optionally select first subgoal
-        m_selectedSubGoalId = 0; // Or ensure no selection
-        updateTasksListModel(); // this will be empty if m_selectedSubGoalId is 0
+        m_selectedSubGoalId = m_subGoals.front().id;
+        qDebug() << "Auto-selected SubGoal ID:" << m_selectedSubGoalId;
     } else {
         m_selectedSubGoalId = 0;
-        updateTasksListModel();
     }
-    emit selectedSubGoalChanged(); // Ensure QML is notified of initial state
+
+    updateTasksListModel();
+    emit selectedSubGoalChanged();
 }
 
 void AppViewModel::saveData() {
@@ -95,53 +100,74 @@ void AppViewModel::saveData() {
 
 void AppViewModel::setMainGoal(const QString& name, const QString& description) {
     m_currentGoal.description = name.toStdString();
-    m_currentGoal.targetDate = description.toStdString(); // Using targetDate for description line 2
+    m_currentGoal.targetDate = description.toStdString();
     m_taskManager.setGoal(m_currentGoal);
     saveData();
     emit currentGoalChanged();
 }
 
+// --- SubGoal Methods ---
 void AppViewModel::addSubGoal(const QString& name) {
     if (name.isEmpty()) return;
+
     SubGoal sg;
     sg.description = name.toStdString();
     m_taskManager.addSubGoal(sg);
     saveData();
     updateSubGoalListModel();
+
+    // Auto-select the new subgoal if it's the first one
+    if (m_selectedSubGoalId == 0 && !m_subGoals.empty()) {
+        m_selectedSubGoalId = m_subGoals.back().id;
+        updateTasksListModel();
+        emit selectedSubGoalChanged();
+    }
 }
 
 void AppViewModel::editSubGoal(int id, const QString& newName) {
     if (newName.isEmpty()) return;
+
     SubGoal sg = m_taskManager.getSubGoalById(id);
-    if (sg.id == 0) return; // Not found
+    if (sg.id == 0) return;
 
     sg.description = newName.toStdString();
     m_taskManager.editSubGoal(id, sg);
     saveData();
     updateSubGoalListModel();
-    if (id == m_selectedSubGoalId) { // If editing the currently selected subgoal
-        emit currentGoalChanged(); // To update any display that might show its name
+
+    if (id == m_selectedSubGoalId) {
+        emit selectedSubGoalChanged();
     }
 }
 
 void AppViewModel::deleteSubGoal(int id) {
-    // Remove from local ViewModel copy
+    // Remove from TaskManager first
     m_subGoals.erase(
         std::remove_if(m_subGoals.begin(), m_subGoals.end(),
-            [id](const SubGoal& sg){ return sg.id == id; }),
+                       [id](const SubGoal& sg){ return sg.id == id; }),
         m_subGoals.end()
-    );
-    // Optionally, update TaskManager if you have a setter or reload from m_subGoals
-    // TODO: Implement TaskManager::deleteSubGoal for proper data consistency
+        );
 
     saveData();
     updateSubGoalListModel();
+
+    // Handle selection change
     if (id == m_selectedSubGoalId) {
-        m_selectedSubGoalId = 0;
+        if (!m_subGoals.empty()) {
+            m_selectedSubGoalId = m_subGoals.front().id;
+        } else {
+            m_selectedSubGoalId = 0;
+        }
         updateTasksListModel();
         emit selectedSubGoalChanged();
     }
-    qDebug() << "Attempted to delete subgoal ID:" << id << "(ViewModel needs TaskManager update for proper delete)";
+
+    qDebug() << "Deleted subgoal ID:" << id;
+}
+
+void AppViewModel::removeSubGoal(const QVariantMap& subGoalData) {
+    int id = subGoalData.value("id").toInt();
+    deleteSubGoal(id);
 }
 
 void AppViewModel::selectSubGoal(int id) {
@@ -150,21 +176,35 @@ void AppViewModel::selectSubGoal(int id) {
         qDebug() << "SubGoal selected:" << m_selectedSubGoalId;
         updateTasksListModel();
         emit selectedSubGoalChanged();
-        // Also emit subGoalsChanged to allow QML to update selection visuals
-        emit subGoalsChanged();
+        emit subGoalsChanged(); // Update UI selection
     }
 }
 
+// --- Task Methods ---
+void AppViewModel::addTask(const QString& description) {
+    addTaskToCurrentSubGoal(description);
+}
+
 void AppViewModel::addTaskToCurrentSubGoal(const QString& description) {
-    if (description.isEmpty() || m_selectedSubGoalId == 0) return;
+    if (description.isEmpty()) {
+        qDebug() << "Cannot add task: description is empty";
+        return;
+    }
+
+    if (m_selectedSubGoalId == 0) {
+        qDebug() << "Cannot add task: no subgoal selected";
+        return;
+    }
+
     m_taskManager.addTask(description.toStdString(), "", m_selectedSubGoalId);
     saveData();
     updateTasksListModel();
+    qDebug() << "Added task:" << description << "to SubGoal:" << m_selectedSubGoalId;
 }
 
 void AppViewModel::editTask(int id, const QString& newDescription) {
     if (newDescription.isEmpty()) return;
-    // DueDate is not handled by UI yet, pass empty
+
     m_taskManager.editTask(id, newDescription.toStdString(), "", m_selectedSubGoalId);
     saveData();
     updateTasksListModel();
@@ -174,6 +214,12 @@ void AppViewModel::deleteTask(int id) {
     m_taskManager.deleteTask(id);
     saveData();
     updateTasksListModel();
+    qDebug() << "Deleted task ID:" << id;
+}
+
+void AppViewModel::removeTask(const QVariantMap& taskData) {
+    int id = taskData.value("id").toInt();
+    deleteTask(id);
 }
 
 // --- Private Helper Methods ---
@@ -183,15 +229,17 @@ void AppViewModel::updateGoalProperties() {
 }
 
 void AppViewModel::updateSubGoalListModel() {
-    m_subGoals = m_taskManager.getSubGoals(); // Fetch fresh list
+    m_subGoals = m_taskManager.getSubGoals();
     emit subGoalsChanged();
 }
 
 void AppViewModel::updateTasksListModel() {
     if (m_selectedSubGoalId != 0) {
         m_currentTasks = m_taskManager.getTasksForSubGoal(m_selectedSubGoalId);
+        qDebug() << "Updated tasks for SubGoal" << m_selectedSubGoalId << ":" << m_currentTasks.size() << "tasks";
     } else {
         m_currentTasks.clear();
+        qDebug() << "No SubGoal selected, cleared tasks";
     }
     emit currentTasksChanged();
 }

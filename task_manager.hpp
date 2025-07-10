@@ -49,6 +49,7 @@ public:
     // SubGoals
     void addSubGoal(const SubGoal& sg);
     void editSubGoal(int id, const SubGoal& sg);
+    void deleteSubGoal(int id); // Added missing method
     std::vector<SubGoal> getSubGoals() const;
     SubGoal getSubGoalById(int id) const;
 

@@ -21,7 +21,7 @@ ApplicationWindow {
         anchors.fill: parent
         spacing: 0
 
-        // --- Верхняя секция (половина большого круга) ---
+        // --- Top Section (half of big circle) ---
         Item {
             id: topSection
             Layout.fillWidth: true
@@ -49,15 +49,15 @@ ApplicationWindow {
                 }
             }
 
-            // Красный круг (Goal) - упрощенная версия
+            // Red circle (Goal)
             Rectangle {
                 id: goalCircle
-                width: topSection.height * 1 // Примерный размер
+                width: topSection.height * 1
                 height: width
                 radius: width / 2
-                color: "#E95B5B" // Красный цвет
+                color: "#E95B5B"
                 anchors.horizontalCenter: parent.horizontalCenter
-                y: -height / 3 // Смещаем вверх, чтобы "обрезать"
+                y: -height / 3
 
                 Column {
                     anchors.centerIn: parent
@@ -65,7 +65,7 @@ ApplicationWindow {
 
                     Text {
                         id: goalNameText
-                        text: AppViewModel.currentGoalText // Use singleton directly
+                        text: AppViewModel.currentGoalText
                         font.pointSize: 20
                         font.bold: true
                         color: "white"
@@ -75,7 +75,7 @@ ApplicationWindow {
                     }
                     Text {
                         id: goalDescriptionText
-                        text: AppViewModel.currentGoalDescription // Use singleton directly
+                        text: AppViewModel.currentGoalDescription
                         font.pointSize: 12
                         color: "white"
                         horizontalAlignment: Text.AlignHCenter
@@ -123,9 +123,9 @@ ApplicationWindow {
                             delegate: Rectangle {
                                 width: 180
                                 height: 80
-                                color: "#2D2D2D"
+                                color: modelData.id === AppViewModel.selectedSubGoalId ? "#4A4A4A" : "#2D2D2D"
                                 radius: 15
-                                border.color: "#F3C44A"
+                                border.color: modelData.id === AppViewModel.selectedSubGoalId ? "#F5D665" : "#F3C44A"
                                 border.width: 2
 
                                 // Верхняя цветная полоска
@@ -178,8 +178,8 @@ ApplicationWindow {
                                         }
 
                                         Text {
-                                            text: "Active"
-                                            color: "#F3C44A"
+                                            text: modelData.id === AppViewModel.selectedSubGoalId ? "Selected" : "Click to select"
+                                            color: modelData.id === AppViewModel.selectedSubGoalId ? "#F5D665" : "#AAAAAA"
                                             font.pointSize: 9
                                             Layout.fillWidth: true
                                         }

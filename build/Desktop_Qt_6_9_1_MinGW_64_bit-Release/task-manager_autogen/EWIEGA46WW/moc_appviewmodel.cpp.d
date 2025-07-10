@@ -1,10 +1,12 @@
 E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/task-manager_autogen/EWIEGA46WW/moc_appviewmodel.cpp: E:/Projects/C++/task-manager/appviewmodel.h \
   E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/task-manager_autogen/moc_predefs.h \
   C:/Qt/6.9.1/mingw_64/include/QtCore/QList \
+  C:/Qt/6.9.1/mingw_64/include/QtCore/QMap \
   C:/Qt/6.9.1/mingw_64/include/QtCore/QObject \
   C:/Qt/6.9.1/mingw_64/include/QtCore/QString \
   C:/Qt/6.9.1/mingw_64/include/QtCore/QVariant \
   C:/Qt/6.9.1/mingw_64/include/QtCore/QVariantList \
+  C:/Qt/6.9.1/mingw_64/include/QtCore/QVariantMap \
   C:/Qt/6.9.1/mingw_64/include/QtCore/q17memory.h \
   C:/Qt/6.9.1/mingw_64/include/QtCore/q20functional.h \
   C:/Qt/6.9.1/mingw_64/include/QtCore/q20memory.h \
@@ -119,6 +121,7 @@ E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/task-ma
   C:/Qt/6.9.1/mingw_64/include/QtCore/qutf8stringview.h \
   C:/Qt/6.9.1/mingw_64/include/QtCore/qvariant.h \
   C:/Qt/6.9.1/mingw_64/include/QtCore/qvariantlist.h \
+  C:/Qt/6.9.1/mingw_64/include/QtCore/qvariantmap.h \
   C:/Qt/6.9.1/mingw_64/include/QtCore/qvarlengtharray.h \
   C:/Qt/6.9.1/mingw_64/include/QtCore/qversiontagging.h \
   C:/Qt/6.9.1/mingw_64/include/QtCore/qxptype_traits.h \
