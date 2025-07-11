@@ -5,8 +5,8 @@
         "targetDate": "Test Goal Description from JSON"
     },
     "lastGoalId": 1,
-    "lastSubGoalId": 3,
-    "lastTaskId": 0,
+    "lastSubGoalId": 4,
+    "lastTaskId": 3,
     "subGoals": [
         {
             "description": "My New SubGoal",
@@ -28,7 +28,29 @@
             "goalId": 1,
             "id": 3,
             "startDate": ""
+        },
+        {
+            "description": "New Subgoal 4",
+            "endDate": "",
+            "goalId": 1,
+            "id": 4,
+            "startDate": ""
         }
     ],
-    "tasks": []
+    "tasks": [
+        {
+            "completed": false,
+            "description": "My new task 1",
+            "dueDate": "",
+            "id": 1,
+            "subGoalId": 1
+        },
+        {
+            "completed": false,
+            "description": "My new task 2",
+            "dueDate": "",
+            "id": 3,
+            "subGoalId": 1
+        }
+    ]
 }
