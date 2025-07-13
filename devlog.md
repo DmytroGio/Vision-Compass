@@ -40,3 +40,11 @@ To see the global goals of life and plan according to them.
 - Implement reordering options (drag & drop or buttons)
 - Style interface for clarity and minimalism
 - Handle edge cases (empty fields, quick edits)
+
+## 2025-07-13
+### Weekly Task: Core Features & Bug Fixing 🛠️
+- Fix SubGoal deletion: Ensure cascading deletion of associated Tasks.
+- Implement deletion confirmation dialog for SubGoals (and Tasks).
+- Handle initial app launch: Prompt user to set Main Goal if none exists.
+- Enhance UI for selected SubGoal: Clearly highlight the active SubGoal.
+- Add input validation: Prevent creation of empty SubGoals and Tasks.
