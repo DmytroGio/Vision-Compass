@@ -275,313 +275,6 @@ ApplicationWindow {
                 }
             }
 
-            // Диалог подтверждения удаления SubGoal
-            Dialog {
-                id: confirmationDialog
-                modal: true
-                title: "Confirm SubGoal Deletion"
-                width: 350
-                height: 180
-
-                property var subGoalToRemove
-
-                Rectangle {
-                    anchors.fill: parent
-                    color: "#2D2D2D"
-                    radius: 10
-
-                    ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 20
-                        spacing: 20
-
-                        Text {
-                            text: "Are you sure you want to delete this sub-goal?"
-                            font.pointSize: 14
-                            color: "#FFFFFF"
-                            horizontalAlignment: Text.AlignHCenter
-                            Layout.fillWidth: true
-                            wrapMode: Text.WordWrap
-                        }
-
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 10
-
-                            Rectangle {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 40
-                                color: "#E95B5B"
-                                radius: 8
-
-                                Text {
-                                    text: "Yes, Delete"
-                                    anchors.centerIn: parent
-                                    color: "#FFFFFF"
-                                    font.pointSize: 12
-                                    font.bold: true
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: {
-                                        AppViewModel.removeSubGoal(confirmationDialog.subGoalToRemove)
-                                        confirmationDialog.close()
-                                    }
-                                    hoverEnabled: true
-                                    onEntered: parent.color = "#F76B6B"
-                                    onExited: parent.color = "#E95B5B"
-                                }
-                            }
-
-                            Rectangle {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 40
-                                color: "#3A3A3A"
-                                radius: 8
-
-                                Text {
-                                    text: "Cancel"
-                                    anchors.centerIn: parent
-                                    color: "#FFFFFF"
-                                    font.pointSize: 12
-                                    font.bold: true
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: {
-                                        confirmationDialog.close()
-                                    }
-                                    hoverEnabled: true
-                                    onEntered: parent.color = "#4A4A4A"
-                                    onExited: parent.color = "#3A3A3A"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Диалог добавления SubGoal
-            Dialog {
-                id: addSubGoalDialog
-                modal: true
-                title: "Add New SubGoal"
-                width: 400
-                height: 200
-
-                Rectangle {
-                    anchors.fill: parent
-                    color: "#2D2D2D"
-                    radius: 10
-
-                    ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 20
-                        spacing: 20
-
-                        Text {
-                            text: "Enter sub-goal name:"
-                            color: "#FFFFFF"
-                            font.pointSize: 14
-                            font.bold: true
-                        }
-
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 45
-                            color: "#3A3A3A"
-                            radius: 8
-                            border.color: "#F3C44A"
-                            border.width: 1
-
-                            TextField {
-                                id: subGoalNameField
-                                anchors.fill: parent
-                                anchors.margins: 10
-                                placeholderText: "Enter sub-goal name..."
-                                color: "#FFFFFF"
-                                font.pointSize: 12
-                                background: Rectangle {
-                                    color: "transparent"
-                                }
-                                placeholderTextColor: "#AAAAAA"
-                            }
-                        }
-
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 10
-
-                            Rectangle {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 40
-                                color: "#F3C44A"
-                                radius: 8
-
-                                Text {
-                                    text: "Add SubGoal"
-                                    anchors.centerIn: parent
-                                    color: "#1E1E1E"
-                                    font.pointSize: 12
-                                    font.bold: true
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: {
-                                        if (subGoalNameField.text !== "") {
-                                            AppViewModel.addSubGoal(subGoalNameField.text)
-                                            subGoalNameField.text = ""
-                                            addSubGoalDialog.close()
-                                        }
-                                    }
-                                    hoverEnabled: true
-                                    onEntered: parent.color = "#F5D665"
-                                    onExited: parent.color = "#F3C44A"
-                                }
-                            }
-
-                            Rectangle {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 40
-                                color: "#3A3A3A"
-                                radius: 8
-
-                                Text {
-                                    text: "Cancel"
-                                    anchors.centerIn: parent
-                                    color: "#FFFFFF"
-                                    font.pointSize: 12
-                                    font.bold: true
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: {
-                                        subGoalNameField.text = ""
-                                        addSubGoalDialog.close()
-                                    }
-                                    hoverEnabled: true
-                                    onEntered: parent.color = "#4A4A4A"
-                                    onExited: parent.color = "#3A3A3A"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Диалог редактирования SubGoal
-            Dialog {
-                id: editSubGoalDialog
-                modal: true
-                title: "Edit SubGoal"
-                width: 400
-                height: 200
-
-                property var subGoalToEdit: null
-
-                Rectangle {
-                    anchors.fill: parent
-                    color: "#2D2D2D"
-                    radius: 10
-
-                    ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 20
-                        spacing: 20
-
-                        Text {
-                            text: "Edit sub-goal name:"
-                            color: "#FFFFFF"
-                            font.pointSize: 14
-                            font.bold: true
-                        }
-
-                        Rectangle {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 45
-                            color: "#3A3A3A"
-                            radius: 8
-                            border.color: "#F3C44A"
-                            border.width: 1
-
-                            TextField {
-                                id: editNameField
-                                anchors.fill: parent
-                                anchors.margins: 10
-                                placeholderText: "New sub-goal name..."
-                                color: "#FFFFFF"
-                                font.pointSize: 12
-                                background: Rectangle {
-                                    color: "transparent"
-                                }
-                                placeholderTextColor: "#AAAAAA"
-                            }
-                        }
-
-                        RowLayout {
-                            Layout.fillWidth: true
-                            spacing: 10
-
-                            Rectangle {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 40
-                                color: "#F3C44A"
-                                radius: 8
-
-                                Text {
-                                    text: "Save Changes"
-                                    anchors.centerIn: parent
-                                    color: "#1E1E1E"
-                                    font.pointSize: 12
-                                    font.bold: true
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: {
-                                        if (editNameField.text !== "" && editSubGoalDialog.subGoalToEdit !== null) {
-                                            AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, editNameField.text) //
-                                            editSubGoalDialog.close()
-                                        }
-                                    }
-                                    hoverEnabled: true
-                                    onEntered: parent.color = "#F5D665"
-                                    onExited: parent.color = "#F3C44A"
-                                }
-                            }
-
-                            Rectangle {
-                                Layout.fillWidth: true
-                                Layout.preferredHeight: 40
-                                color: "#3A3A3A"
-                                radius: 8
-
-                                Text {
-                                    text: "Cancel"
-                                    anchors.centerIn: parent
-                                    color: "#FFFFFF"
-                                    font.pointSize: 12
-                                    font.bold: true
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: {
-                                        editSubGoalDialog.close()
-                                    }
-                                    hoverEnabled: true
-                                    onEntered: parent.color = "#4A4A4A"
-                                    onExited: parent.color = "#3A3A3A"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
 
 
             // Кнопка добавления SubGoal (справа сверху на желтой области)
@@ -851,6 +544,339 @@ ApplicationWindow {
         }
     }
 
+    // Диалог подтверждения удаления SubGoal
+    Dialog {
+        id: confirmationDialog
+        modal: true
+        title: "Confirm SubGoal Deletion"
+        width: 350
+        height: 180
+
+        parent: Overlay.overlay
+        anchors.centerIn: Overlay.overlay
+
+        property var subGoalToRemove
+
+        background: Rectangle { // Добавим фон для затемнения, как в Popup
+            color: "#CC000000" // Полупрозрачный черный
+            radius: 10 // Если хочешь скругленные углы для самого диалога
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            color: "#2D2D2D"
+            radius: 10
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 20
+                spacing: 20
+
+                Text {
+                    text: "Are you sure you want to delete this sub-goal?"
+                    font.pointSize: 14
+                    color: "#FFFFFF"
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 10
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 40
+                        color: "#E95B5B"
+                        radius: 8
+
+                        Text {
+                            text: "Yes, Delete"
+                            anchors.centerIn: parent
+                            color: "#FFFFFF"
+                            font.pointSize: 12
+                            font.bold: true
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                AppViewModel.removeSubGoal(confirmationDialog.subGoalToRemove)
+                                confirmationDialog.close()
+                            }
+                            hoverEnabled: true
+                            onEntered: parent.color = "#F76B6B"
+                            onExited: parent.color = "#E95B5B"
+                        }
+                    }
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 40
+                        color: "#3A3A3A"
+                        radius: 8
+
+                        Text {
+                            text: "Cancel"
+                            anchors.centerIn: parent
+                            color: "#FFFFFF"
+                            font.pointSize: 12
+                            font.bold: true
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                confirmationDialog.close()
+                            }
+                            hoverEnabled: true
+                            onEntered: parent.color = "#4A4A4A"
+                            onExited: parent.color = "#3A3A3A"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Диалог добавления SubGoal
+    Dialog {
+        id: addSubGoalDialog
+        modal: true
+        title: "Add New SubGoal"
+        width: 400
+        height: 200
+
+        parent: Overlay.overlay
+        anchors.centerIn: Overlay.overlay
+
+        background: Rectangle {
+            color: "#CC000000"
+            radius: 10
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            color: "#2D2D2D"
+            radius: 10
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 20
+                spacing: 20
+
+                Text {
+                    text: "Enter sub-goal name:"
+                    color: "#FFFFFF"
+                    font.pointSize: 14
+                    font.bold: true
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 45
+                    color: "#3A3A3A"
+                    radius: 8
+                    border.color: "#F3C44A"
+                    border.width: 1
+
+                    TextField {
+                        id: subGoalNameField
+                        anchors.fill: parent
+                        anchors.margins: 10
+                        placeholderText: "Enter sub-goal name..."
+                        color: "#FFFFFF"
+                        font.pointSize: 12
+                        background: Rectangle {
+                            color: "transparent"
+                        }
+                        placeholderTextColor: "#AAAAAA"
+                    }
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 10
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 40
+                        color: "#F3C44A"
+                        radius: 8
+
+                        Text {
+                            text: "Add SubGoal"
+                            anchors.centerIn: parent
+                            color: "#1E1E1E"
+                            font.pointSize: 12
+                            font.bold: true
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if (subGoalNameField.text !== "") {
+                                    AppViewModel.addSubGoal(subGoalNameField.text)
+                                    subGoalNameField.text = ""
+                                    addSubGoalDialog.close()
+                                }
+                            }
+                            hoverEnabled: true
+                            onEntered: parent.color = "#F5D665"
+                            onExited: parent.color = "#F3C44A"
+                        }
+                    }
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 40
+                        color: "#3A3A3A"
+                        radius: 8
+
+                        Text {
+                            text: "Cancel"
+                            anchors.centerIn: parent
+                            color: "#FFFFFF"
+                            font.pointSize: 12
+                            font.bold: true
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                subGoalNameField.text = ""
+                                addSubGoalDialog.close()
+                            }
+                            hoverEnabled: true
+                            onEntered: parent.color = "#4A4A4A"
+                            onExited: parent.color = "#3A3A3A"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Диалог редактирования SubGoal
+    Dialog {
+        id: editSubGoalDialog
+        modal: true
+        title: "Edit SubGoal"
+        width: 400
+        height: 200
+
+        parent: Overlay.overlay
+        anchors.centerIn: Overlay.overlay
+
+        background: Rectangle {
+            color: "#CC000000"
+            radius: 10
+        }
+
+        property var subGoalToEdit: null
+
+        Rectangle {
+            anchors.fill: parent
+            color: "#2D2D2D"
+            radius: 10
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 20
+                spacing: 20
+
+                Text {
+                    text: "Edit sub-goal name:"
+                    color: "#FFFFFF"
+                    font.pointSize: 14
+                    font.bold: true
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 45
+                    color: "#3A3A3A"
+                    radius: 8
+                    border.color: "#F3C44A"
+                    border.width: 1
+
+                    TextField {
+                        id: editNameField
+                        anchors.fill: parent
+                        anchors.margins: 10
+                        placeholderText: "New sub-goal name..."
+                        color: "#FFFFFF"
+                        font.pointSize: 12
+                        background: Rectangle {
+                            color: "transparent"
+                        }
+                        placeholderTextColor: "#AAAAAA"
+                    }
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 10
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 40
+                        color: "#F3C44A"
+                        radius: 8
+
+                        Text {
+                            text: "Save Changes"
+                            anchors.centerIn: parent
+                            color: "#1E1E1E"
+                            font.pointSize: 12
+                            font.bold: true
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if (editNameField.text !== "" && editSubGoalDialog.subGoalToEdit !== null) {
+                                    AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, editNameField.text) //
+                                    editSubGoalDialog.close()
+                                }
+                            }
+                            hoverEnabled: true
+                            onEntered: parent.color = "#F5D665"
+                            onExited: parent.color = "#F3C44A"
+                        }
+                    }
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 40
+                        color: "#3A3A3A"
+                        radius: 8
+
+                        Text {
+                            text: "Cancel"
+                            anchors.centerIn: parent
+                            color: "#FFFFFF"
+                            font.pointSize: 12
+                            font.bold: true
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                editSubGoalDialog.close()
+                            }
+                            hoverEnabled: true
+                            onEntered: parent.color = "#4A4A4A"
+                            onExited: parent.color = "#3A3A3A"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
     // Диалог подтверждения удаления задачи
     Dialog {
         id: taskConfirmationDialog
@@ -858,6 +884,14 @@ ApplicationWindow {
         title: "Confirm Task Deletion"
         width: 350
         height: 180
+
+        parent: Overlay.overlay
+        anchors.centerIn: Overlay.overlay
+
+        background: Rectangle {
+            color: "#CC000000"
+            radius: 10
+        }
 
         property var taskToRemove
 
@@ -946,6 +980,14 @@ ApplicationWindow {
         title: "Add New Task"
         width: 400
         height: 200
+
+        parent: Overlay.overlay
+        anchors.centerIn: Overlay.overlay
+
+        background: Rectangle {
+            color: "#CC000000"
+            radius: 10
+        }
 
         Rectangle {
             anchors.fill: parent
@@ -1057,6 +1099,14 @@ ApplicationWindow {
         width: 400
         height: 200
 
+        parent: Overlay.overlay
+        anchors.centerIn: Overlay.overlay
+
+        background: Rectangle {
+            color: "#CC000000"
+            radius: 10
+        }
+
         property var taskToEdit: null
 
         Rectangle {
@@ -1166,6 +1216,14 @@ ApplicationWindow {
         title: "Edit Main Goal"
         width: 450
         height: 250
+
+        parent: Overlay.overlay
+        anchors.centerIn: Overlay.overlay
+
+        background: Rectangle {
+            color: "#CC000000"
+            radius: 10
+        }
 
         Rectangle {
             anchors.fill: parent

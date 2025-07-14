@@ -141,18 +141,19 @@ void AppViewModel::editSubGoal(int id, const QString& newName) {
 }
 
 void AppViewModel::deleteSubGoal(int id) {
-    // Remove from TaskManager first
-    m_subGoals.erase(
-        std::remove_if(m_subGoals.begin(), m_subGoals.end(),
-                       [id](const SubGoal& sg){ return sg.id == id; }),
-        m_subGoals.end()
-        );
+    // Delegate deletion to TaskManager, which handles cascading tasks deletion
+    m_taskManager.deleteSubGoal(id);
 
     saveData();
+
     updateSubGoalListModel();
 
     // Handle selection change
     if (id == m_selectedSubGoalId) {
+        // If the deleted subgoal was selected, clear selection or select another one
+        // Re-fetch subgoals from TaskManager to get the updated list
+        m_subGoals = m_taskManager.getSubGoals();
+
         if (!m_subGoals.empty()) {
             m_selectedSubGoalId = m_subGoals.front().id;
         } else {
@@ -160,6 +161,8 @@ void AppViewModel::deleteSubGoal(int id) {
         }
         updateTasksListModel();
         emit selectedSubGoalChanged();
+    } else {
+        updateTasksListModel();
     }
 
     qDebug() << "Deleted subgoal ID:" << id;

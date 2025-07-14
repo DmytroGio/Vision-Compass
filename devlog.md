@@ -43,8 +43,8 @@ To see the global goals of life and plan according to them.
 
 ## 2025-07-13
 ### Weekly Task: Core Features & Bug Fixing 🛠️
-- Fix SubGoal deletion: Ensure cascading deletion of associated Tasks.
-- Implement deletion confirmation dialog for SubGoals (and Tasks).
+- Fix SubGoal deletion: Ensure cascading deletion of associated Tasks. [done]
+- Implement deletion confirmation dialog for SubGoals (and Tasks). [done]
 - Handle initial app launch: Prompt user to set Main Goal if none exists.
 - Enhance UI for selected SubGoal: Clearly highlight the active SubGoal.
 - Add input validation: Prevent creation of empty SubGoals and Tasks.
