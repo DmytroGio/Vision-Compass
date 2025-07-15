@@ -1,56 +1,28 @@
 {
     "goal": {
-        "description": "My Test Goal from JSON",
-        "id": 1,
-        "targetDate": "Test Goal Description from JSON"
+        "description": "My new Large GOAL",
+        "id": 8,
+        "targetDate": "Proffesional Programmer end Spesialist"
     },
-    "lastGoalId": 1,
-    "lastSubGoalId": 8,
-    "lastTaskId": 7,
+    "lastGoalId": 0,
+    "lastSubGoalId": 1,
+    "lastTaskId": 1,
     "subGoals": [
         {
-            "description": "My New SubGoal",
+            "description": "This is new SubGoal 1",
             "endDate": "",
-            "goalId": 1,
+            "goalId": 8,
             "id": 1,
-            "startDate": ""
-        },
-        {
-            "description": "New Subgoal",
-            "endDate": "",
-            "goalId": 1,
-            "id": 2,
-            "startDate": ""
-        },
-        {
-            "description": "ааа",
-            "endDate": "",
-            "goalId": 1,
-            "id": 3,
             "startDate": ""
         }
     ],
     "tasks": [
         {
             "completed": false,
-            "description": "My new task 1",
+            "description": "Task 1",
             "dueDate": "",
             "id": 1,
             "subGoalId": 1
-        },
-        {
-            "completed": false,
-            "description": "My new task 2",
-            "dueDate": "",
-            "id": 3,
-            "subGoalId": 1
-        },
-        {
-            "completed": false,
-            "description": "New task for subgoal 3",
-            "dueDate": "",
-            "id": 7,
-            "subGoalId": 3
         }
     ]
 }

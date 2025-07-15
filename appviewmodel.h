@@ -50,6 +50,7 @@ public:
     Q_INVOKABLE void addTask(const QString& description);
     Q_INVOKABLE void addTaskToCurrentSubGoal(const QString& description);
     Q_INVOKABLE void editTask(int id, const QString& newDescription);
+    Q_INVOKABLE void completeTask(int id);
     Q_INVOKABLE void deleteTask(int id);
     Q_INVOKABLE void removeTask(const QVariantMap& taskData); // For QML compatibility
 

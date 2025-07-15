@@ -184,7 +184,7 @@ void TaskManager::editTask(int id, const std::string& newDescription, const std:
 void TaskManager::completeTask(int id) {
     for (auto& t : tasks)
         if (t.id == id) {
-            t.completed = true;
+            t.completed = !t.completed;
             break;
         }
 }

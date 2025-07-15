@@ -1,6 +1,7 @@
 #include "appviewmodel.h"
 #include <QDebug>
-#include <algorithm>
+#include <QStandardPaths>
+#include <QDir>
 
 AppViewModel::AppViewModel(QObject *parent) : QObject(parent)
 {
@@ -77,20 +78,13 @@ void AppViewModel::setCurrentGoalDescription(const QString& description) {
 
 // --- Q_INVOKABLE Methods ---
 void AppViewModel::loadData() {
-    m_taskManager.loadFromFile("tasks.json");
-    updateGoalProperties();
-    updateSubGoalListModel();
-
-    // Auto-select first subgoal if available
-    if (!m_subGoals.empty()) {
-        m_selectedSubGoalId = m_subGoals.front().id;
-        qDebug() << "Auto-selected SubGoal ID:" << m_selectedSubGoalId;
-    } else {
-        m_selectedSubGoalId = 0;
+    QString dataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QDir dir(dataPath);
+    if (!dir.exists()) {
+        dir.mkpath(".");
     }
-
-    updateTasksListModel();
-    emit selectedSubGoalChanged();
+    QString filePath = dataPath + "/tasks.json";
+    m_taskManager.loadFromFile(filePath.toStdString());
 }
 
 void AppViewModel::saveData() {
@@ -211,6 +205,12 @@ void AppViewModel::editTask(int id, const QString& newDescription) {
     m_taskManager.editTask(id, newDescription.toStdString(), "", m_selectedSubGoalId);
     saveData();
     updateTasksListModel();
+}
+
+void AppViewModel::completeTask(int id){
+    m_taskManager.completeTask(id);
+    saveData();
+    updateTasksListModel(); //Update the model to refresh the UI
 }
 
 void AppViewModel::deleteTask(int id) {
