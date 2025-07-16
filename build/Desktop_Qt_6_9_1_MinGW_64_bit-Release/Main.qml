@@ -1,7 +1,8 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import com.visioncompass.data 1.0
+import QtQuick.Window
+
 
 ApplicationWindow {
     id: mainWindow
@@ -14,6 +15,7 @@ ApplicationWindow {
     maximumHeight: 750
     title: "Vision Compass (QML)"
 
+    //flags: Qt.FramelessWindowHint
 
     // Load data when the application starts
     Component.onCompleted: {
@@ -26,6 +28,82 @@ ApplicationWindow {
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
+
+        // --- Кастомная панель заголовка ---
+        Rectangle {
+            id: titleBar
+            Layout.fillWidth: true
+            height: 30 // Высота нашей кастомной полоски
+            color: "#1E1E1E" // Цвет, соответствующий твоему дизайну
+            // Установи dragging для перемещения окна
+            MouseArea {
+                anchors.fill: parent
+                drag.target: null
+                onPressed: mouse.accepted = true
+                onMouseXChanged: {} // нужно указать хоть одно изменение, чтобы onPressed работал
+                onPressedChanged: {
+                    if (pressed) {
+                        mainWindow.startSystemMove(); // перемещение окна
+                    }
+                }
+            }
+
+            RowLayout {
+                anchors.fill: parent
+                spacing: 0
+
+                Text {
+                    id: windowTitleText
+                    text: mainWindow.title // Используем заголовок окна
+                    color: "white"
+                    font.pointSize: 10
+                    verticalAlignment: Text.AlignVCenter
+                    Layout.leftMargin: 10
+                    Layout.fillWidth: true // Занимает всё доступное пространство
+                }
+
+                // Кнопка свернуть
+                Button {
+                    text: "—" // Символ для свернуть
+                    font.bold: true
+                    width: 40
+                    height: parent.height
+                    contentItem: Text {
+                        text: parent.text
+                        color: "white"
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        anchors.fill: parent
+                    }
+                    background: Rectangle {
+                        color: parent.hovered ? "#4A4A4A" : "#1E1E1E"
+                    }
+                    onClicked: mainWindow.showMinimized()
+                }
+
+                // Кнопка закрыть
+                Button {
+                    text: "✕" // Символ для закрыть
+                    font.bold: true
+                    width: 40
+                    height: parent.height
+                    contentItem: Text {
+                        text: parent.text
+                        color: "white"
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        anchors.fill: parent
+                    }
+                    background: Rectangle {
+                        color: parent.hovered ? "red" : "#1E1E1E" // Красный при наведении
+                    }
+                    onClicked: mainWindow.close()
+                }
+            }
+        }
+        // --- Конец кастомной панели заголовка ---
 
         // --- Top Section (half of big circle) ---
         Item {

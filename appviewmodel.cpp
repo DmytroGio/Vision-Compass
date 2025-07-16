@@ -78,6 +78,10 @@ void AppViewModel::setCurrentGoalDescription(const QString& description) {
 
 // --- Q_INVOKABLE Methods ---
 void AppViewModel::loadData() {
+    m_taskManager.loadFromFile(getTasksFilePath().toStdString());
+    updateGoalProperties();
+    updateSubGoalListModel();
+
     QString dataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QDir dir(dataPath);
     if (!dir.exists()) {
@@ -88,8 +92,8 @@ void AppViewModel::loadData() {
 }
 
 void AppViewModel::saveData() {
-    m_taskManager.saveToFile("tasks.json");
-    qDebug() << "Data saved to tasks.json";
+    m_taskManager.saveToFile(getTasksFilePath().toStdString());
+    qDebug() << "Data saved to" << getTasksFilePath();
 }
 
 void AppViewModel::setMainGoal(const QString& name, const QString& description) {
@@ -245,4 +249,14 @@ void AppViewModel::updateTasksListModel() {
         qDebug() << "No SubGoal selected, cleared tasks";
     }
     emit currentTasksChanged();
+}
+
+
+QString AppViewModel::getTasksFilePath() const {
+    QString dataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QDir dir(dataPath);
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+    return dataPath + "/tasks.json";
 }

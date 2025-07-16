@@ -34,7 +34,8 @@ public:
 
     // Q_INVOKABLE methods - matching QML calls
     Q_INVOKABLE void loadData();
-    Q_INVOKABLE void saveData();
+    // Q_SLOT - publick
+    Q_SLOT void saveData();
 
     // Goal methods
     Q_INVOKABLE void setMainGoal(const QString& name, const QString& description);
@@ -64,6 +65,7 @@ private:
     void updateGoalProperties();
     void updateSubGoalListModel();
     void updateTasksListModel();
+    QString getTasksFilePath() const;
 
     TaskManager m_taskManager;
     Goal m_currentGoal;

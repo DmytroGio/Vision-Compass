@@ -1,17 +1,17 @@
 {
     "goal": {
-        "description": "My new Large GOAL",
-        "id": 8,
-        "targetDate": "Proffesional Programmer end Spesialist"
+        "description": "Main Goal. My Great Goal",
+        "id": 1,
+        "targetDate": "Some usefull"
     },
-    "lastGoalId": 0,
+    "lastGoalId": 1,
     "lastSubGoalId": 1,
     "lastTaskId": 1,
     "subGoals": [
         {
-            "description": "This is new SubGoal 1",
+            "description": "Sub1",
             "endDate": "",
-            "goalId": 8,
+            "goalId": 1,
             "id": 1,
             "startDate": ""
         }
