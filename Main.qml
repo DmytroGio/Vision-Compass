@@ -122,15 +122,12 @@ ApplicationWindow {
                 id: bigCircle
                 anchors.fill: parent
                 onPaint: {
-                    var ctx = getContext("2d");
-                    ctx.clearRect(0, 0, width, height);
+                    var ctx = getContext("2d");                    ctx.clearRect(0, 0, width, height);
                     var radius = width > height ? width * 0.9 : height * 1.8;
-                    ctx.beginPath();
-                    ctx.arc(width / 2, 0, radius / 2, 0, Math.PI, false);
+                    ctx.beginPath();                    ctx.arc(width / 2, 0, radius / 2, 0, Math.PI, false);
                     ctx.closePath();
                     ctx.fillStyle = "#F3C44A";
-                    ctx.fill();
-                }
+                    ctx.fill();                }
             }
 
             // Red circle (Goal)
@@ -635,6 +632,12 @@ ApplicationWindow {
 
         property var subGoalToRemove
 
+        focus: true
+        Keys.onReturnPressed: {
+            AppViewModel.removeSubGoal(confirmationDialog.subGoalToRemove)
+            confirmationDialog.close()
+        }
+
         background: Rectangle { // Добавим фон для затемнения, как в Popup
             color: "#CC000000" // Полупрозрачный черный
             radius: 10 // Если хочешь скругленные углы для самого диалога
@@ -729,6 +732,11 @@ ApplicationWindow {
         parent: Overlay.overlay
         anchors.centerIn: Overlay.overlay
 
+        // ADDED: Set focus on open
+        onOpened: {
+            subGoalNameField.forceActiveFocus()
+        }
+
         background: Rectangle {
             color: "#CC000000"
             radius: 10
@@ -770,6 +778,13 @@ ApplicationWindow {
                             color: "transparent"
                         }
                         placeholderTextColor: "#AAAAAA"
+                        onAccepted: {
+                            if (subGoalNameField.text !== "") {
+                                AppViewModel.addSubGoal(subGoalNameField.text)
+                                subGoalNameField.text = ""
+                                addSubGoalDialog.close()
+                            }
+                        }
                     }
                 }
 
@@ -847,6 +862,11 @@ ApplicationWindow {
         parent: Overlay.overlay
         anchors.centerIn: Overlay.overlay
 
+        // ADDED: Set focus on open
+        onOpened: {
+            editNameField.forceActiveFocus()
+        }
+
         background: Rectangle {
             color: "#CC000000"
             radius: 10
@@ -890,6 +910,12 @@ ApplicationWindow {
                             color: "transparent"
                         }
                         placeholderTextColor: "#AAAAAA"
+                        onAccepted: {
+                            if (editNameField.text !== "" && editSubGoalDialog.subGoalToEdit !== null) {
+                                AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, editNameField.text) //
+                                editSubGoalDialog.close()
+                            }
+                        }
                     }
                 }
 
@@ -969,6 +995,12 @@ ApplicationWindow {
         background: Rectangle {
             color: "#CC000000"
             radius: 10
+        }
+
+        focus: true
+        Keys.onReturnPressed: {
+            AppViewModel.removeTask(taskConfirmationDialog.taskToRemove)
+            taskConfirmationDialog.close()
         }
 
         property var taskToRemove
@@ -1062,6 +1094,11 @@ ApplicationWindow {
         parent: Overlay.overlay
         anchors.centerIn: Overlay.overlay
 
+        // ADDED: Set focus on open
+        onOpened: {
+            taskNameField.forceActiveFocus()
+        }
+
         background: Rectangle {
             color: "#CC000000"
             radius: 10
@@ -1103,6 +1140,13 @@ ApplicationWindow {
                             color: "transparent"
                         }
                         placeholderTextColor: "#AAAAAA"
+                        onAccepted: {
+                            if (taskNameField.text !== "") {
+                                AppViewModel.addTask(taskNameField.text)
+                                taskNameField.text = ""
+                                addTaskDialog.close()
+                            }
+                        }
                     }
                 }
 
@@ -1180,6 +1224,11 @@ ApplicationWindow {
         parent: Overlay.overlay
         anchors.centerIn: Overlay.overlay
 
+        // ADDED: Set focus on open
+        onOpened: {
+            editTaskNameField.forceActiveFocus()
+        }
+
         background: Rectangle {
             color: "#CC000000"
             radius: 10
@@ -1223,6 +1272,12 @@ ApplicationWindow {
                             color: "transparent"
                         }
                         placeholderTextColor: "#AAAAAA"
+                        onAccepted: {
+                            if (editTaskNameField.text !== "" && editTaskDialog.taskToEdit !== null) {
+                                AppViewModel.editTask(editTaskDialog.taskToEdit.id, editTaskNameField.text) //
+                                editTaskDialog.close()
+                            }
+                        }
                     }
                 }
 
@@ -1298,6 +1353,11 @@ ApplicationWindow {
         parent: Overlay.overlay
         anchors.centerIn: Overlay.overlay
 
+        // ADDED: Set focus on open
+        onOpened: {
+            editGoalNameField.forceActiveFocus()
+        }
+
         background: Rectangle {
             color: "#CC000000"
             radius: 10
@@ -1337,6 +1397,10 @@ ApplicationWindow {
                         font.pointSize: 12
                         background: Rectangle { color: "transparent" }
                         placeholderTextColor: "#AAAAAA"
+                        onAccepted: {
+                             AppViewModel.setMainGoal(editGoalNameField.text, editGoalDescriptionField.text)
+                             editGoalDialog.close()
+                        }
                     }
                 }
 
@@ -1364,6 +1428,10 @@ ApplicationWindow {
                         font.pointSize: 12
                         background: Rectangle { color: "transparent" }
                         placeholderTextColor: "#AAAAAA"
+                        onAccepted: {
+                             AppViewModel.setMainGoal(editGoalNameField.text, editGoalDescriptionField.text)
+                             editGoalDialog.close()
+                        }
                     }
                 }
 
