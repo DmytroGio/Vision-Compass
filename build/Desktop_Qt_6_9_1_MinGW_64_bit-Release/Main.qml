@@ -322,9 +322,7 @@ ApplicationWindow {
                                         MouseArea {
                                             anchors.fill: parent
                                             onClicked: {
-                                                editSubGoalDialog.open()
-                                                editSubGoalDialog.subGoalToEdit = modelData
-                                                editSubGoalDialog.editNameField.text = modelData.name
+                                                editSubGoalDialog.openForEditing(modelData)
                                             }
                                             hoverEnabled: true
                                             onEntered: parent.color = "#F5D665"
@@ -591,9 +589,7 @@ ApplicationWindow {
                                     MouseArea {
                                         anchors.fill: parent
                                         onClicked: {
-                                            editTaskDialog.open()
-                                            editTaskDialog.taskToEdit = modelData
-                                            editTaskDialog.editTaskNameField.text = modelData.name
+                                            editTaskDialog.openForEditing(modelData)
                                         }
                                         hoverEnabled: true
                                         onEntered: parent.color = "#F5D665"
@@ -862,17 +858,35 @@ ApplicationWindow {
         parent: Overlay.overlay
         anchors.centerIn: Overlay.overlay
 
-        // ADDED: Set focus on open
+        // This property will hold the data for the item being edited
+        property var subGoalToEdit: null
+
+
+        function openForEditing(itemData) {
+            // Step 1: Securely receive and store the data
+            subGoalToEdit = itemData;
+
+            // Step 2: Now, with the data safely stored, call the built-in open()
+            open();
+        }
+
+        // MODIFIED: This block now fills the text field when the dialog opens
         onOpened: {
+            // First, check that data was actually passed to the dialog
+            if (subGoalToEdit) {
+                // Set the text field's content to the current name of the sub-goal
+                editNameField.text = subGoalToEdit.name
+            }
+            // Then, give focus to the text field
             editNameField.forceActiveFocus()
+            // And select the text for easy editing
+            editNameField.selectAll()
         }
 
         background: Rectangle {
             color: "#CC000000"
             radius: 10
         }
-
-        property var subGoalToEdit: null
 
         Rectangle {
             anchors.fill: parent
@@ -912,7 +926,7 @@ ApplicationWindow {
                         placeholderTextColor: "#AAAAAA"
                         onAccepted: {
                             if (editNameField.text !== "" && editSubGoalDialog.subGoalToEdit !== null) {
-                                AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, editNameField.text) //
+                                AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, editNameField.text)
                                 editSubGoalDialog.close()
                             }
                         }
@@ -923,12 +937,13 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     spacing: 10
 
+                    // "Save Changes" Button
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 40
                         color: "#F3C44A"
                         radius: 8
-
+                        // ... (rest of the button is unchanged)
                         Text {
                             text: "Save Changes"
                             anchors.centerIn: parent
@@ -936,12 +951,11 @@ ApplicationWindow {
                             font.pointSize: 12
                             font.bold: true
                         }
-
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
                                 if (editNameField.text !== "" && editSubGoalDialog.subGoalToEdit !== null) {
-                                    AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, editNameField.text) //
+                                    AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, editNameField.text)
                                     editSubGoalDialog.close()
                                 }
                             }
@@ -951,12 +965,13 @@ ApplicationWindow {
                         }
                     }
 
+                    // "Cancel" Button
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 40
                         color: "#3A3A3A"
                         radius: 8
-
+                        // ... (rest of the button is unchanged)
                         Text {
                             text: "Cancel"
                             anchors.centerIn: parent
@@ -964,7 +979,6 @@ ApplicationWindow {
                             font.pointSize: 12
                             font.bold: true
                         }
-
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
@@ -979,6 +993,7 @@ ApplicationWindow {
             }
         }
     }
+
 
 
     // Диалог подтверждения удаления задачи
@@ -1226,7 +1241,11 @@ ApplicationWindow {
 
         // ADDED: Set focus on open
         onOpened: {
+            if (taskToEdit) {
+                editTaskNameField.text = taskToEdit.name
+            }
             editTaskNameField.forceActiveFocus()
+            editTaskNameField.selectAll()
         }
 
         background: Rectangle {
@@ -1235,6 +1254,11 @@ ApplicationWindow {
         }
 
         property var taskToEdit: null
+
+        function openForEditing(itemData) {
+            taskToEdit = itemData;
+            open();
+        }
 
         Rectangle {
             anchors.fill: parent
