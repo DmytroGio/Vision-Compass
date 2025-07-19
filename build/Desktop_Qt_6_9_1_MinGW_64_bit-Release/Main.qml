@@ -178,6 +178,7 @@ ApplicationWindow {
             }
 
             // Отображение SubGoals с использованием современного дизайна
+            // Отображение SubGoals с использованием современного дизайна
             Rectangle {
                 id: subGoalsContainer
                 anchors.bottom: parent.bottom
@@ -200,17 +201,55 @@ ApplicationWindow {
                         Layout.alignment: Qt.AlignLeft
                     }
 
-                    // Горизонтальный скролл для SubGoals
-                    ScrollView {
+                    // Контейнер для горизонтального скролла SubGoals
+                    Rectangle {
                         Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        clip: true
+                        Layout.preferredHeight: 90
+                        color: "transparent"
 
-                        ListView {
-                            id: subGoalsList
-                            orientation: ListView.Horizontal
-                            model: AppViewModel.subGoalsListModel
-                            spacing: 15
+                        ScrollView {
+                            id: subGoalsScrollView
+                            anchors.fill: parent
+                            anchors.bottomMargin: -10  // Место для скроллбара
+
+                            clip: true
+
+                            // Отключаем вертикальный скроллбар
+                            ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+
+                            // Включаем горизонтальный скроллбар
+                            ScrollBar.horizontal.policy: ScrollBar.AsNeeded
+
+                            // MouseArea для прокрутки колесиком мыши
+                            MouseArea {
+                                anchors.fill: parent
+                                onWheel: {
+                                    // Прокрутка горизонтального скроллбара колесиком мыши
+                                    var delta = wheel.angleDelta.y > 0 ? -30 : 30;
+                                    subGoalsList.contentX = Math.max(0,
+                                        Math.min(subGoalsList.contentWidth - subGoalsList.width,
+                                        subGoalsList.contentX + delta));
+                                }
+                                // Пропускаем клики через MouseArea к элементам ниже
+                                propagateComposedEvents: true
+                                z: -1
+                            }
+
+                            ListView {
+                                id: subGoalsList
+
+                                // КРИТИЧНО: устанавливаем горизонтальную ориентацию
+                                orientation: ListView.Horizontal
+
+                                // Привязка к размерам родителя
+                                anchors.fill: parent
+
+                                model: AppViewModel.subGoalsListModel
+                                spacing: 15
+
+                                // Отступы от краев
+                                leftMargin: 5
+                                rightMargin: 5
 
                             delegate: Rectangle {
                                 width: 180
@@ -243,6 +282,7 @@ ApplicationWindow {
                                         height: 30
                                         color: "#F3C44A"
                                         radius: 6
+                                        Layout.alignment: Qt.AlignTop
 
                                         Text {
                                             text: "◉"
@@ -256,10 +296,11 @@ ApplicationWindow {
                                     // Текст SubGoal
                                     ColumnLayout {
                                         Layout.fillWidth: true
+                                        Layout.fillHeight: true
                                         spacing: 2
 
                                         Text {
-                                            text: modelData.name
+                                            text: modelData.name || "Unnamed SubGoal"
                                             color: "#FFFFFF"
                                             font.pointSize: 12
                                             font.bold: true
@@ -277,78 +318,156 @@ ApplicationWindow {
                                         }
                                     }
 
-                                    // Кнопка удаления SubGoal
-                                    Rectangle {
-                                        width: 25
-                                        height: 25
-                                        color: "#E95B5B"
-                                        radius: 12
+                                    // Контейнер для кнопок
+                                    RowLayout {
+                                        Layout.alignment: Qt.AlignTop
+                                        spacing: 5
 
-                                        Text {
-                                            text: "✕"
-                                            anchors.centerIn: parent
-                                            font.pointSize: 12
-                                            color: "#FFFFFF"
-                                            font.bold: true
-                                        }
+                                        // Кнопка редактирования SubGoal
+                                        Rectangle {
+                                            width: 25
+                                            height: 25
+                                            color: "#F3C44A"
+                                            radius: 12
 
-                                        MouseArea {
-                                            anchors.fill: parent
-                                            onClicked: {
-                                                confirmationDialog.open()
-                                                confirmationDialog.subGoalToRemove = modelData
+                                            Text {
+                                                text: "✎" // Edit icon
+                                                anchors.centerIn: parent
+                                                font.pointSize: 12
+                                                color: "#1E1E1E"
+                                                font.bold: true
                                             }
-                                            hoverEnabled: true
-                                            onEntered: parent.color = "#F76B6B"
-                                            onExited: parent.color = "#E95B5B"
-                                        }
-                                    }
 
-                                    // Кнопка редактирования SubGoal
-                                    Rectangle {
-                                        width: 25
-                                        height: 25
-                                        color: "#F3C44A"
-                                        radius: 12
-
-                                        Text {
-                                            text: "✎" // Edit icon
-                                            anchors.centerIn: parent
-                                            font.pointSize: 12
-                                            color: "#1E1E1E"
-                                            font.bold: true
-                                        }
-
-                                        MouseArea {
-                                            anchors.fill: parent
-                                            onClicked: {
-                                                editSubGoalDialog.openForEditing(modelData)
+                                            MouseArea {
+                                                anchors.fill: parent
+                                                onClicked: {
+                                                    editSubGoalDialog.openForEditing(modelData)
+                                                }
+                                                hoverEnabled: true
+                                                onEntered: parent.color = "#F5D665"
+                                                onExited: parent.color = "#F3C44A"
                                             }
-                                            hoverEnabled: true
-                                            onEntered: parent.color = "#F5D665"
-                                            onExited: parent.color = "#F3C44A"
+                                        }
+
+                                        // Кнопка удаления SubGoal
+                                        Rectangle {
+                                            width: 25
+                                            height: 25
+                                            color: "#E95B5B"
+                                            radius: 12
+
+                                            Text {
+                                                text: "✕"
+                                                anchors.centerIn: parent
+                                                font.pointSize: 12
+                                                color: "#FFFFFF"
+                                                font.bold: true
+                                            }
+
+                                            MouseArea {
+                                                anchors.fill: parent
+                                                onClicked: {
+                                                    confirmationDialog.open()
+                                                    confirmationDialog.subGoalToRemove = modelData
+                                                }
+                                                hoverEnabled: true
+                                                onEntered: parent.color = "#F76B6B"
+                                                onExited: parent.color = "#E95B5B"
+                                            }
                                         }
                                     }
                                 }
 
-                                // Эффект при наведении
+                                // Эффект при наведении на весь элемент
                                 MouseArea {
                                     anchors.fill: parent
                                     hoverEnabled: true
-                                    onEntered: parent.color = "#353535"
-                                    onExited: parent.color = "#2D2D2D"
+                                    onEntered: {
+                                        if (modelData.id !== AppViewModel.selectedSubGoalId) {
+                                            parent.color = "#353535"
+                                        }
+                                    }
+                                    onExited: {
+                                        if (modelData.id !== AppViewModel.selectedSubGoalId) {
+                                            parent.color = "#2D2D2D"
+                                        }
+                                    }
                                     onClicked: {
-                                        AppViewModel.selectSubGoal(modelData.id) //
+                                        AppViewModel.selectSubGoal(modelData.id)
                                     }
                                     z: -1
+                                }
+                            }
+                        }
+
+                        // Кастомный горизонтальный скроллбар - размещаем ВНУТРИ Rectangle
+                        // Кастомный скроллбар без использования ScrollBar
+                        Rectangle {
+                            id: customScrollBar
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            height: 8
+                            color: "#3A3A3A"
+                            border.color: "#444444"
+                            border.width: 1
+                            radius: 4
+
+                            Component.onCompleted: {
+                                // Убеждаемся что радиус применился
+                                radius = 4
+                            }
+
+                            Rectangle {
+                                id: scrollHandle
+                                height: parent.height - 1
+                                width: parent.width * 0.3  // Фиксированный размер
+                                y: 1
+                                radius: 4
+
+                                Component.onCompleted: {
+                                    // Принудительно обновляем позицию при загрузке
+                                    x = Qt.binding(function() {
+                                        return subGoalsList.contentWidth > subGoalsList.width ?
+                                               (subGoalsList.contentX / (subGoalsList.contentWidth - subGoalsList.width)) * maxX : 0
+                                    })
+                                }
+
+                                property real maxX: parent.width - width
+                                x: 1
+
+
+                                gradient: Gradient {
+                                    GradientStop { position: 0.0; color: scrollMouseArea.containsMouse ? "#FFD700" : "#F3C44A" }
+                                    GradientStop { position: 0.5; color: scrollMouseArea.containsMouse ? "#FFF200" : "#E8B332" }
+                                    GradientStop { position: 1.0; color: scrollMouseArea.containsMouse ? "#FFED4E" : "#D35400" }
+                                }
+
+                                border.color: scrollMouseArea.containsMouse ? "#D4A017" : "#C0392B"
+                                border.width: 1
+
+                                MouseArea {
+                                    id: scrollMouseArea
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    drag.target: parent
+                                    drag.axis: Drag.XAxis
+                                    drag.minimumX: 1
+                                    drag.maximumX: parent.maxX - 1
+
+                                    onPositionChanged: {
+                                        if (drag.active && subGoalsList.contentWidth > subGoalsList.width) {
+                                            var ratio = parent.x / parent.maxX
+                                            subGoalsList.contentX = ratio * (subGoalsList.contentWidth - subGoalsList.width)
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-
-
+            }
 
             // Кнопка добавления SubGoal (справа сверху на желтой области)
             Rectangle {
