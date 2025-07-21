@@ -51,13 +51,13 @@ To see the global goals of life and plan according to them.
 - Enhance UI for selected SubGoal: Clearly highlight the active SubGoal.
 - Add input validation: Prevent creation of empty SubGoals and Tasks.
 
-## Weekly Tasks (July 21 - July 27) 📝 🎨
+## Weekly possible Tasks (July 21 - July 27) 📝 🎨
 ### Dialog Unification (Mon-Thu)
-Mon: Develop a reusable CustomDialog.qml component for all application dialogs (add, edit, confirm).
-Tue: Integrate CustomDialog for the main goal editing dialog (editGoalDialog).
-Wed: Apply CustomDialog to SubGoal and Task add/edit dialogs.
-Thu: Implement CustomDialog for SubGoal and Task deletion confirmation dialogs.
+- Develop a reusable CustomDialog.qml component for all application dialogs (add, edit, confirm).
+- Integrate CustomDialog for the main goal editing dialog (editGoalDialog).
+- Apply CustomDialog to SubGoal and Task add/edit dialogs.
+- Implement CustomDialog for SubGoal and Task deletion confirmation dialogs.
 ### Progress Visualization & Refinement (Fri-Sun)
-Fri: Add a simple "completed/total" task count display for each SubGoal in the QML interface, retrieved from C++.
-Sat: Conduct a comprehensive review and testing of all updated dialogs and the new progress indicator. Ensure proper AppViewModel integration.
-Sun: Future planning and analysis for the next phase of UI/UX improvements.
+- Add a simple "completed/total" task count display for each SubGoal in the QML interface, retrieved from C++.
+- Conduct a comprehensive review and testing of all updated dialogs and the new progress indicator. Ensure proper AppViewModel integration.
+- Future planning and analysis for the next phase of UI/UX improvements.

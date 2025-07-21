@@ -109,7 +109,7 @@ ApplicationWindow {
         Item {
             id: topSection
             Layout.fillWidth: true
-            Layout.preferredHeight: mainWindow.height / 2
+            Layout.preferredHeight:  345
 
             // Gray background
             Rectangle {
@@ -122,12 +122,15 @@ ApplicationWindow {
                 id: bigCircle
                 anchors.fill: parent
                 onPaint: {
-                    var ctx = getContext("2d");                    ctx.clearRect(0, 0, width, height);
-                    var radius = width > height ? width * 0.9 : height * 1.8;
-                    ctx.beginPath();                    ctx.arc(width / 2, 0, radius / 2, 0, Math.PI, false);
+                    var ctx = getContext("2d");
+                    ctx.clearRect(0, 0, width, height);
+                    var radius = width * 0.9;
+                    ctx.beginPath();
+                    ctx.arc(width / 2, 0, radius / 2, 0, Math.PI, false);
                     ctx.closePath();
                     ctx.fillStyle = "#F3C44A";
-                    ctx.fill();                }
+                    ctx.fill();
+                }
             }
 
             // Red circle (Goal)
@@ -576,16 +579,39 @@ ApplicationWindow {
                 }
 
                 // Список задач
-                ScrollView {
+
+                Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    clip: true
+                    color: "transparent"
+
+                    // MouseArea для прокрутки колесиком мыши
+                    MouseArea {
+                        anchors.fill: parent
+                        onWheel: {
+                            // Прокрутка вертикального скроллбара колесиком мыши
+                            var delta = wheel.angleDelta.y > 0 ? -30 : 30;
+                            var newContentY = Math.max(0,
+                                Math.min(taskListView.contentHeight - taskListView.height,
+                                taskListView.contentY + delta));
+
+                            // ИСПРАВЛЕНИЕ: Принудительно ограничиваем значение
+                            if (taskListView.contentHeight > taskListView.height) {
+                                taskListView.contentY = newContentY;
+                            }
+                        }
+                        // Пропускаем клики через MouseArea к элементам ниже
+                        propagateComposedEvents: true
+                        z: -1
+                    }
 
                     ListView {
                         id: taskListView
                         anchors.fill: parent
+                        anchors.rightMargin: 15 // Место для скроллбара
                         model: AppViewModel.currentTasksListModel
                         spacing: 10
+                        clip: true
 
                         delegate: Rectangle {
                             width: taskListView.width
@@ -594,7 +620,7 @@ ApplicationWindow {
                             radius: 15
                             border.color: "#444444"
                             border.width: 1
-                            opacity: modelData.completed ? 0.7 : 1.0 // Visual indication for completed tasks
+                            opacity: modelData.completed ? 0.7 : 1.0
 
                             // Левая цветная полоска
                             Rectangle {
@@ -617,11 +643,11 @@ ApplicationWindow {
                                 Rectangle {
                                     width: 40
                                     height: 40
-                                    color: modelData.completed ? "#66BB6A" : "#F3C44A" // Green for completed, yellow for not
+                                    color: modelData.completed ? "#66BB6A" : "#F3C44A"
                                     radius: 8
 
                                     Text {
-                                        text: modelData.completed ? "✓" : "☐" // Checkmark or empty box
+                                        text: modelData.completed ? "✓" : "☐"
                                         anchors.centerIn: parent
                                         font.pointSize: 18
                                         color: "#1E1E1E"
@@ -631,7 +657,7 @@ ApplicationWindow {
                                     MouseArea {
                                         anchors.fill: parent
                                         onClicked: {
-                                            AppViewModel.completeTask(modelData.id) //
+                                            AppViewModel.completeTask(modelData.id)
                                         }
                                         hoverEnabled: true
                                         onEntered: parent.color = modelData.completed ? "#76CC7A" : "#F5D665"
@@ -645,18 +671,17 @@ ApplicationWindow {
                                     spacing: 2
 
                                     Text {
-                                        //text: modelData.name
                                         color: "#FFFFFF"
                                         font.pointSize: 14
                                         font.bold: true
                                         Layout.fillWidth: true
                                         wrapMode: Text.WordWrap
-                                        textFormat: Text.RichText // Allow HTML for strikethrough
+                                        textFormat: Text.RichText
                                         text: modelData.completed ? "<s>" + modelData.name + "</s>" : modelData.name
                                     }
 
                                     Text {
-                                        text: modelData.completed ? "Completed" : "Active task" //
+                                        text: modelData.completed ? "Completed" : "Active task"
                                         color: modelData.completed ? "#66BB6A" : "#AAAAAA"
                                         font.pointSize: 11
                                         Layout.fillWidth: true
@@ -698,7 +723,7 @@ ApplicationWindow {
                                     radius: 17
 
                                     Text {
-                                        text: "✎" // Edit icon
+                                        text: "✎"
                                         anchors.centerIn: parent
                                         font.pointSize: 16
                                         color: "#1E1E1E"
@@ -727,8 +752,81 @@ ApplicationWindow {
                             }
                         }
                     }
-                }
 
+                    // Кастомный вертикальный скроллбар
+                    // Кастомный вертикальный скроллбар
+                    Rectangle {
+                        id: customVerticalScrollBar
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        anchors.right: parent.right
+                        width: 12
+                        color: "#3A3A3A"
+                        border.color: "#444444"
+                        border.width: 1
+                        radius: 6
+
+                        Component.onCompleted: {
+                            radius = 6
+                        }
+
+                        Rectangle {
+                            id: verticalScrollHandle
+                            width: parent.width - 2
+                            height: parent.height * 0.3  // Фиксированный размер
+                            x: 1
+                            radius: 5
+
+                            Component.onCompleted: {
+                                // Принудительно обновляем позицию при загрузке
+                                y = Qt.binding(function() {
+                                    if (taskListView.contentHeight <= taskListView.height) {
+                                        return 1; // Если контент помещается, ползунок вверху
+                                    }
+
+                                    var ratio = taskListView.contentY / (taskListView.contentHeight - taskListView.height);
+                                    var calculatedY = ratio * maxY;
+
+                                    // ИСПРАВЛЕНИЕ: Принудительно ограничиваем позицию ползунка
+                                    return Math.max(1, Math.min(maxY - 1, calculatedY));
+                                })
+                            }
+
+                            property real maxY: parent.height - height
+                            y: 1
+
+                            gradient: Gradient {
+                                GradientStop { position: 0.0; color: verticalScrollMouseArea.containsMouse ? "#FFD700" : "#F3C44A" }
+                                GradientStop { position: 0.5; color: verticalScrollMouseArea.containsMouse ? "#FFF200" : "#E8B332" }
+                                GradientStop { position: 1.0; color: verticalScrollMouseArea.containsMouse ? "#FFED4E" : "#D35400" }
+                            }
+
+                            border.color: verticalScrollMouseArea.containsMouse ? "#D4A017" : "#C0392B"
+                            border.width: 1
+
+                            MouseArea {
+                                id: verticalScrollMouseArea
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                drag.target: parent
+                                drag.axis: Drag.YAxis
+                                drag.minimumY: 1
+                                drag.maximumY: parent.maxY - 1
+
+                                onPositionChanged: {
+                                    if (drag.active && taskListView.contentHeight > taskListView.height) {
+                                        var ratio = Math.max(0, Math.min(1, parent.y / parent.maxY));
+                                        var newContentY = ratio * (taskListView.contentHeight - taskListView.height);
+
+                                        // ИСПРАВЛЕНИЕ: Дополнительная проверка границ
+                                        taskListView.contentY = Math.max(0,
+                                            Math.min(taskListView.contentHeight - taskListView.height, newContentY));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
             }
         }
