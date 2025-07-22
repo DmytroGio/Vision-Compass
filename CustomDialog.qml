@@ -22,7 +22,7 @@ Dialog {
     parent: Overlay.overlay
     anchors.centerIn: Overlay.overlay
     width: dialogWidth
-    padding: 0 // Remove default padding to use our own layout
+    padding: 16
 
     // --- Internal Implementation ---
 
@@ -43,6 +43,8 @@ Dialog {
     background: Rectangle {
         color: "#CC000000" // 80% transparent black
         radius: 10
+        anchors.fill: parent
+        anchors.margins: 5
     }
 
     // Main dialog panel
@@ -91,7 +93,8 @@ Dialog {
                         // Use provided color or a default
                         color: modelData.color || "#3A3A3A"
                         radius: 8
-                        property color baseColor: color
+                        // Initialize baseColor with the initial color, without binding
+                        property color baseColor: modelData.color || "#3A3A3A"
                         property color hoverColor: Qt.lighter(baseColor, 1.2)
 
                         Text {
