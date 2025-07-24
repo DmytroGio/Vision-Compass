@@ -62,15 +62,7 @@ Dialog {
             spacing: 20
 
             // 1. Title
-            Text {
-                text: root.customTitle
-                color: "#FFFFFF"
-                font.pointSize: 16
-                font.bold: true
-                Layout.fillWidth: true
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
-            }
+
 
             // 2. Dynamic Content
             Loader {

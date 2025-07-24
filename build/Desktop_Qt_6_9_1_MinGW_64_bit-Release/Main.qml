@@ -529,7 +529,7 @@ ApplicationWindow {
 
                 // Заголовок секции
                 Text {
-                    text: AppViewModel.selectedSubGoalId !== 0 ? "Tasks for: " + AppViewModel.selectedSubGoalName : "No SubGoal Selected"
+                    text: AppViewModel.selectedSubGoalId !== 0 ? AppViewModel.selectedSubGoalName : "No SubGoal Selected"
                     color: "#FFFFFF"
                     font.pointSize: 18
                     font.bold: true
@@ -908,7 +908,7 @@ ApplicationWindow {
                 color: "#F3C44A",
                 textColor: "#1E1E1E",
                 onClicked: function() {
-                    let nameField = addSubGoalDialog.contentItem.children[1].item;
+                    let nameField = addSubGoalDialog.contentItem.children[0].children[1].item;
                     if (nameField && nameField.text.trim() !== "") {
                         AppViewModel.addSubGoal(nameField.text.trim());
                         nameField.text = "";
@@ -973,7 +973,7 @@ ApplicationWindow {
                 color: "#F3C44A",
                 textColor: "#1E1E1E",
                 onClicked: function() {
-                    let nameField = editSubGoalDialog.contentItem.children[1].item;
+                    let nameField = editSubGoalDialog.contentItem.children[0].children[1].item;
                     if (nameField && nameField.text.trim() !== "" && editSubGoalDialog.subGoalToEdit) {
                         AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, nameField.text.trim());
                     }
@@ -1056,7 +1056,7 @@ ApplicationWindow {
                 color: "#F3C44A",
                 textColor: "#1E1E1E",
                 onClicked: function() {
-                    let nameField = addTaskDialog.contentItem.children[1].item;
+                    let nameField = addTaskDialog.contentItem.children[0].children[1].item;
                     if (nameField && nameField.text.trim() !== "") {
                         AppViewModel.addTask(nameField.text.trim());
                         nameField.text = "";
@@ -1121,7 +1121,7 @@ ApplicationWindow {
                 color: "#F3C44A",
                 textColor: "#1E1E1E",
                 onClicked: function() {
-                    let nameField = editTaskDialog.contentItem.children[1].item;
+                    let nameField = editTaskDialog.contentItem.children[0].children[1].item;
                     if (nameField && nameField.text.trim() !== "" && editTaskDialog.taskToEdit) {
                         AppViewModel.editTask(editTaskDialog.taskToEdit.id, nameField.text.trim());
                     }
@@ -1151,6 +1151,7 @@ ApplicationWindow {
 
                     TextField {
                         id: editGoalNameField
+                        objectName: "goalNameField"
                         text: AppViewModel.currentGoalText
                         placeholderText: "Enter main goal name..."
                         Layout.fillWidth: true
@@ -1165,6 +1166,15 @@ ApplicationWindow {
                         }
                         padding: 10
                         placeholderTextColor: "#AAAAAA"
+
+                        onAccepted: {
+                            // Сохраняем изменения при нажатии Enter
+                            let descField = parent.children[3]; // editGoalDescriptionField
+                            if (text.trim() !== "" && descField && descField.text.trim() !== "") {
+                                AppViewModel.setMainGoal(text.trim(), descField.text.trim());
+                                editGoalDialog.close();
+                            }
+                        }
                     }
 
                     Text {
@@ -1176,6 +1186,7 @@ ApplicationWindow {
 
                     TextField {
                         id: editGoalDescriptionField
+                        objectName: "goalDescField"
                         text: AppViewModel.currentGoalDescription
                         placeholderText: "Enter goal description or target date..."
                         Layout.fillWidth: true
@@ -1190,6 +1201,15 @@ ApplicationWindow {
                         }
                         padding: 10
                         placeholderTextColor: "#AAAAAA"
+
+                        onAccepted: {
+                            // Сохраняем изменения при нажатии Enter
+                            let nameField = parent.children[1]; // editGoalNameField
+                            if (text.trim() !== "" && nameField && nameField.text.trim() !== "") {
+                                AppViewModel.setMainGoal(nameField.text.trim(), text.trim());
+                                editGoalDialog.close();
+                            }
+                        }
                     }
                 }
             }
@@ -1199,13 +1219,27 @@ ApplicationWindow {
                     text: "Save Goal",
                     color: "#E95B5B",
                     onClicked: function() {
-                        let contentLayout = editGoalDialog.contentItem.children[1].item;
-                        if (contentLayout) {
-                            let nameField = contentLayout.children[1];
-                            let descField = contentLayout.children[3];
-                            if (nameField && descField) {
-                                AppViewModel.setMainGoal(nameField.text, descField.text);
+                        // Ищем поля по objectName
+                        function findChildByObjectName(parent, objectName) {
+                            if (parent.objectName === objectName) return parent;
+                            if (parent.children) {
+                                for (var i = 0; i < parent.children.length; i++) {
+                                    var result = findChildByObjectName(parent.children[i], objectName);
+                                    if (result) return result;
+                                }
                             }
+                            return null;
+                        }
+
+                        let contentRoot = editGoalDialog.contentItem;
+                        let nameField = findChildByObjectName(contentRoot, "goalNameField");
+                        let descField = findChildByObjectName(contentRoot, "goalDescField");
+
+                        if (nameField && descField && nameField.text.trim() !== "") {
+                            console.log("Saving goal:", nameField.text, descField.text); // Отладка
+                            AppViewModel.setMainGoal(nameField.text.trim(), descField.text.trim());
+                        } else {
+                            console.log("Fields not found or empty"); // Отладка
                         }
                     }
                 },
@@ -1213,7 +1247,7 @@ ApplicationWindow {
                     text: "Cancel"
                 }
             ]
-        }
+    }
 
 }
 
