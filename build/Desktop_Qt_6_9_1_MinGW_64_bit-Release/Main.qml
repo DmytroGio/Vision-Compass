@@ -22,6 +22,50 @@ ApplicationWindow {
         AppViewModel.loadData()
     }
 
+    function selectSubGoalByIndex(index) {
+           if (AppViewModel.subGoalsListModel && AppViewModel.subGoalsListModel.length > index) {
+               var subGoalId = AppViewModel.subGoalsListModel[index].id;
+               AppViewModel.selectSubGoal(subGoalId);
+           }
+       }
+
+       Shortcut {
+           sequence: "1"
+           onActivated: selectSubGoalByIndex(0)
+       }
+       Shortcut {
+           sequence: "2"
+           onActivated: selectSubGoalByIndex(1)
+       }
+       Shortcut {
+           sequence: "3"
+           onActivated: selectSubGoalByIndex(2)
+       }
+       Shortcut {
+           sequence: "4"
+           onActivated: selectSubGoalByIndex(3)
+       }
+       Shortcut {
+           sequence: "5"
+           onActivated: selectSubGoalByIndex(4)
+       }
+       Shortcut {
+           sequence: "6"
+           onActivated: selectSubGoalByIndex(5)
+       }
+       Shortcut {
+           sequence: "7"
+           onActivated: selectSubGoalByIndex(6)
+       }
+       Shortcut {
+           sequence: "8"
+           onActivated: selectSubGoalByIndex(7)
+       }
+       Shortcut {
+           sequence: "9"
+           onActivated: selectSubGoalByIndex(8)
+       }
+
     // Make AppViewModel available in this QML file
     // Create rectangle
 
@@ -181,7 +225,6 @@ ApplicationWindow {
             }
 
             // Отображение SubGoals с использованием современного дизайна
-            // Отображение SubGoals с использованием современного дизайна
             Rectangle {
                 id: subGoalsContainer
                 anchors.bottom: parent.bottom
@@ -254,153 +297,166 @@ ApplicationWindow {
                                 leftMargin: 5
                                 rightMargin: 5
 
-                            delegate: Rectangle {
-                                width: 180
-                                height: 80
-                                color: modelData.id === AppViewModel.selectedSubGoalId ? "#4A4A4A" : "#2D2D2D"
-                                radius: 15
-                                border.color: modelData.id === AppViewModel.selectedSubGoalId ? "#F5D665" : "#F3C44A"
-                                border.width: 2
+                                delegate: Rectangle {
+                                    width: 180
+                                    height: 80
+                                    color: modelData.id === AppViewModel.selectedSubGoalId ? "#1c1c1c" : "#2D2D2D"
+                                    radius: 15
+                                    border.color: modelData.id === AppViewModel.selectedSubGoalId ? "#F5D665" : "#F3C44A"
+                                    border.width: 2
 
-                                // Верхняя цветная полоска
-                                Rectangle {
-                                    width: parent.width - 10
-                                    height: 4
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 5
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    color: "#F3C44A"
-                                    radius: 2
-                                }
-
-                                // Основное содержимое SubGoal
-                                RowLayout {
-                                    anchors.fill: parent
-                                    anchors.margins: 12
-                                    spacing: 10
-
-                                    // Иконка SubGoal
+                                    // Номер шортката (внизу справа, выходит за границы)
                                     Rectangle {
-                                        width: 30
-                                        height: 30
+                                        width: 24
+                                        height: 24
+                                        anchors.bottom: parent.bottom
+                                        anchors.right: parent.right
+                                        //anchors.horizontalCenter: parent.horizontalCenter
+                                        anchors.bottomMargin: -8 // Выходит за границы ячейки
+                                        anchors.rightMargin: 8  // Выходит за границы ячейки
                                         color: "#F3C44A"
-                                        radius: 6
-                                        Layout.alignment: Qt.AlignTop
+                                        radius: 8
+                                        visible: index < 9 // Показываем только для первых 9
+                                        z: 10 // Поверх всех элементов
 
                                         Text {
-                                            text: "◉"
+                                            text: (index + 1).toString()
                                             anchors.centerIn: parent
-                                            font.pointSize: 14
-                                            color: "#1E1E1E"
+                                            font.pointSize: 11
                                             font.bold: true
+                                            color: modelData.id === AppViewModel.selectedSubGoalId ? "#D35400" : "#1E1E1E"
                                         }
                                     }
 
-                                    // Текст SubGoal
-                                    ColumnLayout {
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
-                                        spacing: 2
-
-                                        Text {
-                                            text: modelData.name || "Unnamed SubGoal"
-                                            color: "#FFFFFF"
-                                            font.pointSize: 12
-                                            font.bold: true
-                                            Layout.fillWidth: true
-                                            wrapMode: Text.WordWrap
-                                            maximumLineCount: 2
-                                            elide: Text.ElideRight
-                                        }
-
-                                        Text {
-                                            text: modelData.id === AppViewModel.selectedSubGoalId ? "Selected" : "Click to select"
-                                            color: modelData.id === AppViewModel.selectedSubGoalId ? "#F5D665" : "#AAAAAA"
-                                            font.pointSize: 9
-                                            Layout.fillWidth: true
-                                        }
-                                    }
-
-                                    // Контейнер для кнопок
+                                    // Основное содержимое SubGoal
                                     RowLayout {
-                                        Layout.alignment: Qt.AlignTop
-                                        spacing: 5
+                                        anchors.fill: parent
+                                        anchors.margins: 12
+                                        spacing: 10
 
-                                        // Кнопка редактирования SubGoal
+                                        // Иконка SubGoal
                                         Rectangle {
-                                            width: 25
-                                            height: 25
+                                            width: 30
+                                            height: 30
                                             color: "#F3C44A"
-                                            radius: 12
+                                            radius: 6
+                                            Layout.alignment: Qt.AlignTop
 
                                             Text {
-                                                text: "✎" // Edit icon
+                                                text: "◉"
                                                 anchors.centerIn: parent
-                                                font.pointSize: 12
+                                                font.pointSize: 14
                                                 color: "#1E1E1E"
                                                 font.bold: true
                                             }
-
-                                            MouseArea {
-                                                anchors.fill: parent
-                                                onClicked: {
-                                                    editSubGoalDialog.openForEditing(modelData)
-                                                }
-                                                hoverEnabled: true
-                                                onEntered: parent.color = "#F5D665"
-                                                onExited: parent.color = "#F3C44A"
-                                            }
                                         }
 
-                                        // Кнопка удаления SubGoal
-                                        Rectangle {
-                                            width: 25
-                                            height: 25
-                                            color: "#E95B5B"
-                                            radius: 12
+                                        // Текст SubGoal
+                                        ColumnLayout {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            spacing: 2
 
                                             Text {
-                                                text: "✕"
-                                                anchors.centerIn: parent
-                                                font.pointSize: 12
+                                                text: modelData.name || "Unnamed SubGoal"
                                                 color: "#FFFFFF"
+                                                font.pointSize: 12
                                                 font.bold: true
+                                                Layout.fillWidth: true
+                                                wrapMode: Text.WordWrap
+                                                maximumLineCount: 2
+                                                elide: Text.ElideRight
                                             }
 
-                                            MouseArea {
-                                                anchors.fill: parent
-                                                onClicked: {
-                                                    confirmationDialog.open()
-                                                    confirmationDialog.subGoalToRemove = modelData
+                                            Text {
+                                                text: modelData.id === AppViewModel.selectedSubGoalId ? "Selected" : "Click to select"
+                                                color: modelData.id === AppViewModel.selectedSubGoalId ? "#F5D665" : "#AAAAAA"
+                                                font.pointSize: 9
+                                                Layout.fillWidth: true
+                                            }
+                                        }
+
+                                        // Контейнер для кнопок
+                                        RowLayout {
+                                            Layout.alignment: Qt.AlignTop
+                                            spacing: 5
+
+                                            // Кнопка редактирования SubGoal
+                                            Rectangle {
+                                                width: 25
+                                                height: 25
+                                                color: "#F3C44A"
+                                                radius: 12
+
+                                                Text {
+                                                    text: "✎" // Edit icon
+                                                    anchors.centerIn: parent
+                                                    font.pointSize: 12
+                                                    color: "#1E1E1E"
+                                                    font.bold: true
                                                 }
-                                                hoverEnabled: true
-                                                onEntered: parent.color = "#F76B6B"
-                                                onExited: parent.color = "#E95B5B"
+
+                                                MouseArea {
+                                                    anchors.fill: parent
+                                                    onClicked: {
+                                                        editSubGoalDialog.openForEditing(modelData)
+                                                    }
+                                                    hoverEnabled: true
+                                                    onEntered: parent.color = "#F5D665"
+                                                    onExited: parent.color = "#F3C44A"
+                                                }
+                                            }
+
+                                            // Кнопка удаления SubGoal
+                                            Rectangle {
+                                                width: 25
+                                                height: 25
+                                                color: "#E95B5B"
+                                                radius: 12
+                                                visible: AppViewModel.subGoalsListModel.length > 1
+
+                                                Text {
+                                                    text: "✕"
+                                                    anchors.centerIn: parent
+                                                    font.pointSize: 12
+                                                    color: "#FFFFFF"
+                                                    font.bold: true
+                                                }
+
+                                                MouseArea {
+                                                    anchors.fill: parent
+                                                    onClicked: {
+                                                        confirmationDialog.open()
+                                                        confirmationDialog.subGoalToRemove = modelData
+                                                    }
+                                                    hoverEnabled: true
+                                                    onEntered: parent.color = "#F76B6B"
+                                                    onExited: parent.color = "#E95B5B"
+                                                }
                                             }
                                         }
                                     }
-                                }
 
-                                // Эффект при наведении на весь элемент
-                                MouseArea {
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    onEntered: {
-                                        if (modelData.id !== AppViewModel.selectedSubGoalId) {
-                                            parent.color = "#353535"
+                                    // Эффект при наведении на весь элемент
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        onEntered: {
+                                            if (modelData.id !== AppViewModel.selectedSubGoalId) {
+                                                parent.color = "#353535"
+                                            }
                                         }
-                                    }
-                                    onExited: {
-                                        if (modelData.id !== AppViewModel.selectedSubGoalId) {
-                                            parent.color = "#2D2D2D"
+                                        onExited: {
+                                            if (modelData.id !== AppViewModel.selectedSubGoalId) {
+                                                parent.color = "#2D2D2D"
+                                            }
                                         }
+                                        onClicked: {
+                                            AppViewModel.selectSubGoal(modelData.id)
+                                        }
+                                        z: -1
                                     }
-                                    onClicked: {
-                                        AppViewModel.selectSubGoal(modelData.id)
-                                    }
-                                    z: -1
                                 }
-                            }
                         }
 
                         // Кастомный горизонтальный скроллбар - размещаем ВНУТРИ Rectangle
@@ -529,7 +585,7 @@ ApplicationWindow {
 
                 // Заголовок секции
                 Text {
-                    text: AppViewModel.selectedSubGoalId !== 0 ? AppViewModel.selectedSubGoalName : "No SubGoal Selected"
+                    text: AppViewModel.subGoalsListModel.length > 0 ? AppViewModel.selectedSubGoalName : "No SubGoals Available"
                     color: "#FFFFFF"
                     font.pointSize: 18
                     font.bold: true

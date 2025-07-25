@@ -78,10 +78,6 @@ void AppViewModel::setCurrentGoalDescription(const QString& description) {
 
 // --- Q_INVOKABLE Methods ---
 void AppViewModel::loadData() {
-    m_taskManager.loadFromFile(getTasksFilePath().toStdString());
-    updateGoalProperties();
-    updateSubGoalListModel();
-
     QString dataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QDir dir(dataPath);
     if (!dir.exists()) {
@@ -89,6 +85,15 @@ void AppViewModel::loadData() {
     }
     QString filePath = dataPath + "/tasks.json";
     m_taskManager.loadFromFile(filePath.toStdString());
+
+    updateGoalProperties();
+    updateSubGoalListModel();
+
+    // --- НОВАЯ ЛОГИКА ---
+    // Если список не пуст, выбираем первый SubGoal по умолчанию
+    if (!m_subGoals.empty()) {
+        selectSubGoal(m_subGoals.front().id);
+    }
 }
 
 void AppViewModel::saveData() {
@@ -112,13 +117,12 @@ void AppViewModel::addSubGoal(const QString& name) {
     sg.description = name.toStdString();
     m_taskManager.addSubGoal(sg);
     saveData();
-    updateSubGoalListModel();
+    updateSubGoalListModel(); // Обновляем список в модели
 
-    // Auto-select the new subgoal if it's the first one
-    if (m_selectedSubGoalId == 0 && !m_subGoals.empty()) {
-        m_selectedSubGoalId = m_subGoals.back().id;
-        updateTasksListModel();
-        emit selectedSubGoalChanged();
+    // --- НОВАЯ ЛОГИКА ---
+    // Если это был первый добавленный элемент, выбираем его
+    if (m_subGoals.size() == 1) {
+        selectSubGoal(m_subGoals.back().id);
     }
 }
 
@@ -139,31 +143,55 @@ void AppViewModel::editSubGoal(int id, const QString& newName) {
 }
 
 void AppViewModel::deleteSubGoal(int id) {
-    // Delegate deletion to TaskManager, which handles cascading tasks deletion
-    m_taskManager.deleteSubGoal(id);
+    if (m_subGoals.empty()) return;
 
-    saveData();
-
-    updateSubGoalListModel();
-
-    // Handle selection change
-    if (id == m_selectedSubGoalId) {
-        // If the deleted subgoal was selected, clear selection or select another one
-        // Re-fetch subgoals from TaskManager to get the updated list
-        m_subGoals = m_taskManager.getSubGoals();
-
-        if (!m_subGoals.empty()) {
-            m_selectedSubGoalId = m_subGoals.front().id;
-        } else {
-            m_selectedSubGoalId = 0;
+    // Находим индекс удаляемого элемента
+    int indexToRemove = -1;
+    for (int i = 0; i < m_subGoals.size(); ++i) {
+        if (m_subGoals[i].id == id) {
+            indexToRemove = i;
+            break;
         }
-        updateTasksListModel();
-        emit selectedSubGoalChanged();
-    } else {
-        updateTasksListModel();
     }
 
-    qDebug() << "Deleted subgoal ID:" << id;
+    if (indexToRemove == -1) return; // Элемент не найден
+
+    // --- КЛЮЧЕВАЯ ЛОГИКА ВЫБОРА НОВОГО ЭЛЕМЕНТА ---
+    int newIdToSelect = 0;
+    if (id == m_selectedSubGoalId) { // Если удаляем выбранный элемент
+        if (m_subGoals.size() > 1) {
+            // Если удаляем не первый, выбираем предыдущий.
+            // Если удаляем первый, выбираем новый первый (который был вторым).
+            int newIndex = (indexToRemove > 0) ? (indexToRemove - 1) : 0;
+            // Получаем ID нового элемента ДО удаления старого
+            newIdToSelect = m_subGoals[newIndex].id;
+            // Если удаляли первый, а выбрали новый первый, ID может совпасть.
+            // Поэтому, если удаляем первый, то выбираем следующий за ним.
+            if (indexToRemove == 0) {
+                newIdToSelect = m_subGoals[1].id;
+            }
+        }
+    } else {
+        // Если удаляем НЕ выбранный элемент, то выделение остается на месте
+        newIdToSelect = m_selectedSubGoalId;
+    }
+
+    // Удаляем SubGoal из TaskManager
+    m_taskManager.deleteSubGoal(id);
+    saveData();
+    updateSubGoalListModel(); // Обновляем список m_subGoals
+
+    // Выбираем новый элемент или очищаем, если список пуст
+    if (!m_subGoals.empty()) {
+        selectSubGoal(newIdToSelect);
+    } else {
+        // Список стал пустым
+        m_selectedSubGoalId = 0;
+        updateTasksListModel();
+        emit selectedSubGoalChanged();
+    }
+
+    qDebug() << "Deleted subgoal ID:" << id << ", new selected ID:" << m_selectedSubGoalId;
 }
 
 void AppViewModel::removeSubGoal(const QVariantMap& subGoalData) {
@@ -172,12 +200,28 @@ void AppViewModel::removeSubGoal(const QVariantMap& subGoalData) {
 }
 
 void AppViewModel::selectSubGoal(int id) {
+    // Проверяем, существует ли еще такой ID
+    bool idExists = false;
+    for(const auto& sg : m_subGoals) {
+        if (sg.id == id) {
+            idExists = true;
+            break;
+        }
+    }
+    // Если ID не существует (например, после удаления), но список не пуст, выбираем первый
+    if (!idExists && !m_subGoals.empty()) {
+        id = m_subGoals.front().id;
+    } else if (m_subGoals.empty()) {
+        id = 0; // Список пуст
+    }
+
+
     if (m_selectedSubGoalId != id) {
         m_selectedSubGoalId = id;
         qDebug() << "SubGoal selected:" << m_selectedSubGoalId;
         updateTasksListModel();
         emit selectedSubGoalChanged();
-        emit subGoalsChanged(); // Update UI selection
+        // emit subGoalsChanged(); // Этот сигнал лучше не трогать, чтобы избежать перерисовки всего списка
     }
 }
 
