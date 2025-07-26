@@ -13,7 +13,7 @@ ApplicationWindow {
     maximumWidth: 800
     minimumHeight: 750
     maximumHeight: 750
-    title: "Vision Compass (QML)"
+    title: "Vision Compass"
 
     //flags: Qt.FramelessWindowHint
 
@@ -300,7 +300,7 @@ ApplicationWindow {
                                 delegate: Rectangle {
                                     width: 180
                                     height: 80
-                                    color: modelData.id === AppViewModel.selectedSubGoalId ? "#1c1c1c" : "#2D2D2D"
+                                    color: modelData.id === AppViewModel.selectedSubGoalId ? "#4A4A4A" : "#2D2D2D"
                                     radius: 15
                                     border.color: modelData.id === AppViewModel.selectedSubGoalId ? "#F5D665" : "#F3C44A"
                                     border.width: 2
@@ -324,7 +324,7 @@ ApplicationWindow {
                                             anchors.centerIn: parent
                                             font.pointSize: 11
                                             font.bold: true
-                                            color: modelData.id === AppViewModel.selectedSubGoalId ? "#D35400" : "#1E1E1E"
+                                            color: modelData.id === AppViewModel.selectedSubGoalId ? "#FAF7F3" : "#1E1E1E"
                                         }
                                     }
 
@@ -459,67 +459,76 @@ ApplicationWindow {
                                 }
                         }
 
-                        // Кастомный горизонтальный скроллбар - размещаем ВНУТРИ Rectangle
-                        // Кастомный скроллбар без использования ScrollBar
-                        Rectangle {
-                            id: customScrollBar
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.bottom: parent.bottom
-                            height: 8
-                            color: "#3A3A3A"
-                            border.color: "#444444"
-                            border.width: 1
-                            radius: 4
-
-                            visible: subGoalsList.contentWidth > subGoalsList.width
-
-                            Component.onCompleted: {
-                                // Убеждаемся что радиус применился
-                                radius = 4
-                            }
-
+                            // Кастомный горизонтальный скроллбар - размещаем ВНУТРИ Rectangle
+                            // Кастомный скроллбар без использования ScrollBar
                             Rectangle {
-                                id: scrollHandle
-                                height: parent.height - 1
-                                width: parent.width * 0.3  // Фиксированный размер
-                                y: 1
+                                id: customScrollBar
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.bottom: parent.bottom
+                                height: 8
+                                color: "#3A3A3A"
+                                border.color: "#444444"
+                                border.width: 1
                                 radius: 4
 
+                                visible: subGoalsList.contentWidth > subGoalsList.width
+
+                                // Принудительная установка радиуса при создании
                                 Component.onCompleted: {
-                                    // Принудительно обновляем позицию при загрузке
-                                    x = Qt.binding(function() {
-                                        return subGoalsList.contentWidth > subGoalsList.width ?
-                                               (subGoalsList.contentX / (subGoalsList.contentWidth - subGoalsList.width)) * maxX : 0
-                                    })
+                                    radius = 4
                                 }
 
-                                property real maxX: parent.width - width
-                                x: 1
+                                Rectangle {
+                                    id: scrollHandle
+                                    height: parent.height - 2
+                                    width: parent.width * 0.3  // Фиксированный размер
+                                    y: 1
+                                    radius: 3  // Чуть меньше радиус для лучшего отображения
 
+                                    // Принудительная установка начальной позиции
+                                    Component.onCompleted: {
+                                        radius = 3;
+                                        x = Qt.binding(function() {
+                                            if (subGoalsList.contentWidth <= subGoalsList.width) {
+                                                return 1;
+                                            }
+                                            var ratio = subGoalsList.contentX / (subGoalsList.contentWidth - subGoalsList.width);
+                                            return Math.max(1, Math.min(maxX - 1, ratio * maxX));
+                                        })
+                                    }
 
-                                gradient: Gradient {
-                                    GradientStop { position: 0.0; color: scrollMouseArea.containsMouse ? "#FFD700" : "#F3C44A" }
-                                    GradientStop { position: 0.5; color: scrollMouseArea.containsMouse ? "#FFF200" : "#E8B332" }
-                                    GradientStop { position: 1.0; color: scrollMouseArea.containsMouse ? "#FFED4E" : "#D35400" }
-                                }
+                                    property real maxX: parent.width - width - 2  // Учитываем границы
+                                    x: 1
 
-                                border.color: scrollMouseArea.containsMouse ? "#D4A017" : "#C0392B"
-                                border.width: 1
+                                    // Принудительное обновление при любых изменениях
+                                    onXChanged: radius = 3
+                                    onWidthChanged: radius = 3
+                                    onHeightChanged: radius = 3
 
-                                MouseArea {
-                                    id: scrollMouseArea
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    drag.target: parent
-                                    drag.axis: Drag.XAxis
-                                    drag.minimumX: 1
-                                    drag.maximumX: parent.maxX - 1
+                                    gradient: Gradient {
+                                        GradientStop { position: 0.0; color: scrollMouseArea.containsMouse ? "#FFD700" : "#F3C44A" }
+                                        GradientStop { position: 0.5; color: scrollMouseArea.containsMouse ? "#FFF200" : "#E8B332" }
+                                        GradientStop { position: 1.0; color: scrollMouseArea.containsMouse ? "#FFED4E" : "#D35400" }
+                                    }
 
-                                    onPositionChanged: {
-                                        if (drag.active && subGoalsList.contentWidth > subGoalsList.width) {
-                                            var ratio = parent.x / parent.maxX
-                                            subGoalsList.contentX = ratio * (subGoalsList.contentWidth - subGoalsList.width)
+                                    border.color: scrollMouseArea.containsMouse ? "#D4A017" : "#C0392B"
+                                    border.width: 1
+
+                                    MouseArea {
+                                        id: scrollMouseArea
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        drag.target: parent
+                                        drag.axis: Drag.XAxis
+                                        drag.minimumX: 1
+                                        drag.maximumX: parent.maxX - 1
+
+                                        onPositionChanged: {
+                                            if (drag.active && subGoalsList.contentWidth > subGoalsList.width) {
+                                                var ratio = parent.x / parent.maxX
+                                                subGoalsList.contentX = ratio * (subGoalsList.contentWidth - subGoalsList.width)
+                                            }
                                         }
                                     }
                                 }
@@ -527,7 +536,6 @@ ApplicationWindow {
                         }
                     }
                 }
-            }
             }
 
             // Кнопка добавления SubGoal (справа сверху на желтой области)
