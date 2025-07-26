@@ -297,6 +297,61 @@ ApplicationWindow {
                                 leftMargin: 5
                                 rightMargin: 5
 
+                                // Функция для автоматического скролла к выбранному элементу
+                                function scrollToSelectedItem() {
+                                    if (!AppViewModel.selectedSubGoalId || !AppViewModel.subGoalsListModel) return;
+
+                                    // Находим индекс выбранного элемента
+                                    var selectedIndex = -1;
+                                    for (var i = 0; i < AppViewModel.subGoalsListModel.length; i++) {
+                                        if (AppViewModel.subGoalsListModel[i].id === AppViewModel.selectedSubGoalId) {
+                                            selectedIndex = i;
+                                            break;
+                                        }
+                                    }
+
+                                    if (selectedIndex === -1) return;
+
+                                    // Вычисляем позицию элемента
+                                    var itemWidth = 180; // Ширина элемента
+                                    var itemSpacing = 15; // Расстояние между элементами
+                                    var itemPosition = selectedIndex * (itemWidth + itemSpacing);
+                                    var viewportWidth = subGoalsList.width;
+
+                                    // Вычисляем оптимальную позицию для центрирования элемента
+                                    var targetContentX = itemPosition - (viewportWidth - itemWidth) / 2;
+
+                                    // Ограничиваем позицию границами контента
+                                    var maxContentX = Math.max(0, subGoalsList.contentWidth - viewportWidth);
+                                    targetContentX = Math.max(0, Math.min(maxContentX, targetContentX));
+
+                                    // Плавная анимация к целевой позиции
+                                    scrollAnimation.to = targetContentX;
+                                    scrollAnimation.start();
+                                }
+
+                                // Анимация для плавного скролла
+                                NumberAnimation {
+                                    id: scrollAnimation
+                                    target: subGoalsList
+                                    property: "contentX"
+                                    duration: 300
+                                    easing.type: Easing.OutCubic
+                                }
+
+                                // Отслеживаем изменения выбранной SubGoal
+                                Connections {
+                                    target: AppViewModel
+                                    function onSelectedSubGoalIdChanged() {
+                                        Qt.callLater(subGoalsList.scrollToSelectedItem);
+                                    }
+                                }
+
+                                // Также вызываем скролл при загрузке модели
+                                onModelChanged: {
+                                    Qt.callLater(scrollToSelectedItem);
+                                }
+
                                 delegate: Rectangle {
                                     width: 180
                                     height: 80
@@ -318,6 +373,23 @@ ApplicationWindow {
                                         radius: 8
                                         visible: index < 9 // Показываем только для первых 9
                                         z: 10 // Поверх всех элементов
+
+                                        //border.color: modelData.id === AppViewModel.selectedSubGoalId ? "#FFFFFF" : "transparent"
+                                        //border.width: modelData.id === AppViewModel.selectedSubGoalId ? 2 : 0
+
+                                        // Черная тень для цифры выбранной subgoal
+                                            Text {
+                                                text: (index + 1).toString()
+                                                anchors.centerIn: parent
+                                                anchors.horizontalCenterOffset: 1
+                                                anchors.verticalCenterOffset: 1
+                                                font.pointSize: 11
+                                                font.bold: true
+                                                color: "black"
+                                                opacity: modelData.id === AppViewModel.selectedSubGoalId ? 0.6 : 0
+                                                z: 0
+                                            }
+
 
                                         Text {
                                             text: (index + 1).toString()
@@ -457,8 +529,7 @@ ApplicationWindow {
                                         z: -1
                                     }
                                 }
-                        }
-
+                            }
                             // Кастомный горизонтальный скроллбар - размещаем ВНУТРИ Rectangle
                             // Кастомный скроллбар без использования ScrollBar
                             Rectangle {

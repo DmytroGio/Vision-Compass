@@ -1,4 +1,4 @@
-﻿## 2025-06-20
+## 2025-06-20
 ### Future features ⸜(｡˃ ᵕ ˂)⸝♡
 - Integration of Json format, place txt [done]
 - Persistent Unique IDs? Ensure that task IDs are unique and not reused, even after deletions.
@@ -63,5 +63,8 @@ To see the global goals of life and plan according to them.
 - Future planning and analysis for the next phase of UI/UX improvements.
 
 ## 2025-07-24
-- Make SubGoal permanently selected. A SubGoal must always be selected—by default, the first one when the program is launched. Without "No SubGoal Selected"
-- Make shortcuts for the first 9 Subgoals (numbers from 1 to 9)
+- Make SubGoal permanently selected. A SubGoal must always be selected—by default, the first one when the program is launched. Without "No SubGoal Selected" [done]
+- Make shortcuts for the first 9 Subgoals (numbers from 1 to 9) [done]
+
+## 2025-07-26
+- Scrollbar offset for selected shortcut Subgoal
