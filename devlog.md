@@ -67,4 +67,4 @@ To see the global goals of life and plan according to them.
 - Make shortcuts for the first 9 Subgoals (numbers from 1 to 9) [done]
 
 ## 2025-07-26
-- Scrollbar offset for selected shortcut Subgoal
+- Scrollbar offset for selected shortcut Subgoal [done]

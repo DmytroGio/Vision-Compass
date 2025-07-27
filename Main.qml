@@ -353,12 +353,45 @@ ApplicationWindow {
                                 }
 
                                 delegate: Rectangle {
+                                    id: subGoalItem
                                     width: 180
                                     height: 80
-                                    color: modelData.id === AppViewModel.selectedSubGoalId ? "#4A4A4A" : "#2D2D2D"
                                     radius: 15
-                                    border.color: modelData.id === AppViewModel.selectedSubGoalId ? "#F5D665" : "#F3C44A"
                                     border.width: 2
+
+                                    property bool isSelected: modelData.id === AppViewModel.selectedSubGoalId
+                                    property bool isHovered: false
+
+                                    // Основной фон - всегда одинаковый для выбранного элемента
+                                    color: isSelected ? "transparent" : "#2D2D2D"
+                                    border.color: isSelected ? "#FF8C00" : "#F3C44A"
+
+                                    // Градиентный фон для выбранного элемента
+                                    Rectangle {
+                                        anchors.fill: parent
+                                        radius: parent.radius
+                                        visible: isSelected
+                                        gradient: Gradient {
+                                            GradientStop { position: 0.0; color: "#FF8C00" }
+                                            GradientStop { position: 0.3; color: "#FF7F00" }
+                                            GradientStop { position: 0.7; color: "#FF6500" }
+                                            GradientStop { position: 1.0; color: "#E55B00" }
+                                        }
+                                        opacity: 0.8
+                                    }
+
+                                    // Эффект при наведении для НЕвыбранных элементов
+                                    Rectangle {
+                                        anchors.fill: parent
+                                        radius: parent.radius
+                                        gradient: Gradient {
+                                            GradientStop { position: 0.0; color: "#B8860B" }
+                                            GradientStop { position: 0.5; color: "#CD853F" }
+                                            GradientStop { position: 1.0; color: "#A0522D" }
+                                        }
+                                        opacity: 0.6
+                                        visible: !isSelected && isHovered
+                                    }
 
                                     // Номер шортката (внизу справа, выходит за границы)
                                     Rectangle {
@@ -366,37 +399,32 @@ ApplicationWindow {
                                         height: 24
                                         anchors.bottom: parent.bottom
                                         anchors.right: parent.right
-                                        //anchors.horizontalCenter: parent.horizontalCenter
-                                        anchors.bottomMargin: -8 // Выходит за границы ячейки
-                                        anchors.rightMargin: 8  // Выходит за границы ячейки
+                                        anchors.bottomMargin: -8
+                                        anchors.rightMargin: 8
                                         color: "#F3C44A"
                                         radius: 8
-                                        visible: index < 9 // Показываем только для первых 9
-                                        z: 10 // Поверх всех элементов
-
-                                        //border.color: modelData.id === AppViewModel.selectedSubGoalId ? "#FFFFFF" : "transparent"
-                                        //border.width: modelData.id === AppViewModel.selectedSubGoalId ? 2 : 0
+                                        visible: index < 9
+                                        z: 10
 
                                         // Черная тень для цифры выбранной subgoal
-                                            Text {
-                                                text: (index + 1).toString()
-                                                anchors.centerIn: parent
-                                                anchors.horizontalCenterOffset: 1
-                                                anchors.verticalCenterOffset: 1
-                                                font.pointSize: 11
-                                                font.bold: true
-                                                color: "black"
-                                                opacity: modelData.id === AppViewModel.selectedSubGoalId ? 0.6 : 0
-                                                z: 0
-                                            }
-
+                                        Text {
+                                            text: (index + 1).toString()
+                                            anchors.centerIn: parent
+                                            anchors.horizontalCenterOffset: 1
+                                            anchors.verticalCenterOffset: 1
+                                            font.pointSize: 11
+                                            font.bold: true
+                                            color: "black"
+                                            opacity: subGoalItem.isSelected ? 0.6 : 0
+                                            z: 0
+                                        }
 
                                         Text {
                                             text: (index + 1).toString()
                                             anchors.centerIn: parent
                                             font.pointSize: 11
                                             font.bold: true
-                                            color: modelData.id === AppViewModel.selectedSubGoalId ? "#FAF7F3" : "#1E1E1E"
+                                            color: subGoalItem.isSelected ? "#FAF7F3" : "#1E1E1E"
                                         }
                                     }
 
@@ -405,23 +433,6 @@ ApplicationWindow {
                                         anchors.fill: parent
                                         anchors.margins: 12
                                         spacing: 10
-
-                                        // Иконка SubGoal
-                                        Rectangle {
-                                            width: 30
-                                            height: 30
-                                            color: "#F3C44A"
-                                            radius: 6
-                                            Layout.alignment: Qt.AlignTop
-
-                                            Text {
-                                                text: "◉"
-                                                anchors.centerIn: parent
-                                                font.pointSize: 14
-                                                color: "#1E1E1E"
-                                                font.bold: true
-                                            }
-                                        }
 
                                         // Текст SubGoal
                                         ColumnLayout {
@@ -439,13 +450,6 @@ ApplicationWindow {
                                                 maximumLineCount: 2
                                                 elide: Text.ElideRight
                                             }
-
-                                            Text {
-                                                text: modelData.id === AppViewModel.selectedSubGoalId ? "Selected" : "Click to select"
-                                                color: modelData.id === AppViewModel.selectedSubGoalId ? "#F5D665" : "#AAAAAA"
-                                                font.pointSize: 9
-                                                Layout.fillWidth: true
-                                            }
                                         }
 
                                         // Контейнер для кнопок
@@ -461,7 +465,7 @@ ApplicationWindow {
                                                 radius: 12
 
                                                 Text {
-                                                    text: "✎" // Edit icon
+                                                    text: "✎"
                                                     anchors.centerIn: parent
                                                     font.pointSize: 12
                                                     color: "#1E1E1E"
@@ -509,19 +513,15 @@ ApplicationWindow {
                                         }
                                     }
 
-                                    // Эффект при наведении на весь элемент
+                                    // MouseArea для выбора и эффектов наведения
                                     MouseArea {
                                         anchors.fill: parent
                                         hoverEnabled: true
                                         onEntered: {
-                                            if (modelData.id !== AppViewModel.selectedSubGoalId) {
-                                                parent.color = "#353535"
-                                            }
+                                            subGoalItem.isHovered = true
                                         }
                                         onExited: {
-                                            if (modelData.id !== AppViewModel.selectedSubGoalId) {
-                                                parent.color = "#2D2D2D"
-                                            }
+                                            subGoalItem.isHovered = false
                                         }
                                         onClicked: {
                                             AppViewModel.selectSubGoal(modelData.id)
@@ -662,56 +662,66 @@ ApplicationWindow {
                 anchors.margins: 20
                 spacing: 15
 
-                // Заголовок секции
-                Text {
-                    text: AppViewModel.subGoalsListModel.length > 0 ? AppViewModel.selectedSubGoalName : "No SubGoals Available"
-                    color: "#FFFFFF"
-                    font.pointSize: 18
-                    font.bold: true
-                    Layout.alignment: Qt.AlignLeft
-                }
-
-                // Кнопка добавления новой задачи
-                Rectangle {
+                // Заголовок секции с кнопкой добавления
+                RowLayout {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 60
-                    color: "#3A3A3A"
-                    radius: 15
-                    border.color: "#F3C44A"
-                    border.width: 2
+                    Layout.preferredHeight: 50
 
-                    Rectangle {
-                        anchors.centerIn: parent
-                        width: 40
-                        height: 40
-                        radius: 20
-                        color: "#F3C44A"
-
-                        Text {
-                            text: "+"
-                            anchors.centerIn: parent
-                            font.pointSize: 24
-                            font.bold: true
-                            color: "#1E1E1E"
-                        }
-                    }
-
+                    // Заголовок слева
                     Text {
-                        text: "Add New Task"
-                        anchors.centerIn: parent
-                        anchors.leftMargin: 60
+                        text: AppViewModel.subGoalsListModel.length > 0 ? AppViewModel.selectedSubGoalName : "No SubGoals Available"
                         color: "#FFFFFF"
-                        font.pointSize: 14
+                        font.pointSize: 18
+                        font.bold: true
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignVCenter
                     }
 
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: {
-                            addTaskDialog.open()
+                    // Кнопка добавления справа
+                    Rectangle {
+                        Layout.preferredWidth: 150
+                        Layout.preferredHeight: 40
+                        color: "#3A3A3A"
+                        radius: 10
+                        border.color: "#F3C44A"
+                        border.width: 2
+
+                        RowLayout {
+                            anchors.centerIn: parent
+                            spacing: 8
+
+                            Rectangle {
+                                width: 24
+                                height: 24
+                                radius: 12
+                                color: "#F3C44A"
+
+                                Text {
+                                    text: "+"
+                                    anchors.centerIn: parent
+                                    font.pointSize: 16
+                                    font.bold: true
+                                    color: "#1E1E1E"
+                                }
+                            }
+
+                            Text {
+                                text: "Add Task"
+                                color: "#FFFFFF"
+                                font.pointSize: 12
+                                font.bold: true
+                            }
                         }
-                        hoverEnabled: true
-                        onEntered: parent.color = "#4A4A4A"
-                        onExited: parent.color = "#3A3A3A"
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                addTaskDialog.open()
+                            }
+                            hoverEnabled: true
+                            onEntered: parent.color = "#4A4A4A"
+                            onExited: parent.color = "#3A3A3A"
+                        }
                     }
                 }
 
@@ -896,7 +906,7 @@ ApplicationWindow {
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         anchors.right: parent.right
-                        width: 12
+                        width: 8
                         color: "#3A3A3A"
                         border.color: "#444444"
                         border.width: 1
