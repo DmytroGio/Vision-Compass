@@ -105,45 +105,48 @@ ApplicationWindow {
                     Layout.leftMargin: 10
                     Layout.fillWidth: true // Занимает всё доступное пространство
                 }
-
                 // Кнопка свернуть
-                Button {
-                    text: "—" // Символ для свернуть
-                    font.bold: true
+                Rectangle {
                     width: 40
                     height: parent.height
-                    contentItem: Text {
-                        text: parent.text
+                    color: minimizeMouseArea.containsMouse ? "#3A3A3A" : "#1E1E1E"
+
+                    Text {
+                        text: "—"
                         color: "white"
                         font.bold: true
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
+                        font.pointSize: 12
+                        anchors.centerIn: parent
+                    }
+
+                    MouseArea {
+                        id: minimizeMouseArea
                         anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: mainWindow.showMinimized()
                     }
-                    background: Rectangle {
-                        color: parent.hovered ? "#4A4A4A" : "#1E1E1E"
-                    }
-                    onClicked: mainWindow.showMinimized()
                 }
 
                 // Кнопка закрыть
-                Button {
-                    text: "✕" // Символ для закрыть
-                    font.bold: true
+                Rectangle {
                     width: 40
                     height: parent.height
-                    contentItem: Text {
-                        text: parent.text
+                    color: closeMouseArea.containsMouse ? "#CC4444" : "#1E1E1E"
+
+                    Text {
+                        text: "✕"
                         color: "white"
                         font.bold: true
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
+                        font.pointSize: 12
+                        anchors.centerIn: parent
+                    }
+
+                    MouseArea {
+                        id: closeMouseArea
                         anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: mainWindow.close()
                     }
-                    background: Rectangle {
-                        color: parent.hovered ? "red" : "#1E1E1E" // Красный при наведении
-                    }
-                    onClicked: mainWindow.close()
                 }
             }
         }
@@ -690,21 +693,6 @@ ApplicationWindow {
                             anchors.centerIn: parent
                             spacing: 8
 
-                            Rectangle {
-                                width: 24
-                                height: 24
-                                radius: 12
-                                color: "#F3C44A"
-
-                                Text {
-                                    text: "+"
-                                    anchors.centerIn: parent
-                                    font.pointSize: 16
-                                    font.bold: true
-                                    color: "#1E1E1E"
-                                }
-                            }
-
                             Text {
                                 text: "Add Task"
                                 color: "#FFFFFF"
@@ -1077,9 +1065,9 @@ ApplicationWindow {
             open();
             // Set text after dialog is opened to ensure the component is loaded
             Qt.callLater(function() {
-                let nameField = editSubGoalDialog.contentItem.children[1].item;
-                if (nameField) {
-                    nameField.text = itemData.name;
+                let nameField = editSubGoalDialog.contentItem.children[0].children[1].item;
+                if (nameField && itemData) {
+                    nameField.text = itemData.name || "";
                     nameField.selectAll();
                     nameField.forceActiveFocus();
                 }
@@ -1089,6 +1077,7 @@ ApplicationWindow {
         content: Component {
             TextField {
                 id: editNameField
+                text: editSubGoalDialog.subGoalToEdit ? (editSubGoalDialog.subGoalToEdit.name || "") : ""
                 placeholderText: "Edit sub-goal name..."
                 Layout.fillWidth: true
                 Layout.preferredHeight: 45
@@ -1225,9 +1214,9 @@ ApplicationWindow {
             open();
             // Set text after dialog is opened to ensure the component is loaded
             Qt.callLater(function() {
-                let nameField = editTaskDialog.contentItem.children[1].item;
-                if (nameField) {
-                    nameField.text = itemData.name;
+                let nameField = editTaskDialog.contentItem.children[0].children[1].item;
+                if (nameField && itemData) {
+                    nameField.text = itemData.name || "";
                     nameField.selectAll();
                     nameField.forceActiveFocus();
                 }
@@ -1237,6 +1226,7 @@ ApplicationWindow {
         content: Component {
             TextField {
                 id: editTaskNameField
+                text: editTaskDialog.taskToEdit ? (editTaskDialog.taskToEdit.name || "") : ""
                 placeholderText: "Edit task name..."
                 Layout.fillWidth: true
                 Layout.preferredHeight: 45
