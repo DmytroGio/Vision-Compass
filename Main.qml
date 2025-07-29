@@ -244,10 +244,11 @@ ApplicationWindow {
                     // Заголовок секции SubGoals
                     Text {
                         text: "Sub Goals"
-                        color: "#FFFFFF"
-                        font.pointSize: 14
+                        color: "#F5D665"  // Светлее желтого круга
+                        font.pointSize: 17
                         font.bold: true
-                        Layout.alignment: Qt.AlignLeft
+                        anchors.left: parent.left
+                        anchors.leftMargin: parent.width / 4.5
                     }
 
                     // Контейнер для горизонтального скролла SubGoals
