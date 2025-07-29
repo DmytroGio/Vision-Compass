@@ -356,6 +356,7 @@ ApplicationWindow {
                                     Qt.callLater(scrollToSelectedItem);
                                 }
 
+
                                 delegate: Rectangle {
                                     id: subGoalItem
                                     width: 180
@@ -366,23 +367,19 @@ ApplicationWindow {
                                     property bool isSelected: modelData.id === AppViewModel.selectedSubGoalId
                                     property bool isHovered: false
 
-                                    // Основной фон - всегда одинаковый для выбранного элемента
-                                    color: isSelected ? "transparent" : "#2D2D2D"
-                                    border.color: isSelected ? "#FF8C00" : "#F3C44A"
-
-                                    // Градиентный фон для выбранного элемента
                                     Rectangle {
-                                        anchors.fill: parent
-                                        radius: parent.radius
-                                        visible: isSelected
-                                        gradient: Gradient {
-                                            GradientStop { position: 0.0; color: "#FF8C00" }
-                                            GradientStop { position: 0.3; color: "#FF7F00" }
-                                            GradientStop { position: 0.7; color: "#FF6500" }
-                                            GradientStop { position: 1.0; color: "#E55B00" }
+                                            anchors.fill: parent
+                                            anchors.topMargin: isSelected ? 8 : 4
+                                            anchors.leftMargin: isSelected ? 8 : 4
+                                            radius: parent.radius
+                                            color: "#000000"
+                                            opacity: isSelected ? 0.6 : 0.4
+                                            z: -1
                                         }
-                                        opacity: 0.8
-                                    }
+
+                                    // Основной фон
+                                    color: isSelected ? "#F3C44A" : "#2D2D2D"
+                                    border.color: isSelected ? "#F5D665" : "#F3C44A"
 
                                     // Эффект при наведении для НЕвыбранных элементов
                                     Rectangle {
@@ -428,7 +425,7 @@ ApplicationWindow {
                                             anchors.centerIn: parent
                                             font.pointSize: 11
                                             font.bold: true
-                                            color: subGoalItem.isSelected ? "#FAF7F3" : "#1E1E1E"
+                                            color: subGoalItem.isSelected ? "#1E1E1E" : "#1E1E1E"
                                         }
                                     }
 
@@ -446,7 +443,7 @@ ApplicationWindow {
 
                                             Text {
                                                 text: modelData.name || "Unnamed SubGoal"
-                                                color: "#FFFFFF"
+                                                color: subGoalItem.isSelected ? "#1E1E1E" : "#FFFFFF"
                                                 font.pointSize: 12
                                                 font.bold: true
                                                 Layout.fillWidth: true
@@ -465,14 +462,14 @@ ApplicationWindow {
                                             Rectangle {
                                                 width: 25
                                                 height: 25
-                                                color: "#F3C44A"
+                                                color: subGoalItem.isSelected ? "#1E1E1E" : "#F3C44A"
                                                 radius: 12
 
                                                 Text {
                                                     text: "✎"
                                                     anchors.centerIn: parent
                                                     font.pointSize: 12
-                                                    color: "#1E1E1E"
+                                                    color: subGoalItem.isSelected ? "#F3C44A" : "#1E1E1E"
                                                     font.bold: true
                                                 }
 
@@ -482,8 +479,8 @@ ApplicationWindow {
                                                         editSubGoalDialog.openForEditing(modelData)
                                                     }
                                                     hoverEnabled: true
-                                                    onEntered: parent.color = "#F5D665"
-                                                    onExited: parent.color = "#F3C44A"
+                                                    onEntered: parent.color = subGoalItem.isSelected ? "#2D2D2D" : "#F5D665"
+                                                    onExited: parent.color = subGoalItem.isSelected ? "#1E1E1E" : "#F3C44A"
                                                 }
                                             }
 
