@@ -68,3 +68,6 @@ To see the global goals of life and plan according to them.
 
 ## 2025-07-26
 - Scrollbar offset for selected shortcut Subgoal [done]
+
+## 2025-07-30
+- Change the color of the Main Task when hovering over it

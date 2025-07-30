@@ -385,11 +385,7 @@ ApplicationWindow {
                                     Rectangle {
                                         anchors.fill: parent
                                         radius: parent.radius
-                                        gradient: Gradient {
-                                            GradientStop { position: 0.0; color: "#B8860B" }
-                                            GradientStop { position: 0.5; color: "#CD853F" }
-                                            GradientStop { position: 1.0; color: "#A0522D" }
-                                        }
+                                        color: "#FF8C42"  // Оранжевый цвет
                                         opacity: 0.6
                                         visible: !isSelected && isHovered
                                     }
@@ -458,12 +454,20 @@ ApplicationWindow {
                                             Layout.alignment: Qt.AlignTop
                                             spacing: 5
 
+
                                             // Кнопка редактирования SubGoal
                                             Rectangle {
+                                                id: editButton
                                                 width: 25
                                                 height: 25
-                                                color: subGoalItem.isSelected ? "#1E1E1E" : "#F3C44A"
                                                 radius: 12
+
+                                                // Стабильная логика цвета: зависит только от состояния выбора и наведения
+                                                property bool isHovered: false
+                                                property color baseColor: subGoalItem.isSelected ? "#1E1E1E" : "#F3C44A"
+                                                property color hoveredColor: subGoalItem.isSelected ? "#2D2D2D" : "#F5D665"
+
+                                                color: isHovered ? hoveredColor : baseColor
 
                                                 Text {
                                                     text: "✎"
@@ -475,15 +479,21 @@ ApplicationWindow {
 
                                                 MouseArea {
                                                     anchors.fill: parent
+                                                    hoverEnabled: true
+
                                                     onClicked: {
                                                         editSubGoalDialog.openForEditing(modelData)
                                                     }
-                                                    hoverEnabled: true
-                                                    onEntered: parent.color = subGoalItem.isSelected ? "#2D2D2D" : "#F5D665"
-                                                    onExited: parent.color = subGoalItem.isSelected ? "#1E1E1E" : "#F3C44A"
+
+                                                    onEntered: {
+                                                        editButton.isHovered = true
+                                                    }
+
+                                                    onExited: {
+                                                        editButton.isHovered = false
+                                                    }
                                                 }
                                             }
-
                                             // Кнопка удаления SubGoal
                                             Rectangle {
                                                 width: 25
@@ -578,11 +588,7 @@ ApplicationWindow {
                                     onWidthChanged: radius = 3
                                     onHeightChanged: radius = 3
 
-                                    gradient: Gradient {
-                                        GradientStop { position: 0.0; color: scrollMouseArea.containsMouse ? "#FFD700" : "#F3C44A" }
-                                        GradientStop { position: 0.5; color: scrollMouseArea.containsMouse ? "#FFF200" : "#E8B332" }
-                                        GradientStop { position: 1.0; color: scrollMouseArea.containsMouse ? "#FFED4E" : "#D35400" }
-                                    }
+                                    color: scrollMouseArea.containsMouse ? "#FF8C42" : "#F3C44A"
 
                                     border.color: scrollMouseArea.containsMouse ? "#D4A017" : "#C0392B"
                                     border.width: 1
@@ -929,11 +935,7 @@ ApplicationWindow {
                             property real maxY: parent.height - height
                             y: 1
 
-                            gradient: Gradient {
-                                GradientStop { position: 0.0; color: verticalScrollMouseArea.containsMouse ? "#FFD700" : "#F3C44A" }
-                                GradientStop { position: 0.5; color: verticalScrollMouseArea.containsMouse ? "#FFF200" : "#E8B332" }
-                                GradientStop { position: 1.0; color: verticalScrollMouseArea.containsMouse ? "#FFED4E" : "#D35400" }
-                            }
+                            color: verticalScrollMouseArea.containsMouse ? "#FF8C42" : "#F3C44A"
 
                             border.color: verticalScrollMouseArea.containsMouse ? "#D4A017" : "#C0392B"
                             border.width: 1
