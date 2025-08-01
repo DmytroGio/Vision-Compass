@@ -222,7 +222,25 @@ ApplicationWindow {
                         editGoalDialog.open()
                     }
                     hoverEnabled: true
-                    onEntered: parent.color = "#F76B6B"
+
+                    // Проверяем, находится ли курсор внутри круга
+                    property bool isInsideCircle: {
+                        var centerX = width / 2
+                        var centerY = height / 2
+                        var radius = Math.min(width, height) / 2
+                        var dx = mouseX - centerX
+                        var dy = mouseY - centerY
+                        return (dx * dx + dy * dy) <= (radius * radius)
+                    }
+
+                    onPositionChanged: {
+                        if (isInsideCircle && !parent.color.toString().includes("#FF8C42")) {
+                            parent.color = "#FF8C42"
+                        } else if (!isInsideCircle && !parent.color.toString().includes("#E95B5B")) {
+                            parent.color = "#E95B5B"
+                        }
+                    }
+
                     onExited: parent.color = "#E95B5B"
                 }
             }
@@ -619,11 +637,12 @@ ApplicationWindow {
             // Кнопка добавления SubGoal (справа сверху на желтой области)
             Rectangle {
                 id: addSubGoalButtonTop
-                width: 50
-                height: 50
-                anchors.top: parent.top
-                anchors.right: parent.right
-                anchors.margins: 15
+                    width: 50
+                    height: 50
+                    anchors.bottom: subGoalsContainer.top
+                    anchors.right: parent.right
+                    anchors.bottomMargin: 20
+                    anchors.rightMargin: 80
                 color: "#2D2D2D"
                 radius: 25
                 border.color: "#F3C44A"
@@ -639,6 +658,7 @@ ApplicationWindow {
                     Text {
                         text: "+"
                         anchors.centerIn: parent
+                        anchors.verticalCenterOffset: -2  // Поднимаем на 2 пикселя вверх
                         font.pointSize: 18
                         font.bold: true
                         color: "#1E1E1E"
