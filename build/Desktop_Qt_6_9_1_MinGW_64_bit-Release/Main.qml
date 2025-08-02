@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls 2.15
 import QtQuick.Layouts
 import QtQuick.Window
 
@@ -79,6 +79,17 @@ ApplicationWindow {
             Layout.fillWidth: true
             height: 30 // Высота нашей кастомной полоски
             color: "#1E1E1E" // Цвет, соответствующий твоему дизайну
+
+            Image {
+                id: windowIcon
+                source: "qrc:/VisionCompass/icons/compass-icon.png" // ✨ Вот так нужно указать путь!
+                width: 20
+                height: 20
+                anchors.left: parent.left
+                anchors.leftMargin: 110
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
             // Установи dragging для перемещения окна
             MouseArea {
                 anchors.fill: parent

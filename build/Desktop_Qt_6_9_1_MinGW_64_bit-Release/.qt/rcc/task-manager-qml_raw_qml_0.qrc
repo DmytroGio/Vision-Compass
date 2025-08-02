@@ -2,6 +2,7 @@
   <qresource prefix="/VisionCompass/">
     <file alias="Main.qml">E:/Projects/C++/task-manager/Main.qml</file>
     <file alias="Screen01.qml">E:/Projects/C++/task-manager/Screen01.qml</file>
+    <file alias="CustomDialog.qml">E:/Projects/C++/task-manager/CustomDialog.qml</file>
   </qresource>
 </RCC>
 

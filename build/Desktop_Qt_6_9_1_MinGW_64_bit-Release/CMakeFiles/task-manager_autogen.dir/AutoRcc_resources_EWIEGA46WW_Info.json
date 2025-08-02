@@ -11,7 +11,8 @@
 	[
 		"E:/Projects/C++/task-manager/Main.qml",
 		"E:/Projects/C++/task-manager/CustomDialog.qml",
-		"E:/Projects/C++/task-manager/Screen01.qml"
+		"E:/Projects/C++/task-manager/Screen01.qml",
+		"E:/Projects/C++/task-manager/icons/compass-icon.png"
 	],
 	"LOCK_FILE" : "E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/CMakeFiles/task-manager_autogen.dir/AutoRcc_resources_EWIEGA46WW_Lock.lock",
 	"MULTI_CONFIG" : false,

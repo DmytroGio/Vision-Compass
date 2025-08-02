@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 
 
     QQuickWindow::setDefaultAlphaBuffer(true);
-    app.setWindowIcon(QIcon(":/VisionCompass/icons/compass-icon.png"));
+    app.setWindowIcon(QIcon(":/icons/compass-icon.png"));
 
     QCoreApplication::setOrganizationName("DmytroVision");
     QCoreApplication::setApplicationName("VisionCompass");

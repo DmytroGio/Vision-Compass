@@ -3,6 +3,7 @@
         <file>Main.qml</file>
         <file>Screen01.qml</file>
         <file>CustomDialog.qml</file>
+        <file>icons/compass-icon.png</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

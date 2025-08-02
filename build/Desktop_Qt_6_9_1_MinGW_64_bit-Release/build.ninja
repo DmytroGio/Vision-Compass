@@ -47,7 +47,7 @@ cmake_ninja_workdir = E$:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW
 #############################################
 # Order-only phony target for task-manager-qml
 
-build cmake_object_order_depends_target_task-manager-qml: phony || .qt/rcc/qrc_qmake_VisionCompass.cpp .qt/rcc/qrc_task-manager-qml_raw_qml_0.cpp .rcc/qmlcache/task-manager-qml_Main_qml.cpp .rcc/qmlcache/task-manager-qml_Main_qml.cpp.aotstats .rcc/qmlcache/task-manager-qml_Screen01_qml.cpp .rcc/qmlcache/task-manager-qml_Screen01_qml.cpp.aotstats .rcc/qmlcache/task-manager-qml_qmlcache_loader.cpp meta_types/qt6task-manager-qml_release_metatypes.json meta_types/qt6task-manager-qml_release_metatypes.json.gen meta_types/task-manager-qml_json_file_list.txt meta_types/task-manager-qml_json_file_list.txt.timestamp task-manager-qml.qmltypes task-manager-qml_autogen task-manager-qml_autogen/mocs_compilation.cpp task-manager-qml_autogen/timestamp task-manager-qml_autogen_timestamp_deps task-manager-qml_copy_qml task-manager-qml_copy_res task-manager-qml_qmltyperegistrations.cpp
+build cmake_object_order_depends_target_task-manager-qml: phony || .qt/rcc/qrc_qmake_VisionCompass.cpp .qt/rcc/qrc_task-manager-qml_raw_qml_0.cpp .rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp .rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp.aotstats .rcc/qmlcache/task-manager-qml_Main_qml.cpp .rcc/qmlcache/task-manager-qml_Main_qml.cpp.aotstats .rcc/qmlcache/task-manager-qml_Screen01_qml.cpp .rcc/qmlcache/task-manager-qml_Screen01_qml.cpp.aotstats .rcc/qmlcache/task-manager-qml_qmlcache_loader.cpp meta_types/qt6task-manager-qml_release_metatypes.json meta_types/qt6task-manager-qml_release_metatypes.json.gen meta_types/task-manager-qml_json_file_list.txt meta_types/task-manager-qml_json_file_list.txt.timestamp task-manager-qml.qmltypes task-manager-qml_autogen task-manager-qml_autogen/mocs_compilation.cpp task-manager-qml_autogen/timestamp task-manager-qml_autogen_timestamp_deps task-manager-qml_copy_qml task-manager-qml_copy_res task-manager-qml_qmltyperegistrations.cpp
 
 build CMakeFiles/task-manager-qml.dir/task-manager-qml_autogen/mocs_compilation.cpp.obj: CXX_COMPILER__task-manager-qml_unscanned_Release E$:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/task-manager-qml_autogen/mocs_compilation.cpp || cmake_object_order_depends_target_task-manager-qml
   DEFINES = -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_QMLINTEGRATION_LIB -DQT_QML_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64 -Dtask_manager_qml_EXPORTS
@@ -97,6 +97,14 @@ build CMakeFiles/task-manager-qml.dir/build/Desktop_Qt_6_9_1_MinGW_64_bit-Releas
   OBJECT_DIR = CMakeFiles\task-manager-qml.dir
   OBJECT_FILE_DIR = CMakeFiles\task-manager-qml.dir\build\Desktop_Qt_6_9_1_MinGW_64_bit-Release\.rcc\qmlcache
 
+build CMakeFiles/task-manager-qml.dir/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp.obj: CXX_COMPILER__task-manager-qml_unscanned_Release E$:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp || cmake_object_order_depends_target_task-manager-qml
+  DEFINES = -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_QMLINTEGRATION_LIB -DQT_QML_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64 -Dtask_manager_qml_EXPORTS
+  DEP_FILE = CMakeFiles\task-manager-qml.dir\build\Desktop_Qt_6_9_1_MinGW_64_bit-Release\.rcc\qmlcache\task-manager-qml_CustomDialog_qml.cpp.obj.d
+  FLAGS = -O3 -DNDEBUG -std=gnu++17 -fdiagnostics-color=always
+  INCLUDES = -IE:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/task-manager-qml_autogen/include -IE:/Projects/C++/task-manager -isystem C:/Qt/6.9.1/mingw_64/include/QtQml/6.9.1 -isystem C:/Qt/6.9.1/mingw_64/include/QtQml/6.9.1/QtQml -isystem C:/Qt/6.9.1/mingw_64/include/QtCore/6.9.1 -isystem C:/Qt/6.9.1/mingw_64/include/QtCore/6.9.1/QtCore -isystem C:/Qt/6.9.1/mingw_64/include/QtCore -isystem C:/Qt/6.9.1/mingw_64/include -isystem C:/Qt/6.9.1/mingw_64/mkspecs/win32-g++ -isystem C:/Qt/6.9.1/mingw_64/include/QtQml -isystem C:/Qt/6.9.1/mingw_64/include/QtQmlIntegration -isystem C:/Qt/6.9.1/mingw_64/include/QtNetwork
+  OBJECT_DIR = CMakeFiles\task-manager-qml.dir
+  OBJECT_FILE_DIR = CMakeFiles\task-manager-qml.dir\build\Desktop_Qt_6_9_1_MinGW_64_bit-Release\.rcc\qmlcache
+
 build CMakeFiles/task-manager-qml.dir/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.qt/rcc/qrc_task-manager-qml_raw_qml_0.cpp.obj: CXX_COMPILER__task-manager-qml_unscanned_Release E$:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.qt/rcc/qrc_task-manager-qml_raw_qml_0.cpp || cmake_object_order_depends_target_task-manager-qml
   DEFINES = -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_QMLINTEGRATION_LIB -DQT_QML_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64 -Dtask_manager_qml_EXPORTS
   DEP_FILE = CMakeFiles\task-manager-qml.dir\build\Desktop_Qt_6_9_1_MinGW_64_bit-Release\.qt\rcc\qrc_task-manager-qml_raw_qml_0.cpp.obj.d
@@ -113,7 +121,7 @@ build CMakeFiles/task-manager-qml.dir/build/Desktop_Qt_6_9_1_MinGW_64_bit-Releas
 #############################################
 # Link the shared library task-manager-qml.dll
 
-build task-manager-qml.dll libtask-manager-qml.a: CXX_SHARED_LIBRARY_LINKER__task-manager-qml_Release CMakeFiles/task-manager-qml.dir/task-manager-qml_autogen/mocs_compilation.cpp.obj CMakeFiles/task-manager-qml.dir/task-manager-qml_qmltyperegistrations.cpp.obj CMakeFiles/task-manager-qml.dir/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.qt/rcc/qrc_qmake_VisionCompass.cpp.obj CMakeFiles/task-manager-qml.dir/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.rcc/qmlcache/task-manager-qml_qmlcache_loader.cpp.obj CMakeFiles/task-manager-qml.dir/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.rcc/qmlcache/task-manager-qml_Main_qml.cpp.obj CMakeFiles/task-manager-qml.dir/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.rcc/qmlcache/task-manager-qml_Screen01_qml.cpp.obj CMakeFiles/task-manager-qml.dir/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.qt/rcc/qrc_task-manager-qml_raw_qml_0.cpp.obj | C$:/Qt/6.9.1/mingw_64/lib/libQt6Qml.a C$:/Qt/6.9.1/mingw_64/lib/libQt6Network.a C$:/Qt/6.9.1/mingw_64/lib/libQt6Core.a || task-manager-qml_autogen task-manager-qml_autogen_timestamp_deps task-manager-qml_copy_qml task-manager-qml_copy_res
+build task-manager-qml.dll libtask-manager-qml.a: CXX_SHARED_LIBRARY_LINKER__task-manager-qml_Release CMakeFiles/task-manager-qml.dir/task-manager-qml_autogen/mocs_compilation.cpp.obj CMakeFiles/task-manager-qml.dir/task-manager-qml_qmltyperegistrations.cpp.obj CMakeFiles/task-manager-qml.dir/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.qt/rcc/qrc_qmake_VisionCompass.cpp.obj CMakeFiles/task-manager-qml.dir/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.rcc/qmlcache/task-manager-qml_qmlcache_loader.cpp.obj CMakeFiles/task-manager-qml.dir/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.rcc/qmlcache/task-manager-qml_Main_qml.cpp.obj CMakeFiles/task-manager-qml.dir/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.rcc/qmlcache/task-manager-qml_Screen01_qml.cpp.obj CMakeFiles/task-manager-qml.dir/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp.obj CMakeFiles/task-manager-qml.dir/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.qt/rcc/qrc_task-manager-qml_raw_qml_0.cpp.obj | C$:/Qt/6.9.1/mingw_64/lib/libQt6Qml.a C$:/Qt/6.9.1/mingw_64/lib/libQt6Network.a C$:/Qt/6.9.1/mingw_64/lib/libQt6Core.a || task-manager-qml_autogen task-manager-qml_autogen_timestamp_deps task-manager-qml_copy_qml task-manager-qml_copy_res
   LANGUAGE_COMPILE_FLAGS = -O3 -DNDEBUG
   LINK_LIBRARIES = C:/Qt/6.9.1/mingw_64/lib/libQt6Qml.a  C:/Qt/6.9.1/mingw_64/lib/libQt6Network.a  -lws2_32  -lshell32  C:/Qt/6.9.1/mingw_64/lib/libQt6Core.a  -lmpr  -luserenv  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\task-manager-qml.dir
@@ -274,6 +282,13 @@ build CMakeFiles/task-manager.dir/task_manager.cpp.obj: CXX_COMPILER__task-manag
   OBJECT_DIR = CMakeFiles\task-manager.dir
   OBJECT_FILE_DIR = CMakeFiles\task-manager.dir
 
+build CMakeFiles/task-manager.dir/app.rc.obj: RC_COMPILER__task-manager_unscanned_Release E$:/Projects/C++/task-manager/app.rc || cmake_object_order_depends_target_task-manager
+  DEFINES = -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NEEDS_QMAIN -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_QMLINTEGRATION_LIB -DQT_QMLMETA_LIB -DQT_QMLMODELS_LIB -DQT_QMLWORKERSCRIPT_LIB -DQT_QML_LIB -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64
+  DEP_FILE = CMakeFiles\task-manager.dir\app.rc.obj.d
+  INCLUDES = -I E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/task-manager_autogen/include -I C:/Qt/6.9.1/mingw_64/include/QtCore -I C:/Qt/6.9.1/mingw_64/include -I C:/Qt/6.9.1/mingw_64/mkspecs/win32-g++ -I C:/Qt/6.9.1/mingw_64/include/QtWidgets -I C:/Qt/6.9.1/mingw_64/include/QtGui -I C:/Qt/6.9.1/mingw_64/include/QtQml -I C:/Qt/6.9.1/mingw_64/include/QtQmlIntegration -I C:/Qt/6.9.1/mingw_64/include/QtNetwork -I C:/Qt/6.9.1/mingw_64/include/QtQuick -I C:/Qt/6.9.1/mingw_64/include/QtQmlMeta -I C:/Qt/6.9.1/mingw_64/include/QtQmlModels -I C:/Qt/6.9.1/mingw_64/include/QtQmlWorkerScript -I C:/Qt/6.9.1/mingw_64/include/QtOpenGL -I C:/Qt/6.9.1/mingw_64/include/QtQuickControls2
+  OBJECT_DIR = CMakeFiles\task-manager.dir
+  OBJECT_FILE_DIR = CMakeFiles\task-manager.dir
+
 build CMakeFiles/task-manager.dir/task-manager_autogen/EWIEGA46WW/qrc_resources.cpp.obj: CXX_COMPILER__task-manager_unscanned_Release E$:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/task-manager_autogen/EWIEGA46WW/qrc_resources.cpp || cmake_object_order_depends_target_task-manager
   DEFINES = -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NEEDS_QMAIN -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_QMLINTEGRATION_LIB -DQT_QMLMETA_LIB -DQT_QMLMODELS_LIB -DQT_QMLWORKERSCRIPT_LIB -DQT_QML_LIB -DQT_QUICKCONTROLS2_LIB -DQT_QUICK_LIB -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN64
   DEP_FILE = CMakeFiles\task-manager.dir\task-manager_autogen\EWIEGA46WW\qrc_resources.cpp.obj.d
@@ -290,7 +305,7 @@ build CMakeFiles/task-manager.dir/task-manager_autogen/EWIEGA46WW/qrc_resources.
 #############################################
 # Link the executable task-manager.exe
 
-build task-manager.exe: CXX_EXECUTABLE_LINKER__task-manager_Release CMakeFiles/task-manager.dir/task-manager_autogen/mocs_compilation.cpp.obj CMakeFiles/task-manager.dir/main.cpp.obj CMakeFiles/task-manager.dir/appviewmodel.cpp.obj CMakeFiles/task-manager.dir/task_manager.cpp.obj CMakeFiles/task-manager.dir/task-manager_autogen/EWIEGA46WW/qrc_resources.cpp.obj | C$:/Qt/6.9.1/mingw_64/lib/libQt6Widgets.a C$:/Qt/6.9.1/mingw_64/lib/libQt6QuickControls2.a libtask-manager-qml.a C$:/Qt/6.9.1/mingw_64/lib/libQt6Quick.a C$:/Qt/6.9.1/mingw_64/lib/libQt6QmlMeta.a C$:/Qt/6.9.1/mingw_64/lib/libQt6QmlWorkerScript.a C$:/Qt/6.9.1/mingw_64/lib/libQt6OpenGL.a C$:/Qt/6.9.1/mingw_64/lib/libQt6Gui.a C$:/Qt/6.9.1/mingw_64/lib/libQt6QmlModels.a C$:/Qt/6.9.1/mingw_64/lib/libQt6Qml.a C$:/Qt/6.9.1/mingw_64/lib/libQt6Network.a C$:/Qt/6.9.1/mingw_64/lib/libQt6Core.a C$:/Qt/6.9.1/mingw_64/lib/libQt6EntryPoint.a || task-manager-qml.dll task-manager_autogen task-manager_autogen_timestamp_deps task-manager_qmlimportscan
+build task-manager.exe: CXX_EXECUTABLE_LINKER__task-manager_Release CMakeFiles/task-manager.dir/task-manager_autogen/mocs_compilation.cpp.obj CMakeFiles/task-manager.dir/main.cpp.obj CMakeFiles/task-manager.dir/appviewmodel.cpp.obj CMakeFiles/task-manager.dir/task_manager.cpp.obj CMakeFiles/task-manager.dir/app.rc.obj CMakeFiles/task-manager.dir/task-manager_autogen/EWIEGA46WW/qrc_resources.cpp.obj | C$:/Qt/6.9.1/mingw_64/lib/libQt6Widgets.a C$:/Qt/6.9.1/mingw_64/lib/libQt6QuickControls2.a libtask-manager-qml.a C$:/Qt/6.9.1/mingw_64/lib/libQt6Quick.a C$:/Qt/6.9.1/mingw_64/lib/libQt6QmlMeta.a C$:/Qt/6.9.1/mingw_64/lib/libQt6QmlWorkerScript.a C$:/Qt/6.9.1/mingw_64/lib/libQt6OpenGL.a C$:/Qt/6.9.1/mingw_64/lib/libQt6Gui.a C$:/Qt/6.9.1/mingw_64/lib/libQt6QmlModels.a C$:/Qt/6.9.1/mingw_64/lib/libQt6Qml.a C$:/Qt/6.9.1/mingw_64/lib/libQt6Network.a C$:/Qt/6.9.1/mingw_64/lib/libQt6Core.a C$:/Qt/6.9.1/mingw_64/lib/libQt6EntryPoint.a || task-manager-qml.dll task-manager_autogen task-manager_autogen_timestamp_deps task-manager_qmlimportscan
   FLAGS = -O3 -DNDEBUG
   LINK_FLAGS = -mwindows
   LINK_LIBRARIES = C:/Qt/6.9.1/mingw_64/lib/libQt6Widgets.a  C:/Qt/6.9.1/mingw_64/lib/libQt6QuickControls2.a  libtask-manager-qml.a  C:/Qt/6.9.1/mingw_64/lib/libQt6Quick.a  C:/Qt/6.9.1/mingw_64/lib/libQt6QmlMeta.a  C:/Qt/6.9.1/mingw_64/lib/libQt6QmlWorkerScript.a  C:/Qt/6.9.1/mingw_64/lib/libQt6OpenGL.a  -luser32  C:/Qt/6.9.1/mingw_64/lib/libQt6Gui.a  -ld3d11  -ldxgi  -ldxguid  -ld3d12  C:/Qt/6.9.1/mingw_64/lib/libQt6QmlModels.a  C:/Qt/6.9.1/mingw_64/lib/libQt6Qml.a  C:/Qt/6.9.1/mingw_64/lib/libQt6Network.a  C:/Qt/6.9.1/mingw_64/lib/libQt6Core.a  -lmpr  -luserenv  -lmingw32  C:/Qt/6.9.1/mingw_64/lib/libQt6EntryPoint.a  -lws2_32  -lshell32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
@@ -305,13 +320,13 @@ build task-manager.exe: CXX_EXECUTABLE_LINKER__task-manager_Release CMakeFiles/t
 #############################################
 # Utility command for module_task-manager-qml_aotstats_target
 
-build module_task-manager-qml_aotstats_target: phony CMakeFiles/module_task-manager-qml_aotstats_target .rcc/qmlcache/module_task-manager-qml.aotstats .rcc/qmlcache/task-manager-qml_Main_qml.cpp .rcc/qmlcache/task-manager-qml_Main_qml.cpp.aotstats .rcc/qmlcache/task-manager-qml_Screen01_qml.cpp .rcc/qmlcache/task-manager-qml_Screen01_qml.cpp.aotstats task-manager-qml_qmltyperegistrations.cpp task-manager-qml.qmltypes task-manager-qml_qmltyperegistration
+build module_task-manager-qml_aotstats_target: phony CMakeFiles/module_task-manager-qml_aotstats_target .rcc/qmlcache/module_task-manager-qml.aotstats .rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp .rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp.aotstats .rcc/qmlcache/task-manager-qml_Main_qml.cpp .rcc/qmlcache/task-manager-qml_Main_qml.cpp.aotstats .rcc/qmlcache/task-manager-qml_Screen01_qml.cpp .rcc/qmlcache/task-manager-qml_Screen01_qml.cpp.aotstats task-manager-qml_qmltyperegistrations.cpp task-manager-qml.qmltypes task-manager-qml_qmltyperegistration
 
 
 #############################################
 # Utility command for all_aotstats
 
-build all_aotstats: phony CMakeFiles/all_aotstats .rcc/qmlcache/all_aotstats.aotstats .rcc/qmlcache/all_aotstats.txt .rcc/qmlcache/module_task-manager-qml.aotstats .rcc/qmlcache/task-manager-qml_Main_qml.cpp .rcc/qmlcache/task-manager-qml_Main_qml.cpp.aotstats .rcc/qmlcache/task-manager-qml_Screen01_qml.cpp .rcc/qmlcache/task-manager-qml_Screen01_qml.cpp.aotstats task-manager-qml_qmltyperegistrations.cpp task-manager-qml.qmltypes module_task-manager-qml_aotstats_target
+build all_aotstats: phony CMakeFiles/all_aotstats .rcc/qmlcache/all_aotstats.aotstats .rcc/qmlcache/all_aotstats.txt .rcc/qmlcache/module_task-manager-qml.aotstats .rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp .rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp.aotstats .rcc/qmlcache/task-manager-qml_Main_qml.cpp .rcc/qmlcache/task-manager-qml_Main_qml.cpp.aotstats .rcc/qmlcache/task-manager-qml_Screen01_qml.cpp .rcc/qmlcache/task-manager-qml_Screen01_qml.cpp.aotstats task-manager-qml_qmltyperegistrations.cpp task-manager-qml.qmltypes module_task-manager-qml_aotstats_target
 
 
 #############################################
@@ -477,9 +492,18 @@ build .rcc/qmlcache/task-manager-qml_Screen01_qml.cpp .rcc/qmlcache/task-manager
 
 
 #############################################
+# Custom command for .rcc\qmlcache\task-manager-qml_CustomDialog_qml.cpp
+
+build .rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp .rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp.aotstats | ${cmake_ninja_workdir}.rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp ${cmake_ninja_workdir}.rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp.aotstats: CUSTOM_COMMAND C$:/Qt/6.9.1/mingw_64/bin/qmlcachegen.exe E$:/Projects/C++/task-manager/CustomDialog.qml .qt/rcc/qmake_VisionCompass.qrc .qt/rcc/task-manager-qml_raw_qml_0.qrc task-manager-qml.qmltypes qmldir
+  COMMAND = C:\WINDOWS\system32\cmd.exe /C "cd /D E:\Projects\C++\task-manager\build\Desktop_Qt_6_9_1_MinGW_64_bit-Release && C:\Qt\Tools\CMake_64\bin\cmake.exe -E make_directory E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.rcc/qmlcache && E:\Projects\C++\task-manager\build\Desktop_Qt_6_9_1_MinGW_64_bit-Release\.qt\bin\qt_setup_tool_path.bat C:/Qt/6.9.1/mingw_64/bin/qmlcachegen.exe --bare --resource-path /VisionCompass/CustomDialog.qml -I C:/Qt/6.9.1/mingw_64/qml -i E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/qmldir --resource E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.qt/rcc/qmake_VisionCompass.qrc --resource E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.qt/rcc/task-manager-qml_raw_qml_0.qrc --dump-aot-stats --module-id=VisionCompass(task-manager-qml) -o E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp E:/Projects/C++/task-manager/CustomDialog.qml"
+  DESC = Generating .rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp, .rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp.aotstats
+  restat = 1
+
+
+#############################################
 # Custom command for .qt\rcc\qrc_task-manager-qml_raw_qml_0.cpp
 
-build .qt/rcc/qrc_task-manager-qml_raw_qml_0.cpp | ${cmake_ninja_workdir}.qt/rcc/qrc_task-manager-qml_raw_qml_0.cpp: CUSTOM_COMMAND E$:/Projects/C++/task-manager/Main.qml E$:/Projects/C++/task-manager/Screen01.qml .qt/rcc/task-manager-qml_raw_qml_0.qrc C$:/Qt/6.9.1/mingw_64/bin/rcc.exe || task-manager-qml_autogen task-manager-qml_autogen_timestamp_deps task-manager-qml_copy_qml task-manager-qml_copy_res
+build .qt/rcc/qrc_task-manager-qml_raw_qml_0.cpp | ${cmake_ninja_workdir}.qt/rcc/qrc_task-manager-qml_raw_qml_0.cpp: CUSTOM_COMMAND E$:/Projects/C++/task-manager/Main.qml E$:/Projects/C++/task-manager/Screen01.qml E$:/Projects/C++/task-manager/CustomDialog.qml .qt/rcc/task-manager-qml_raw_qml_0.qrc C$:/Qt/6.9.1/mingw_64/bin/rcc.exe || task-manager-qml_autogen task-manager-qml_autogen_timestamp_deps task-manager-qml_copy_qml task-manager-qml_copy_res
   COMMAND = C:\WINDOWS\system32\cmd.exe /C "cd /D E:\Projects\C++\task-manager\build\Desktop_Qt_6_9_1_MinGW_64_bit-Release && C:\Qt\6.9.1\mingw_64\bin\rcc.exe --output E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.qt/rcc/qrc_task-manager-qml_raw_qml_0.cpp --name task-manager-qml_raw_qml_0 E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.qt/rcc/task-manager-qml_raw_qml_0.qrc --no-zstd"
   DESC = Running rcc for resource task-manager-qml_raw_qml_0
   restat = 1
@@ -525,21 +549,21 @@ build task-manager-qmlplugin_autogen/timestamp task-manager-qmlplugin_autogen/mo
 #############################################
 # Custom command for CMakeFiles\task-manager-qml_qmllint
 
-build CMakeFiles/task-manager-qml_qmllint | ${cmake_ninja_workdir}CMakeFiles/task-manager-qml_qmllint: CUSTOM_COMMAND C$:/Qt/6.9.1/mingw_64/bin/qmllint.exe E$:/Projects/C++/task-manager/Main.qml E$:/Projects/C++/task-manager/Screen01.qml .rcc/qmllint/task-manager-qml.rsp || all_qmltyperegistrations task-manager-qml_qmltyperegistration
+build CMakeFiles/task-manager-qml_qmllint | ${cmake_ninja_workdir}CMakeFiles/task-manager-qml_qmllint: CUSTOM_COMMAND C$:/Qt/6.9.1/mingw_64/bin/qmllint.exe E$:/Projects/C++/task-manager/Main.qml E$:/Projects/C++/task-manager/Screen01.qml E$:/Projects/C++/task-manager/CustomDialog.qml .rcc/qmllint/task-manager-qml.rsp || all_qmltyperegistrations task-manager-qml_qmltyperegistration
   COMMAND = C:\WINDOWS\system32\cmd.exe /C "cd /D E:\Projects\C++\task-manager && E:\Projects\C++\task-manager\build\Desktop_Qt_6_9_1_MinGW_64_bit-Release\.qt\bin\qt_setup_tool_path.bat C:/Qt/6.9.1/mingw_64/bin/qmllint.exe @E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.rcc/qmllint/task-manager-qml.rsp"
 
 
 #############################################
 # Custom command for CMakeFiles\task-manager-qml_qmllint_json
 
-build CMakeFiles/task-manager-qml_qmllint_json | ${cmake_ninja_workdir}CMakeFiles/task-manager-qml_qmllint_json: CUSTOM_COMMAND C$:/Qt/6.9.1/mingw_64/bin/qmllint.exe E$:/Projects/C++/task-manager/Main.qml E$:/Projects/C++/task-manager/Screen01.qml .rcc/qmllint/task-manager-qml_json.rsp || all_qmltyperegistrations task-manager-qml_qmltyperegistration
+build CMakeFiles/task-manager-qml_qmllint_json | ${cmake_ninja_workdir}CMakeFiles/task-manager-qml_qmllint_json: CUSTOM_COMMAND C$:/Qt/6.9.1/mingw_64/bin/qmllint.exe E$:/Projects/C++/task-manager/Main.qml E$:/Projects/C++/task-manager/Screen01.qml E$:/Projects/C++/task-manager/CustomDialog.qml .rcc/qmllint/task-manager-qml_json.rsp || all_qmltyperegistrations task-manager-qml_qmltyperegistration
   COMMAND = C:\WINDOWS\system32\cmd.exe /C "cd /D E:\Projects\C++\task-manager && E:\Projects\C++\task-manager\build\Desktop_Qt_6_9_1_MinGW_64_bit-Release\.qt\bin\qt_setup_tool_path.bat C:/Qt/6.9.1/mingw_64/bin/qmllint.exe @E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.rcc/qmllint/task-manager-qml_json.rsp"
 
 
 #############################################
 # Custom command for CMakeFiles\task-manager-qml_qmllint_module
 
-build CMakeFiles/task-manager-qml_qmllint_module | ${cmake_ninja_workdir}CMakeFiles/task-manager-qml_qmllint_module: CUSTOM_COMMAND C$:/Qt/6.9.1/mingw_64/bin/qmllint.exe E$:/Projects/C++/task-manager/Main.qml E$:/Projects/C++/task-manager/Screen01.qml .rcc/qmllint/task-manager-qml_module.rsp || all_qmltyperegistrations task-manager-qml_qmltyperegistration
+build CMakeFiles/task-manager-qml_qmllint_module | ${cmake_ninja_workdir}CMakeFiles/task-manager-qml_qmllint_module: CUSTOM_COMMAND C$:/Qt/6.9.1/mingw_64/bin/qmllint.exe E$:/Projects/C++/task-manager/Main.qml E$:/Projects/C++/task-manager/Screen01.qml E$:/Projects/C++/task-manager/CustomDialog.qml .rcc/qmllint/task-manager-qml_module.rsp || all_qmltyperegistrations task-manager-qml_qmltyperegistration
   COMMAND = C:\WINDOWS\system32\cmd.exe /C "cd /D E:\Projects\C++\task-manager && E:\Projects\C++\task-manager\build\Desktop_Qt_6_9_1_MinGW_64_bit-Release\.qt\bin\qt_setup_tool_path.bat C:/Qt/6.9.1/mingw_64/bin/qmllint.exe @E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.rcc/qmllint/task-manager-qml_module.rsp"
 
 
@@ -552,7 +576,7 @@ build CMakeFiles/task-manager-qml_copy_qml | ${cmake_ninja_workdir}CMakeFiles/ta
 #############################################
 # Custom command for .qt\task-manager-qml_qml.txt
 
-build .qt/task-manager-qml_qml.txt | ${cmake_ninja_workdir}.qt/task-manager-qml_qml.txt: CUSTOM_COMMAND C$:/Qt/6.9.1/mingw_64/lib/cmake/Qt6Qml/Qt6QmlCopyFiles.cmake E$:/Projects/C++/task-manager/Main.qml E$:/Projects/C++/task-manager/Screen01.qml
+build .qt/task-manager-qml_qml.txt | ${cmake_ninja_workdir}.qt/task-manager-qml_qml.txt: CUSTOM_COMMAND C$:/Qt/6.9.1/mingw_64/lib/cmake/Qt6Qml/Qt6QmlCopyFiles.cmake E$:/Projects/C++/task-manager/Main.qml E$:/Projects/C++/task-manager/Screen01.qml E$:/Projects/C++/task-manager/CustomDialog.qml
   COMMAND = C:\WINDOWS\system32\cmd.exe /C "cd /D E:\Projects\C++\task-manager\build\Desktop_Qt_6_9_1_MinGW_64_bit-Release && C:\Qt\Tools\CMake_64\bin\cmake.exe -DFILES_INFO_PATH=E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.qt/task-manager-qml_qml.cmake -P C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6Qml/Qt6QmlCopyFiles.cmake"
   DESC = Copying task-manager-qml qml sources into build dir
   restat = 1
@@ -587,7 +611,7 @@ build task-manager_autogen/timestamp task-manager_autogen/mocs_compilation.cpp |
 #############################################
 # Custom command for task-manager_autogen\EWIEGA46WW\qrc_resources.cpp
 
-build task-manager_autogen/EWIEGA46WW/qrc_resources.cpp | ${cmake_ninja_workdir}task-manager_autogen/EWIEGA46WW/qrc_resources.cpp: CUSTOM_COMMAND E$:/Projects/C++/task-manager/resources.qrc CMakeFiles/task-manager_autogen.dir/AutoRcc_resources_EWIEGA46WW_Info.json E$:/Projects/C++/task-manager/Main.qml E$:/Projects/C++/task-manager/CustomDialog.qml E$:/Projects/C++/task-manager/Screen01.qml C$:/Qt/6.9.1/mingw_64/bin/rcc.exe C$:/Qt/6.9.1/mingw_64/bin/rcc.exe || task-manager-qml.dll task-manager-qml_autogen task-manager-qml_autogen_timestamp_deps task-manager-qml_copy_qml task-manager-qml_copy_res task-manager_autogen task-manager_autogen_timestamp_deps task-manager_qmlimportscan
+build task-manager_autogen/EWIEGA46WW/qrc_resources.cpp | ${cmake_ninja_workdir}task-manager_autogen/EWIEGA46WW/qrc_resources.cpp: CUSTOM_COMMAND E$:/Projects/C++/task-manager/resources.qrc CMakeFiles/task-manager_autogen.dir/AutoRcc_resources_EWIEGA46WW_Info.json E$:/Projects/C++/task-manager/Main.qml E$:/Projects/C++/task-manager/CustomDialog.qml E$:/Projects/C++/task-manager/Screen01.qml E$:/Projects/C++/task-manager/icons/compass-icon.png C$:/Qt/6.9.1/mingw_64/bin/rcc.exe C$:/Qt/6.9.1/mingw_64/bin/rcc.exe || task-manager-qml.dll task-manager-qml_autogen task-manager-qml_autogen_timestamp_deps task-manager-qml_copy_qml task-manager-qml_copy_res task-manager_autogen task-manager_autogen_timestamp_deps task-manager_qmlimportscan
   COMMAND = C:\WINDOWS\system32\cmd.exe /C "cd /D E:\Projects\C++\task-manager\build\Desktop_Qt_6_9_1_MinGW_64_bit-Release && C:\Qt\Tools\CMake_64\bin\cmake.exe -E cmake_autorcc E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/CMakeFiles/task-manager_autogen.dir/AutoRcc_resources_EWIEGA46WW_Info.json Release"
   DESC = Automatic RCC for resources.qrc
   restat = 1
@@ -602,7 +626,7 @@ build CMakeFiles/module_task-manager-qml_aotstats_target | ${cmake_ninja_workdir
 #############################################
 # Custom command for .rcc\qmlcache\module_task-manager-qml.aotstats
 
-build .rcc/qmlcache/module_task-manager-qml.aotstats | ${cmake_ninja_workdir}.rcc/qmlcache/module_task-manager-qml.aotstats: CUSTOM_COMMAND .rcc/qmlcache/task-manager-qml_Main_qml.cpp.aotstats .rcc/qmlcache/task-manager-qml_Screen01_qml.cpp.aotstats .rcc/qmlcache/module_task-manager-qml.aotstatslist || task-manager-qml_qmltyperegistration
+build .rcc/qmlcache/module_task-manager-qml.aotstats | ${cmake_ninja_workdir}.rcc/qmlcache/module_task-manager-qml.aotstats: CUSTOM_COMMAND .rcc/qmlcache/task-manager-qml_Main_qml.cpp.aotstats .rcc/qmlcache/task-manager-qml_Screen01_qml.cpp.aotstats .rcc/qmlcache/task-manager-qml_CustomDialog_qml.cpp.aotstats .rcc/qmlcache/module_task-manager-qml.aotstatslist || task-manager-qml_qmltyperegistration
   COMMAND = C:\WINDOWS\system32\cmd.exe /C "cd /D E:\Projects\C++\task-manager\build\Desktop_Qt_6_9_1_MinGW_64_bit-Release && E:\Projects\C++\task-manager\build\Desktop_Qt_6_9_1_MinGW_64_bit-Release\.qt\bin\qt_setup_tool_path.bat C:/Qt/6.9.1/mingw_64/bin/qmlaotstats.exe aggregate E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.rcc/qmlcache/module_task-manager-qml.aotstatslist E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.rcc/qmlcache/module_task-manager-qml.aotstats"
   DESC = Generating .rcc/qmlcache/module_task-manager-qml.aotstats
   restat = 1

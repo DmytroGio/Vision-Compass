@@ -22,6 +22,7 @@ set(PROJECT_SOURCES
         user.hpp
         json.hpp
         resources.qrc
+        app.rc
 )
 
 # Create a resource file for QML
@@ -29,7 +30,7 @@ set(CMAKE_AUTORCC ON)
 qt_add_qml_module(task-manager-qml
     URI VisionCompass
     VERSION 1.0
-    QML_FILES Main.qml Screen01.qml
+    QML_FILES Main.qml Screen01.qml CustomDialog.qml
     # Add other QML files here if needed
 )
 
