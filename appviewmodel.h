@@ -55,6 +55,13 @@ public:
     Q_INVOKABLE void deleteTask(int id);
     Q_INVOKABLE void removeTask(const QVariantMap& taskData); // For QML compatibility
 
+    // Data management methods
+    Q_INVOKABLE void exportData(const QString& filePath);
+    Q_INVOKABLE void importData(const QString& filePath);
+    Q_INVOKABLE void importDataWithDialog();
+    Q_INVOKABLE void clearAllData();
+    Q_INVOKABLE QString getDefaultDataPath() const;
+
 signals:
     void currentGoalChanged();
     void subGoalsChanged();

@@ -2,6 +2,9 @@
 #include <QDebug>
 #include <QStandardPaths>
 #include <QDir>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QDateTime>
 
 AppViewModel::AppViewModel(QObject *parent) : QObject(parent)
 {
@@ -303,4 +306,144 @@ QString AppViewModel::getTasksFilePath() const {
         dir.mkpath(".");
     }
     return dataPath + "/tasks.json";
+}
+
+void AppViewModel::importData(const QString& filePath) {
+    try {
+        if (filePath.isEmpty()) {
+            qDebug() << "Import cancelled: empty file path";
+            return;
+        }
+
+        qDebug() << "Importing data from:" << filePath;
+
+        // Create backup of current data before importing
+        QString backupPath = getTasksFilePath() + ".backup";
+        m_taskManager.saveToFile(backupPath.toStdString());
+        qDebug() << "Created backup at:" << backupPath;
+
+        // Load new data
+        m_taskManager.loadFromFile(filePath.toStdString());
+
+        // Update UI
+        updateGoalProperties();
+        updateSubGoalListModel();
+
+        // Select first subgoal if available
+        if (!m_subGoals.empty()) {
+            selectSubGoal(m_subGoals[0].id);
+        } else {
+            m_selectedSubGoalId = 0;
+            updateTasksListModel();
+            emit selectedSubGoalChanged();
+        }
+
+        qDebug() << "Import completed successfully";
+
+    } catch (const std::exception& e) {
+        qDebug() << "Import error:" << e.what();
+        // Restore from backup if import failed
+        QString backupPath = getTasksFilePath() + ".backup";
+        try {
+            m_taskManager.loadFromFile(backupPath.toStdString());
+            updateGoalProperties();
+            updateSubGoalListModel();
+            updateTasksListModel();
+            qDebug() << "Restored from backup after failed import";
+        } catch (const std::exception& restoreError) {
+            qDebug() << "Failed to restore from backup:" << restoreError.what();
+        }
+    }
+}
+
+void AppViewModel::exportData(const QString& filePath) {
+    try {
+        QString actualPath = filePath;
+
+        if (actualPath.isEmpty()) {
+            actualPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+            + "/VisionCompass_backup_"
+                + QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss")
+                + ".json";
+        }
+
+        if (!actualPath.endsWith(".json", Qt::CaseInsensitive)) {
+            actualPath += ".json";
+        }
+
+        qDebug() << "Exporting data to:" << actualPath;
+        m_taskManager.saveToFile(actualPath.toStdString());
+        qDebug() << "Export completed successfully to:" << actualPath;
+
+    } catch (const std::exception& e) {
+        qDebug() << "Export error:" << e.what();
+    }
+}
+
+void AppViewModel::importDataWithDialog() {
+    // Простая версия: импортируем последний экспортированный файл
+    QString documentsPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+
+    // Ищем последний файл backup в папке Documents
+    QDir dir(documentsPath);
+    QStringList filters;
+    filters << "VisionCompass_backup_*.json";
+    QFileInfoList files = dir.entryInfoList(filters, QDir::Files, QDir::Time);
+
+    if (!files.isEmpty()) {
+        QString latestFile = files.first().absoluteFilePath();
+        qDebug() << "Found latest backup file:" << latestFile;
+        importData(latestFile);
+        qDebug() << "Import completed from latest backup";
+    } else {
+        qDebug() << "No backup files found in Documents folder";
+
+        // Попробуем найти любой JSON файл VisionCompass
+        filters.clear();
+        filters << "*.json";
+        files = dir.entryInfoList(filters, QDir::Files, QDir::Time);
+
+        for (const QFileInfo& file : files) {
+            if (file.fileName().contains("VisionCompass", Qt::CaseInsensitive)) {
+                qDebug() << "Found VisionCompass file:" << file.absoluteFilePath();
+                importData(file.absoluteFilePath());
+                return;
+            }
+        }
+
+        qDebug() << "No VisionCompass files found for import";
+    }
+}
+
+void AppViewModel::clearAllData() {
+    // Clear all data and reset to defaults
+    m_taskManager = TaskManager(); // Reset to default state
+
+    // Set default goal
+    Goal defaultGoal;
+    defaultGoal.id = 1;
+    defaultGoal.description = "My Main Goal";
+    defaultGoal.targetDate = "Set your target date";
+    m_taskManager.setGoal(defaultGoal);
+
+    // Add default subgoal
+    SubGoal defaultSubGoal;
+    defaultSubGoal.description = "First Sub Goal";
+    m_taskManager.addSubGoal(defaultSubGoal);
+
+    // Update UI
+    updateGoalProperties();
+    updateSubGoalListModel();
+
+    // Select the default subgoal
+    if (!m_subGoals.empty()) {
+        selectSubGoal(m_subGoals[0].id);
+    }
+
+    // Save the cleared state
+    saveData();
+}
+
+QString AppViewModel::getDefaultDataPath() const {
+    return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
 }

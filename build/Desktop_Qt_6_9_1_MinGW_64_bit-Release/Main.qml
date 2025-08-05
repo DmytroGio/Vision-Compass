@@ -686,6 +686,47 @@ ApplicationWindow {
                     onExited: parent.color = "#2D2D2D"
                 }
             }
+
+            // Data Management Menu Button
+            Rectangle {
+                id: dataMenuButton
+                width: 50
+                height: 50
+                anchors.bottom: subGoalsContainer.top
+                anchors.left: parent.left
+                anchors.bottomMargin: 20
+                anchors.leftMargin: 80
+                color: "#2D2D2D"
+                radius: 25
+                border.color: "#F3C44A"
+                border.width: 2
+
+                Rectangle {
+                    anchors.centerIn: parent
+                    width: 30
+                    height: 30
+                    radius: 15
+                    color: "#F3C44A"
+
+                    Text {
+                        text: "⚙"
+                        anchors.centerIn: parent
+                        font.pointSize: 16
+                        color: "#1E1E1E"
+                        font.bold: true
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        dataManagementDialog.open()
+                    }
+                    hoverEnabled: true
+                    onEntered: parent.color = "#353535"
+                    onExited: parent.color = "#2D2D2D"
+                }
+            }
         }
 
         // --- Нижняя секция (Задачи) ---
@@ -1415,5 +1456,346 @@ ApplicationWindow {
             ]
     }
 
+    // Data Management Dialog
+        CustomDialog {
+            id: dataManagementDialog
+            dialogWidth: 450
+
+            content: Component {
+                ColumnLayout {
+                    spacing: 20
+
+                    Text {
+                        text: "Data Management"
+                        color: "#F3C44A"
+                        font.pointSize: 16
+                        font.bold: true
+                        Layout.alignment: Qt.AlignHCenter
+                    }
+
+                    // Export Section
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 60
+                        color: "#2D2D2D"
+                        radius: 10
+                        border.color: "#444444"
+                        border.width: 1
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.margins: 15
+                            spacing: 15
+
+                            Text {
+                                text: "📤"
+                                font.pointSize: 20
+                                color: "#66BB6A"
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 2
+
+                                Text {
+                                    text: "Export Data"
+                                    color: "#FFFFFF"
+                                    font.pointSize: 12
+                                    font.bold: true
+                                }
+
+                                Text {
+                                    text: "Save your data to a backup file"
+                                    color: "#AAAAAA"
+                                    font.pointSize: 10
+                                }
+                            }
+
+                            Rectangle {
+                                width: 80
+                                height: 30
+                                color: "#66BB6A"
+                                radius: 15
+
+                                Text {
+                                    text: "Export"
+                                    anchors.centerIn: parent
+                                    color: "#1E1E1E"
+                                    font.pointSize: 10
+                                    font.bold: true
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        Qt.callLater(function() {
+                                            AppViewModel.exportData("")
+                                        }) // This will now show file dialog
+                                        dataManagementDialog.close()
+                                    }
+                                    hoverEnabled: true
+                                    onEntered: parent.color = "#76CC7A"
+                                    onExited: parent.color = "#66BB6A"
+                                }
+                            }
+                        }
+                    }
+
+                    // Import Section
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 60
+                        color: "#2D2D2D"
+                        radius: 10
+                        border.color: "#444444"
+                        border.width: 1
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.margins: 15
+                            spacing: 15
+
+                            Text {
+                                text: "📥"
+                                font.pointSize: 20
+                                color: "#42A5F5"
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 2
+
+                                Text {
+                                    text: "Import Data"
+                                    color: "#FFFFFF"
+                                    font.pointSize: 12
+                                    font.bold: true
+                                }
+
+                                Text {
+                                    text: "Load data from a backup file"
+                                    color: "#AAAAAA"
+                                    font.pointSize: 10
+                                }
+                            }
+
+                            Rectangle {
+                                width: 80
+                                height: 30
+                                color: "#42A5F5"
+                                radius: 15
+
+                                Text {
+                                    text: "Import"
+                                    anchors.centerIn: parent
+                                    color: "#1E1E1E"
+                                    font.pointSize: 10
+                                    font.bold: true
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        Qt.callLater(function() {
+                                            AppViewModel.importDataWithDialog()
+                                        })
+                                        dataManagementDialog.close()
+                                    }
+                                    hoverEnabled: true
+                                    onEntered: parent.color = "#52B5FF"
+                                    onExited: parent.color = "#42A5F5"
+                                }
+                            }
+                        }
+                    }
+
+                    // Clear Data Section
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 60
+                        color: "#2D2D2D"
+                        radius: 10
+                        border.color: "#444444"
+                        border.width: 1
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.margins: 15
+                            spacing: 15
+
+                            Text {
+                                text: "🗑"
+                                font.pointSize: 20
+                                color: "#E95B5B"
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 2
+
+                                Text {
+                                    text: "Clear All Data"
+                                    color: "#FFFFFF"
+                                    font.pointSize: 12
+                                    font.bold: true
+                                }
+
+                                Text {
+                                    text: "Reset to default state (irreversible)"
+                                    color: "#AAAAAA"
+                                    font.pointSize: 10
+                                }
+                            }
+
+                            Rectangle {
+                                width: 80
+                                height: 30
+                                color: "#E95B5B"
+                                radius: 15
+
+                                Text {
+                                    text: "Clear"
+                                    anchors.centerIn: parent
+                                    color: "#FFFFFF"
+                                    font.pointSize: 10
+                                    font.bold: true
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        clearDataConfirmDialog.open()
+                                    }
+                                    hoverEnabled: true
+                                    onEntered: parent.color = "#F76B6B"
+                                    onExited: parent.color = "#E95B5B"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            buttons: [
+                {
+                    text: "Close"
+                }
+            ]
+        }
+
+        // File Import Dialog (Note: This is a simplified version - for full file dialog you'd need C++ FileDialog)
+        CustomDialog {
+            id: importFileDialog
+            dialogWidth: 400
+
+            content: Component {
+                ColumnLayout {
+                    spacing: 15
+
+                    Text {
+                        text: "Import Data File"
+                        color: "#FFFFFF"
+                        font.pointSize: 14
+                        font.bold: true
+                    }
+
+                    TextField {
+                        id: importPathField
+                        placeholderText: "Enter file path or drag & drop JSON file..."
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 45
+                        color: "#FFFFFF"
+                        font.pointSize: 12
+                        background: Rectangle {
+                            color: "#3A3A3A"
+                            radius: 8
+                            border.color: "#42A5F5"
+                            border.width: 1
+                        }
+                        padding: 10
+                        placeholderTextColor: "#AAAAAA"
+                    }
+
+                    Text {
+                        text: "⚠️ This will replace all current data. Make sure to export current data first!"
+                        color: "#E95B5B"
+                        font.pointSize: 10
+                        Layout.fillWidth: true
+                        wrapMode: Text.WordWrap
+                    }
+                }
+            }
+
+            buttons: [
+                {
+                    text: "Import",
+                    color: "#42A5F5",
+                    onClicked: function() {
+                        let pathField = importFileDialog.contentItem.children[0].children[1].item;
+                        if (pathField && pathField.text.trim() !== "") {
+                            AppViewModel.importData(pathField.text.trim());
+                            pathField.text = "";
+                            dataManagementDialog.close();
+                        }
+                    }
+                },
+                {
+                    text: "Cancel"
+                }
+            ]
+        }
+
+        // Clear Data Confirmation Dialog
+        CustomDialog {
+            id: clearDataConfirmDialog
+            dialogWidth: 400
+
+            content: Component {
+                ColumnLayout {
+                    spacing: 15
+
+                    Text {
+                        text: "⚠️ Clear All Data"
+                        color: "#E95B5B"
+                        font.pointSize: 16
+                        font.bold: true
+                        Layout.alignment: Qt.AlignHCenter
+                    }
+
+                    Text {
+                        text: "This action will permanently delete all your goals, sub-goals, and tasks. This cannot be undone."
+                        color: "#FFFFFF"
+                        font.pointSize: 12
+                        Layout.fillWidth: true
+                        wrapMode: Text.WordWrap
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    Text {
+                        text: "Are you absolutely sure you want to continue?"
+                        color: "#F3C44A"
+                        font.pointSize: 12
+                        font.bold: true
+                        Layout.fillWidth: true
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+                }
+            }
+
+            buttons: [
+                {
+                    text: "Yes, Clear All Data",
+                    color: "#E95B5B",
+                    onClicked: function() {
+                        AppViewModel.clearAllData();
+                        dataManagementDialog.close();
+                    }
+                },
+                {
+                    text: "Cancel",
+                    color: "#3A3A3A"
+                }
+            ]
+        }
 }
 
