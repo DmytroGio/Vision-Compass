@@ -82,7 +82,7 @@ ApplicationWindow {
 
             Image {
                 id: windowIcon
-                source: "qrc:/VisionCompass/icons/compass-icon.png" // ✨ Вот так нужно указать путь!
+                source: "qrc:/VisionCompass/icons/compass-icon.png"
                 width: 20
                 height: 20
                 anchors.left: parent.left
@@ -701,20 +701,12 @@ ApplicationWindow {
                 border.color: "#F3C44A"
                 border.width: 2
 
-                Rectangle {
+                Image {
+                    source: "qrc:/VisionCompass/icons/export_import-icon.png"
+                    width: 20
+                    height: 20
                     anchors.centerIn: parent
-                    width: 30
-                    height: 30
-                    radius: 15
-                    color: "#F3C44A"
-
-                    Text {
-                        text: "⚙"
-                        anchors.centerIn: parent
-                        font.pointSize: 16
-                        color: "#1E1E1E"
-                        font.bold: true
-                    }
+                    fillMode: Image.PreserveAspectFit
                 }
 
                 MouseArea {
@@ -1494,7 +1486,7 @@ ApplicationWindow {
                             }
 
                             ColumnLayout {
-                                Layout.fillWidth: true
+                                Layout.preferredWidth: 280
                                 spacing: 2
 
                                 Text {
@@ -1508,12 +1500,14 @@ ApplicationWindow {
                                     text: "Save your data to a backup file"
                                     color: "#AAAAAA"
                                     font.pointSize: 10
+                                    wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
                                 }
                             }
 
                             Rectangle {
-                                width: 80
-                                height: 30
+                                Layout.preferredWidth: 80
+                                Layout.preferredHeight: 30
                                 color: "#66BB6A"
                                 radius: 15
 
@@ -1562,7 +1556,7 @@ ApplicationWindow {
                             }
 
                             ColumnLayout {
-                                Layout.fillWidth: true
+                                Layout.preferredWidth: 280
                                 spacing: 2
 
                                 Text {
@@ -1576,12 +1570,14 @@ ApplicationWindow {
                                     text: "Load data from a backup file"
                                     color: "#AAAAAA"
                                     font.pointSize: 10
+                                    wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
                                 }
                             }
 
                             Rectangle {
-                                width: 80
-                                height: 30
+                                Layout.preferredWidth: 80
+                                Layout.preferredHeight: 30
                                 color: "#42A5F5"
                                 radius: 15
 
@@ -1630,7 +1626,7 @@ ApplicationWindow {
                             }
 
                             ColumnLayout {
-                                Layout.fillWidth: true
+                                Layout.preferredWidth: 280
                                 spacing: 2
 
                                 Text {
@@ -1644,12 +1640,14 @@ ApplicationWindow {
                                     text: "Reset to default state (irreversible)"
                                     color: "#AAAAAA"
                                     font.pointSize: 10
+                                    wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
                                 }
                             }
 
                             Rectangle {
-                                width: 80
-                                height: 30
+                                Layout.preferredWidth: 80
+                                Layout.preferredHeight: 30
                                 color: "#E95B5B"
                                 radius: 15
 
