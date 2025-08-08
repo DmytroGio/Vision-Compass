@@ -80,4 +80,4 @@ To see the global goals of life and plan according to them.
 - Change the import and export settings icon [done]
 
 ## 2025-08-07
-- Incorrect position offset (scrollbar moves to the top of the list or list is refreshed) after changing the status of a task at the bottom of the list to “completed/not completed.”
+- Incorrect position offset (scrollbar moves to the top of the list or list is refreshed) after changing the status of a task at the bottom of the list to “completed/not completed.” [done]

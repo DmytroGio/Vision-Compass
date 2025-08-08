@@ -22,12 +22,67 @@ ApplicationWindow {
         AppViewModel.loadData()
     }
 
+    // Функция для автоматического скролла к выбранному элементу
+    function scrollToSelectedItem() {
+        if (!AppViewModel.selectedSubGoalId || !AppViewModel.subGoalsListModel) return;
+
+        // Находим индекс выбранного элемента
+        var selectedIndex = -1;
+        for (var i = 0; i < AppViewModel.subGoalsListModel.length; i++) {
+            if (AppViewModel.subGoalsListModel[i].id === AppViewModel.selectedSubGoalId) {
+                selectedIndex = i;
+                break;
+            }
+        }
+
+        if (selectedIndex === -1) return;
+
+        // Вычисляем позицию элемента
+        var itemWidth = 180; // Ширина элемента
+        var itemSpacing = 15; // Расстояние между элементами
+        var itemPosition = selectedIndex * (itemWidth + itemSpacing);
+        var viewportWidth = subGoalsList.width;
+
+        // Вычисляем оптимальную позицию для центрирования элемента
+        var targetContentX = itemPosition - (viewportWidth - itemWidth) / 2;
+
+        // Ограничиваем позицию границами контента
+        var maxContentX = Math.max(0, subGoalsList.contentWidth - viewportWidth);
+        targetContentX = Math.max(0, Math.min(maxContentX, targetContentX));
+
+        // Прямое назначение без анимации для немедленного эффекта
+        subGoalsList.contentX = targetContentX;
+
+        // Затем запускаем анимацию для плавности
+        scrollAnimation.to = targetContentX;
+        scrollAnimation.start();
+    }
+
     function selectSubGoalByIndex(index) {
-           if (AppViewModel.subGoalsListModel && AppViewModel.subGoalsListModel.length > index) {
-               var subGoalId = AppViewModel.subGoalsListModel[index].id;
-               AppViewModel.selectSubGoal(subGoalId);
-           }
-       }
+        if (AppViewModel.subGoalsListModel && AppViewModel.subGoalsListModel.length > index) {
+            var subGoalId = AppViewModel.subGoalsListModel[index].id;
+            AppViewModel.selectSubGoal(subGoalId);
+
+            // Прямое центрирование после выбора
+            Qt.callLater(function() {
+                // Вычисляем позицию элемента
+                var itemWidth = 180; // Ширина элемента
+                var itemSpacing = 15; // Расстояние между элементами
+                var itemPosition = index * (itemWidth + itemSpacing);
+                var viewportWidth = subGoalsList.width;
+
+                // Вычисляем оптимальную позицию для центрирования элемента
+                var targetContentX = itemPosition - (viewportWidth - itemWidth) / 2;
+
+                // Ограничиваем позицию границами контента
+                var maxContentX = Math.max(0, subGoalsList.contentWidth - viewportWidth);
+                targetContentX = Math.max(0, Math.min(maxContentX, targetContentX));
+
+                // Устанавливаем позицию скролла
+                subGoalsList.contentX = targetContentX;
+            });
+        }
+    }
 
        Shortcut {
            sequence: "1"
@@ -316,75 +371,26 @@ ApplicationWindow {
 
                             ListView {
                                 id: subGoalsList
-
-                                // КРИТИЧНО: устанавливаем горизонтальную ориентацию
                                 orientation: ListView.Horizontal
-
-                                // Привязка к размерам родителя
                                 anchors.fill: parent
 
                                 model: AppViewModel.subGoalsListModel
                                 spacing: 15
+                                clip: true
 
                                 // Отступы от краев
                                 leftMargin: 5
                                 rightMargin: 5
 
-                                // Функция для автоматического скролла к выбранному элементу
-                                function scrollToSelectedItem() {
-                                    if (!AppViewModel.selectedSubGoalId || !AppViewModel.subGoalsListModel) return;
+                                // Сохранение позиции скролла
+                                property real savedContentX: 0
 
-                                    // Находим индекс выбранного элемента
-                                    var selectedIndex = -1;
-                                    for (var i = 0; i < AppViewModel.subGoalsListModel.length; i++) {
-                                        if (AppViewModel.subGoalsListModel[i].id === AppViewModel.selectedSubGoalId) {
-                                            selectedIndex = i;
-                                            break;
-                                        }
-                                    }
-
-                                    if (selectedIndex === -1) return;
-
-                                    // Вычисляем позицию элемента
-                                    var itemWidth = 180; // Ширина элемента
-                                    var itemSpacing = 15; // Расстояние между элементами
-                                    var itemPosition = selectedIndex * (itemWidth + itemSpacing);
-                                    var viewportWidth = subGoalsList.width;
-
-                                    // Вычисляем оптимальную позицию для центрирования элемента
-                                    var targetContentX = itemPosition - (viewportWidth - itemWidth) / 2;
-
-                                    // Ограничиваем позицию границами контента
-                                    var maxContentX = Math.max(0, subGoalsList.contentWidth - viewportWidth);
-                                    targetContentX = Math.max(0, Math.min(maxContentX, targetContentX));
-
-                                    // Плавная анимация к целевой позиции
-                                    scrollAnimation.to = targetContentX;
-                                    scrollAnimation.start();
-                                }
-
-                                // Анимация для плавного скролла
-                                NumberAnimation {
-                                    id: scrollAnimation
-                                    target: subGoalsList
-                                    property: "contentX"
-                                    duration: 300
-                                    easing.type: Easing.OutCubic
-                                }
-
-                                // Отслеживаем изменения выбранной SubGoal
-                                Connections {
-                                    target: AppViewModel
-                                    function onSelectedSubGoalIdChanged() {
-                                        Qt.callLater(subGoalsList.scrollToSelectedItem);
-                                    }
-                                }
-
-                                // Также вызываем скролл при загрузке модели
                                 onModelChanged: {
-                                    Qt.callLater(scrollToSelectedItem);
+                                    // Восстанавливаем позицию после обновления модели
+                                    if (savedContentX > 0 && contentWidth > width) {
+                                        contentX = Math.min(savedContentX, contentWidth - width);
+                                    }
                                 }
-
 
                                 delegate: Rectangle {
                                     id: subGoalItem
@@ -569,8 +575,7 @@ ApplicationWindow {
                                         z: -1
                                     }
                                 }
-                            }
-                            // Кастомный горизонтальный скроллбар - размещаем ВНУТРИ Rectangle
+                            }// Кастомный горизонтальный скроллбар - размещаем ВНУТРИ Rectangle
                             // Кастомный скроллбар без использования ScrollBar
                             Rectangle {
                                 id: customScrollBar
@@ -816,6 +821,16 @@ ApplicationWindow {
                         spacing: 10
                         clip: true
 
+                        // Сохранение позиции скролла
+                        property real savedContentY: 0
+
+                        onModelChanged: {
+                            // Восстанавливаем позицию после обновления модели
+                            if (savedContentY > 0 && contentHeight > height) {
+                                contentY = Math.min(savedContentY, contentHeight - height);
+                            }
+                        }
+
                         delegate: Rectangle {
                             width: taskListView.width
                             height: 80
@@ -860,7 +875,9 @@ ApplicationWindow {
                                     MouseArea {
                                         anchors.fill: parent
                                         onClicked: {
-                                            AppViewModel.completeTask(modelData.id)
+                                            // Сохраняем текущую позицию перед изменением
+                                            taskListView.savedContentY = taskListView.contentY;
+                                            AppViewModel.completeTask(modelData.id);
                                         }
                                         hoverEnabled: true
                                         onEntered: parent.color = modelData.completed ? "#76CC7A" : "#F5D665"
