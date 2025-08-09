@@ -73,7 +73,7 @@ To see the global goals of life and plan according to them.
 - Change the color of the Main Task when hovering over it [done]
 
 ## 2025-08-5
-- Info panel - description of the application's philosophy and hotkeys
+- Info panel - description of the application's philosophy and hotkeys [done]
 - Export, Import, Delete list [done]
 
 ## 2025-08-07
@@ -81,3 +81,9 @@ To see the global goals of life and plan according to them.
 
 ## 2025-08-07
 - Incorrect position offset (scrollbar moves to the top of the list or list is refreshed) after changing the status of a task at the bottom of the list to “completed/not completed.” [done]
+
+## 2025-08-08
+- The width of the scrollbar changes depending on the number of items in the list (adaptive width).
+
+## 2025-08-09
+- Changes to the visual state of the Subgoal cell (possibly adding a green stroke) if all tasks in the task list have been completed.

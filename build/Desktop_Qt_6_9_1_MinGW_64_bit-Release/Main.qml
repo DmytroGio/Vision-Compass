@@ -724,6 +724,40 @@ ApplicationWindow {
                     onExited: parent.color = "#2D2D2D"
                 }
             }
+
+            // Info Button
+            Rectangle {
+                id: infoButton
+                width: 50
+                height: 50
+                anchors.bottom: subGoalsContainer.top
+                anchors.left: dataMenuButton.right
+                anchors.bottomMargin: 20
+                anchors.leftMargin: 15
+                color: "#2D2D2D"
+                radius: 25
+                border.color: "#F3C44A"
+                border.width: 2
+
+                Text {
+                    text: "i"
+                    anchors.centerIn: parent
+                    font.pointSize: 20
+                    font.bold: true
+                    color: "#F3C44A"
+                    font.italic: true
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        infoDialog.open()
+                    }
+                    hoverEnabled: true
+                    onEntered: parent.color = "#353535"
+                    onExited: parent.color = "#2D2D2D"
+                }
+            }
         }
 
         // --- Нижняя секция (Задачи) ---
@@ -1466,351 +1500,546 @@ ApplicationWindow {
     }
 
     // Data Management Dialog
-        CustomDialog {
-            id: dataManagementDialog
-            dialogWidth: 450
+    CustomDialog {
+        id: dataManagementDialog
+        dialogWidth: 450
 
-            content: Component {
-                ColumnLayout {
-                    spacing: 20
+        content: Component {
+            ColumnLayout {
+                spacing: 20
 
-                    Text {
-                        text: "Data Management"
-                        color: "#F3C44A"
-                        font.pointSize: 16
-                        font.bold: true
-                        Layout.alignment: Qt.AlignHCenter
-                    }
+                Text {
+                    text: "Data Management"
+                    color: "#F3C44A"
+                    font.pointSize: 16
+                    font.bold: true
+                    Layout.alignment: Qt.AlignHCenter
+                }
 
-                    // Export Section
-                    Rectangle {
-                        Layout.fillWidth: true
-                        height: 60
-                        color: "#2D2D2D"
-                        radius: 10
-                        border.color: "#444444"
-                        border.width: 1
+                // Export Section
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 60
+                    color: "#2D2D2D"
+                    radius: 10
+                    border.color: "#444444"
+                    border.width: 1
 
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.margins: 15
-                            spacing: 15
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 15
+                        spacing: 15
+
+                        Text {
+                            text: "📤"
+                            font.pointSize: 20
+                            color: "#66BB6A"
+                        }
+
+                        ColumnLayout {
+                            Layout.preferredWidth: 280
+                            spacing: 2
 
                             Text {
-                                text: "📤"
-                                font.pointSize: 20
-                                color: "#66BB6A"
+                                text: "Export Data"
+                                color: "#FFFFFF"
+                                font.pointSize: 12
+                                font.bold: true
                             }
 
-                            ColumnLayout {
-                                Layout.preferredWidth: 280
-                                spacing: 2
+                            Text {
+                                text: "Save your data to a backup file"
+                                color: "#AAAAAA"
+                                font.pointSize: 10
+                                wrapMode: Text.WordWrap
+                                Layout.fillWidth: true
+                            }
+                        }
 
-                                Text {
-                                    text: "Export Data"
-                                    color: "#FFFFFF"
-                                    font.pointSize: 12
-                                    font.bold: true
-                                }
+                        Rectangle {
+                            Layout.preferredWidth: 80
+                            Layout.preferredHeight: 30
+                            color: "#66BB6A"
+                            radius: 15
 
-                                Text {
-                                    text: "Save your data to a backup file"
-                                    color: "#AAAAAA"
-                                    font.pointSize: 10
-                                    wrapMode: Text.WordWrap
-                                    Layout.fillWidth: true
-                                }
+                            Text {
+                                text: "Export"
+                                anchors.centerIn: parent
+                                color: "#1E1E1E"
+                                font.pointSize: 10
+                                font.bold: true
                             }
 
-                            Rectangle {
-                                Layout.preferredWidth: 80
-                                Layout.preferredHeight: 30
-                                color: "#66BB6A"
-                                radius: 15
-
-                                Text {
-                                    text: "Export"
-                                    anchors.centerIn: parent
-                                    color: "#1E1E1E"
-                                    font.pointSize: 10
-                                    font.bold: true
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    Qt.callLater(function() {
+                                        AppViewModel.exportData("")
+                                    }) // This will now show file dialog
+                                    dataManagementDialog.close()
                                 }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: {
-                                        Qt.callLater(function() {
-                                            AppViewModel.exportData("")
-                                        }) // This will now show file dialog
-                                        dataManagementDialog.close()
-                                    }
-                                    hoverEnabled: true
-                                    onEntered: parent.color = "#76CC7A"
-                                    onExited: parent.color = "#66BB6A"
-                                }
+                                hoverEnabled: true
+                                onEntered: parent.color = "#76CC7A"
+                                onExited: parent.color = "#66BB6A"
                             }
                         }
                     }
+                }
 
-                    // Import Section
-                    Rectangle {
-                        Layout.fillWidth: true
-                        height: 60
-                        color: "#2D2D2D"
-                        radius: 10
-                        border.color: "#444444"
-                        border.width: 1
+                // Import Section
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 60
+                    color: "#2D2D2D"
+                    radius: 10
+                    border.color: "#444444"
+                    border.width: 1
 
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.margins: 15
-                            spacing: 15
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 15
+                        spacing: 15
+
+                        Text {
+                            text: "📥"
+                            font.pointSize: 20
+                            color: "#42A5F5"
+                        }
+
+                        ColumnLayout {
+                            Layout.preferredWidth: 280
+                            spacing: 2
 
                             Text {
-                                text: "📥"
-                                font.pointSize: 20
-                                color: "#42A5F5"
+                                text: "Import Data"
+                                color: "#FFFFFF"
+                                font.pointSize: 12
+                                font.bold: true
                             }
 
-                            ColumnLayout {
-                                Layout.preferredWidth: 280
-                                spacing: 2
+                            Text {
+                                text: "Load data from a backup file"
+                                color: "#AAAAAA"
+                                font.pointSize: 10
+                                wrapMode: Text.WordWrap
+                                Layout.fillWidth: true
+                            }
+                        }
 
-                                Text {
-                                    text: "Import Data"
-                                    color: "#FFFFFF"
-                                    font.pointSize: 12
-                                    font.bold: true
-                                }
+                        Rectangle {
+                            Layout.preferredWidth: 80
+                            Layout.preferredHeight: 30
+                            color: "#42A5F5"
+                            radius: 15
 
-                                Text {
-                                    text: "Load data from a backup file"
-                                    color: "#AAAAAA"
-                                    font.pointSize: 10
-                                    wrapMode: Text.WordWrap
-                                    Layout.fillWidth: true
-                                }
+                            Text {
+                                text: "Import"
+                                anchors.centerIn: parent
+                                color: "#1E1E1E"
+                                font.pointSize: 10
+                                font.bold: true
                             }
 
-                            Rectangle {
-                                Layout.preferredWidth: 80
-                                Layout.preferredHeight: 30
-                                color: "#42A5F5"
-                                radius: 15
-
-                                Text {
-                                    text: "Import"
-                                    anchors.centerIn: parent
-                                    color: "#1E1E1E"
-                                    font.pointSize: 10
-                                    font.bold: true
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    Qt.callLater(function() {
+                                        AppViewModel.importDataWithDialog()
+                                    })
+                                    dataManagementDialog.close()
                                 }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: {
-                                        Qt.callLater(function() {
-                                            AppViewModel.importDataWithDialog()
-                                        })
-                                        dataManagementDialog.close()
-                                    }
-                                    hoverEnabled: true
-                                    onEntered: parent.color = "#52B5FF"
-                                    onExited: parent.color = "#42A5F5"
-                                }
+                                hoverEnabled: true
+                                onEntered: parent.color = "#52B5FF"
+                                onExited: parent.color = "#42A5F5"
                             }
                         }
                     }
+                }
 
-                    // Clear Data Section
-                    Rectangle {
-                        Layout.fillWidth: true
-                        height: 60
-                        color: "#2D2D2D"
-                        radius: 10
-                        border.color: "#444444"
-                        border.width: 1
+                // Clear Data Section
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 60
+                    color: "#2D2D2D"
+                    radius: 10
+                    border.color: "#444444"
+                    border.width: 1
 
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.margins: 15
-                            spacing: 15
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 15
+                        spacing: 15
+
+                        Text {
+                            text: "🗑"
+                            font.pointSize: 20
+                            color: "#E95B5B"
+                        }
+
+                        ColumnLayout {
+                            Layout.preferredWidth: 280
+                            spacing: 2
 
                             Text {
-                                text: "🗑"
-                                font.pointSize: 20
-                                color: "#E95B5B"
+                                text: "Clear All Data"
+                                color: "#FFFFFF"
+                                font.pointSize: 12
+                                font.bold: true
                             }
 
-                            ColumnLayout {
-                                Layout.preferredWidth: 280
-                                spacing: 2
+                            Text {
+                                text: "Reset to default state (irreversible)"
+                                color: "#AAAAAA"
+                                font.pointSize: 10
+                                wrapMode: Text.WordWrap
+                                Layout.fillWidth: true
+                            }
+                        }
 
-                                Text {
-                                    text: "Clear All Data"
-                                    color: "#FFFFFF"
-                                    font.pointSize: 12
-                                    font.bold: true
-                                }
+                        Rectangle {
+                            Layout.preferredWidth: 80
+                            Layout.preferredHeight: 30
+                            color: "#E95B5B"
+                            radius: 15
 
-                                Text {
-                                    text: "Reset to default state (irreversible)"
-                                    color: "#AAAAAA"
-                                    font.pointSize: 10
-                                    wrapMode: Text.WordWrap
-                                    Layout.fillWidth: true
-                                }
+                            Text {
+                                text: "Clear"
+                                anchors.centerIn: parent
+                                color: "#FFFFFF"
+                                font.pointSize: 10
+                                font.bold: true
                             }
 
-                            Rectangle {
-                                Layout.preferredWidth: 80
-                                Layout.preferredHeight: 30
-                                color: "#E95B5B"
-                                radius: 15
-
-                                Text {
-                                    text: "Clear"
-                                    anchors.centerIn: parent
-                                    color: "#FFFFFF"
-                                    font.pointSize: 10
-                                    font.bold: true
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    clearDataConfirmDialog.open()
                                 }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: {
-                                        clearDataConfirmDialog.open()
-                                    }
-                                    hoverEnabled: true
-                                    onEntered: parent.color = "#F76B6B"
-                                    onExited: parent.color = "#E95B5B"
-                                }
+                                hoverEnabled: true
+                                onEntered: parent.color = "#F76B6B"
+                                onExited: parent.color = "#E95B5B"
                             }
                         }
                     }
                 }
             }
-
-            buttons: [
-                {
-                    text: "Close"
-                }
-            ]
         }
 
-        // File Import Dialog (Note: This is a simplified version - for full file dialog you'd need C++ FileDialog)
-        CustomDialog {
-            id: importFileDialog
-            dialogWidth: 400
+        buttons: [
+            {
+                text: "Close"
+            }
+        ]
+    }
 
-            content: Component {
-                ColumnLayout {
-                    spacing: 15
+    // File Import Dialog (Note: This is a simplified version - for full file dialog you'd need C++ FileDialog)
+    CustomDialog {
+        id: importFileDialog
+        dialogWidth: 400
 
-                    Text {
-                        text: "Import Data File"
-                        color: "#FFFFFF"
-                        font.pointSize: 14
-                        font.bold: true
+        content: Component {
+            ColumnLayout {
+                spacing: 15
+
+                Text {
+                    text: "Import Data File"
+                    color: "#FFFFFF"
+                    font.pointSize: 14
+                    font.bold: true
+                }
+
+                TextField {
+                    id: importPathField
+                    placeholderText: "Enter file path or drag & drop JSON file..."
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 45
+                    color: "#FFFFFF"
+                    font.pointSize: 12
+                    background: Rectangle {
+                        color: "#3A3A3A"
+                        radius: 8
+                        border.color: "#42A5F5"
+                        border.width: 1
                     }
+                    padding: 10
+                    placeholderTextColor: "#AAAAAA"
+                }
 
-                    TextField {
-                        id: importPathField
-                        placeholderText: "Enter file path or drag & drop JSON file..."
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 45
-                        color: "#FFFFFF"
-                        font.pointSize: 12
-                        background: Rectangle {
-                            color: "#3A3A3A"
-                            radius: 8
-                            border.color: "#42A5F5"
-                            border.width: 1
-                        }
-                        padding: 10
-                        placeholderTextColor: "#AAAAAA"
-                    }
-
-                    Text {
-                        text: "⚠️ This will replace all current data. Make sure to export current data first!"
-                        color: "#E95B5B"
-                        font.pointSize: 10
-                        Layout.fillWidth: true
-                        wrapMode: Text.WordWrap
-                    }
+                Text {
+                    text: "⚠️ This will replace all current data. Make sure to export current data first!"
+                    color: "#E95B5B"
+                    font.pointSize: 10
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
                 }
             }
-
-            buttons: [
-                {
-                    text: "Import",
-                    color: "#42A5F5",
-                    onClicked: function() {
-                        let pathField = importFileDialog.contentItem.children[0].children[1].item;
-                        if (pathField && pathField.text.trim() !== "") {
-                            AppViewModel.importData(pathField.text.trim());
-                            pathField.text = "";
-                            dataManagementDialog.close();
-                        }
-                    }
-                },
-                {
-                    text: "Cancel"
-                }
-            ]
         }
 
-        // Clear Data Confirmation Dialog
-        CustomDialog {
-            id: clearDataConfirmDialog
-            dialogWidth: 400
-
-            content: Component {
-                ColumnLayout {
-                    spacing: 15
-
-                    Text {
-                        text: "⚠️ Clear All Data"
-                        color: "#E95B5B"
-                        font.pointSize: 16
-                        font.bold: true
-                        Layout.alignment: Qt.AlignHCenter
-                    }
-
-                    Text {
-                        text: "This action will permanently delete all your goals, sub-goals, and tasks. This cannot be undone."
-                        color: "#FFFFFF"
-                        font.pointSize: 12
-                        Layout.fillWidth: true
-                        wrapMode: Text.WordWrap
-                        horizontalAlignment: Text.AlignHCenter
-                    }
-
-                    Text {
-                        text: "Are you absolutely sure you want to continue?"
-                        color: "#F3C44A"
-                        font.pointSize: 12
-                        font.bold: true
-                        Layout.fillWidth: true
-                        horizontalAlignment: Text.AlignHCenter
-                    }
-                }
-            }
-
-            buttons: [
-                {
-                    text: "Yes, Clear All Data",
-                    color: "#E95B5B",
-                    onClicked: function() {
-                        AppViewModel.clearAllData();
+        buttons: [
+            {
+                text: "Import",
+                color: "#42A5F5",
+                onClicked: function() {
+                    let pathField = importFileDialog.contentItem.children[0].children[1].item;
+                    if (pathField && pathField.text.trim() !== "") {
+                        AppViewModel.importData(pathField.text.trim());
+                        pathField.text = "";
                         dataManagementDialog.close();
                     }
-                },
-                {
-                    text: "Cancel",
-                    color: "#3A3A3A"
                 }
-            ]
+            },
+            {
+                text: "Cancel"
+            }
+        ]
+    }
+
+    // Clear Data Confirmation Dialog
+    CustomDialog {
+        id: clearDataConfirmDialog
+        dialogWidth: 400
+
+        content: Component {
+            ColumnLayout {
+                spacing: 15
+
+                Text {
+                    text: "⚠️ Clear All Data"
+                    color: "#E95B5B"
+                    font.pointSize: 16
+                    font.bold: true
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Text {
+                    text: "This action will permanently delete all your goals, sub-goals, and tasks. This cannot be undone."
+                    color: "#FFFFFF"
+                    font.pointSize: 12
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
+                }
+
+                Text {
+                    text: "Are you absolutely sure you want to continue?"
+                    color: "#F3C44A"
+                    font.pointSize: 12
+                    font.bold: true
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignHCenter
+                }
+            }
         }
+
+        buttons: [
+            {
+                text: "Yes, Clear All Data",
+                color: "#E95B5B",
+                onClicked: function() {
+                    AppViewModel.clearAllData();
+                    dataManagementDialog.close();
+                }
+            },
+            {
+                text: "Cancel",
+                color: "#3A3A3A"
+            }
+        ]
+    }
+
+    // Info Dialog
+    CustomDialog {
+        id: infoDialog
+        dialogWidth: 500
+
+        content: Component {
+            ColumnLayout {
+                spacing: 20
+
+                Text {
+                    text: "Vision Compass - Quick Guide"
+                    color: "#F3C44A"
+                    font.pointSize: 18
+                    font.bold: true
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                // Main Goal Section
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 70
+                    color: "#2D2D2D"
+                    radius: 10
+                    border.color: "#E95B5B"
+                    border.width: 2
+
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 15
+                        spacing: 15
+
+                        Rectangle {
+                            width: 30
+                            height: 30
+                            color: "#E95B5B"
+                            radius: 15
+                            Layout.alignment: Qt.AlignVCenter
+
+                            Text {
+                                text: "🎯"
+                                anchors.centerIn: parent
+                                font.pointSize: 14
+                            }
+                        }
+
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
+                            Layout.topMargin: -5
+                            spacing: 2
+
+                            Text {
+                                text: "Main Goal (1 year to 10+ years)"
+                                color: "#FFFFFF"
+                                font.pointSize: 12
+                                font.bold: true
+                            }
+
+                            Text {
+                                text: "Your main goal, as a guide for life"
+                                color: "#AAAAAA"
+                                font.pointSize: 10
+                                wrapMode: Text.WordWrap
+                                Layout.fillWidth: true
+                            }
+                        }
+                    }
+                }
+
+                // SubGoals Section
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 70
+                    color: "#2D2D2D"
+                    radius: 10
+                    border.color: "#F3C44A"
+                    border.width: 2
+
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 15
+                        spacing: 15
+
+                        Rectangle {
+                            width: 30
+                            height: 30
+                            color: "#F3C44A"
+                            radius: 15
+                            Layout.alignment: Qt.AlignVCenter
+
+                            Text {
+                                text: "📋"
+                                anchors.centerIn: parent
+                                font.pointSize: 14
+                            }
+                        }
+
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
+                            Layout.topMargin: -5
+                            spacing: 2
+
+                            Text {
+                                text: "Subgoals (3 months to 1 year)"
+                                color: "#FFFFFF"
+                                font.pointSize: 12
+                                font.bold: true
+                            }
+
+                            Text {
+                                text: "Major directions/blocks leading to the main goal"
+                                color: "#AAAAAA"
+                                font.pointSize: 10
+                                wrapMode: Text.WordWrap
+                                Layout.fillWidth: true
+                            }
+                        }
+                    }
+                }
+
+                // Tasks Section
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 70
+                    color: "#2D2D2D"
+                    radius: 10
+                    border.color: "#66BB6A"
+                    border.width: 2
+
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.margins: 15
+                        spacing: 15
+
+                        Rectangle {
+                            width: 30
+                            height: 30
+                            color: "#66BB6A"
+                            radius: 15
+                            Layout.alignment: Qt.AlignVCenter
+
+                            Text {
+                                text: "✓"
+                                anchors.centerIn: parent
+                                font.pointSize: 14
+                                color: "#1E1E1E"
+                                font.bold: true
+                            }
+                        }
+
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
+                            Layout.topMargin: -5
+                            spacing: 2
+
+                            Text {
+                                text: "Tasks (1 day to 3 months)"
+                                color: "#FFFFFF"
+                                font.pointSize: 12
+                                font.bold: true
+                            }
+
+                            Text {
+                                text: "Components of subgoals that we must accomplish"
+                                color: "#AAAAAA"
+                                font.pointSize: 10
+                                wrapMode: Text.WordWrap
+                                Layout.fillWidth: true
+                            }
+                        }
+                    }
+                }
+
+                Text {
+                    text: "💡 Use keyboard shortcuts 1-9 to quickly select subgoals!"
+                    color: "#F3C44A"
+                    font.pointSize: 11
+                    font.bold: true
+                    Layout.alignment: Qt.AlignHCenter
+                    Layout.topMargin: 10
+                }
+            }
+        }
+
+        buttons: [
+            {
+                text: "Got it!",
+                color: "#F3C44A",
+                textColor: "#1E1E1E"
+            }
+        ]
+    }
 }
 
