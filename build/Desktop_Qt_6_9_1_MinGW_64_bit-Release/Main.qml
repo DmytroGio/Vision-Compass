@@ -598,7 +598,16 @@ ApplicationWindow {
                                 Rectangle {
                                     id: scrollHandle
                                     height: parent.height - 2
-                                    width: parent.width * 0.3  // Фиксированный размер
+                                    // ИЗМЕНЕНИЕ: Адаптивная ширина вместо фиксированной
+                                    width: {
+                                        if (subGoalsList.contentWidth <= subGoalsList.width) {
+                                            return parent.width - 2; // Полная ширина если контент помещается
+                                        }
+                                        // Пропорциональная ширина: отношение видимой области к общему контенту
+                                        var ratio = subGoalsList.width / subGoalsList.contentWidth;
+                                        var minWidth = 30; // Минимальная ширина ползунка
+                                        return Math.max(minWidth, parent.width * ratio);
+                                    }
                                     y: 1
                                     radius: 3  // Чуть меньше радиус для лучшего отображения
 
@@ -1028,7 +1037,16 @@ ApplicationWindow {
                         Rectangle {
                             id: verticalScrollHandle
                             width: parent.width - 2
-                            height: parent.height * 0.3  // Фиксированный размер
+                            // ИЗМЕНЕНИЕ: Адаптивная высота вместо фиксированной
+                            height: {
+                                if (taskListView.contentHeight <= taskListView.height) {
+                                    return parent.height - 2; // Полная высота если контент помещается
+                                }
+                                // Пропорциональная высота: отношение видимой области к общему контенту
+                                var ratio = taskListView.height / taskListView.contentHeight;
+                                var minHeight = 30; // Минимальная высота ползунка
+                                return Math.max(minHeight, parent.height * ratio);
+                            }
                             x: 1
                             radius: 5
 
@@ -1047,7 +1065,7 @@ ApplicationWindow {
                                 })
                             }
 
-                            property real maxY: parent.height - height
+                            property real maxY: parent.height - height - 2
                             y: 1
 
                             color: verticalScrollMouseArea.containsMouse ? "#FF8C42" : "#F3C44A"
