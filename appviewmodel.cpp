@@ -45,6 +45,32 @@ QVariantList AppViewModel::currentTasksListModel() const {
     return list;
 }
 
+QVariantList AppViewModel::subGoalCompletionStatus() const
+{
+    QVariantList statusList;
+    for (const auto& subGoal : m_subGoals) {
+        auto tasksForSubGoal = m_taskManager.getTasksForSubGoal(subGoal.id);
+
+        bool allCompleted = false;
+        if (!tasksForSubGoal.empty()) {
+            allCompleted = std::all_of(tasksForSubGoal.begin(), tasksForSubGoal.end(),
+                                       [](const Task& task) { return task.completed; });
+        }
+
+        QVariantMap statusMap;
+        statusMap["subGoalId"] = subGoal.id;
+        statusMap["allTasksCompleted"] = allCompleted;
+        statusMap["hasAnyTasks"] = !tasksForSubGoal.empty();
+        statusList.append(statusMap);
+    }
+    return statusList;
+}
+
+void AppViewModel::updateSubGoalCompletionStatus()
+{
+    emit subGoalCompletionChanged();
+}
+
 int AppViewModel::selectedSubGoalId() const {
     return m_selectedSubGoalId;
 }
@@ -284,6 +310,7 @@ void AppViewModel::updateGoalProperties() {
 
 void AppViewModel::updateSubGoalListModel() {
     m_subGoals = m_taskManager.getSubGoals();
+    updateSubGoalCompletionStatus();
     emit subGoalsChanged();
 }
 
@@ -295,6 +322,7 @@ void AppViewModel::updateTasksListModel() {
         m_currentTasks.clear();
         qDebug() << "No SubGoal selected, cleared tasks";
     }
+    updateSubGoalCompletionStatus();
     emit currentTasksChanged();
 }
 

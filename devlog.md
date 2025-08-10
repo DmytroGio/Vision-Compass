@@ -83,7 +83,7 @@ To see the global goals of life and plan according to them.
 - Incorrect position offset (scrollbar moves to the top of the list or list is refreshed) after changing the status of a task at the bottom of the list to “completed/not completed.” [done]
 
 ## 2025-08-08
-- The width of the scrollbar changes depending on the number of items in the list (adaptive width).
+- The width of the scrollbar changes depending on the number of items in the list (adaptive width). [done]
 
 ## 2025-08-09
-- Changes to the visual state of the Subgoal cell (possibly adding a green stroke) if all tasks in the task list have been completed.
+- Changes to the visual state of the Subgoal cell (possibly adding a green stroke) if all tasks in the task list have been completed. [done]

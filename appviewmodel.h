@@ -16,6 +16,7 @@ class AppViewModel : public QObject
     Q_PROPERTY(QVariantList currentTasksListModel READ currentTasksListModel NOTIFY currentTasksChanged)
     Q_PROPERTY(int selectedSubGoalId READ selectedSubGoalId NOTIFY selectedSubGoalChanged)
     Q_PROPERTY(QString selectedSubGoalName READ selectedSubGoalName NOTIFY selectedSubGoalChanged)
+    Q_PROPERTY(QVariantList subGoalCompletionStatus READ subGoalCompletionStatus NOTIFY subGoalCompletionChanged)
 
 public:
     explicit AppViewModel(QObject *parent = nullptr);
@@ -27,6 +28,7 @@ public:
     QVariantList currentTasksListModel() const;
     int selectedSubGoalId() const;
     QString selectedSubGoalName() const;
+    QVariantList subGoalCompletionStatus() const;
 
     // Property setters
     void setCurrentGoalText(const QString& text);
@@ -67,11 +69,13 @@ signals:
     void subGoalsChanged();
     void currentTasksChanged();
     void selectedSubGoalChanged();
+    void subGoalCompletionChanged();
 
 private:
     void updateGoalProperties();
     void updateSubGoalListModel();
     void updateTasksListModel();
+    void updateSubGoalCompletionStatus();
     QString getTasksFilePath() const;
 
     TaskManager m_taskManager;

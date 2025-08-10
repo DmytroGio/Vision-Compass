@@ -402,6 +402,16 @@ ApplicationWindow {
                                     property bool isSelected: modelData.id === AppViewModel.selectedSubGoalId
                                     property bool isHovered: false
 
+                                    property bool allTasksCompleted: {
+                                        let completionStatus = AppViewModel.subGoalCompletionStatus;
+                                        for (let i = 0; i < completionStatus.length; i++) {
+                                            if (completionStatus[i].subGoalId === modelData.id) {
+                                                return completionStatus[i].allTasksCompleted && completionStatus[i].hasAnyTasks;
+                                            }
+                                        }
+                                        return false;
+                                    }
+
                                     Rectangle {
                                             anchors.fill: parent
                                             anchors.topMargin: isSelected ? 8 : 4
@@ -413,14 +423,27 @@ ApplicationWindow {
                                         }
 
                                     // Основной фон
-                                    color: isSelected ? "#F3C44A" : "#2D2D2D"
-                                    border.color: isSelected ? "#F5D665" : "#F3C44A"
+                                    color: {
+                                        if (allTasksCompleted) {
+                                            return isSelected ? "#66BB6A" : "#4CAF50";
+                                        } else {
+                                            return isSelected ? "#F3C44A" : "#2D2D2D";
+                                        }
+                                    }
+
+                                    border.color: {
+                                        if (allTasksCompleted) {
+                                            return isSelected ? "#76CC7A" : "#66BB6A";
+                                        } else {
+                                            return isSelected ? "#F5D665" : "#F3C44A";
+                                        }
+                                    }
 
                                     // Эффект при наведении для НЕвыбранных элементов
                                     Rectangle {
                                         anchors.fill: parent
                                         radius: parent.radius
-                                        color: "#FF8C42"  // Оранжевый цвет
+                                        color: allTasksCompleted ? "#81C784" : "#FF8C42"
                                         opacity: 0.6
                                         visible: !isSelected && isHovered
                                     }
