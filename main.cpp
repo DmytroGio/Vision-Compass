@@ -6,9 +6,14 @@
 #include <QQuickWindow>
 #include <QIcon>
 
+
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+
+    app.setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
+    qputenv("QT_QUICK_CONTROLS_STYLE", "Material");
+    qputenv("QT_QUICK_CONTROLS_MATERIAL_THEME", "Dark");
 
 
     QQuickWindow::setDefaultAlphaBuffer(true);
@@ -36,13 +41,6 @@ int main(int argc, char *argv[])
 
     engine.load(url);
 
-    // ИСПРАВЛЕНИЕ: Устанавливаем флаг после загрузки QML
-    if (!engine.rootObjects().isEmpty()) {
-        QQuickWindow *window = qobject_cast<QQuickWindow*>(engine.rootObjects().first());
-        if (window) {
-            window->setFlags(Qt::FramelessWindowHint);
-            window->show(); // Явно показываем окно после установки флагов
-        }
-    }
+
     return app.exec();
 }

@@ -9,10 +9,10 @@ ApplicationWindow {
     visible: true
     width: 800
     height: 750
-    minimumWidth: 800
-    maximumWidth: 800
-    minimumHeight: 750
-    maximumHeight: 750
+
+    minimumWidth: 600
+    minimumHeight: 500
+
     title: "Vision Compass"
 
     //flags: Qt.FramelessWindowHint
@@ -128,101 +128,13 @@ ApplicationWindow {
         anchors.fill: parent
         spacing: 0
 
-        // --- Кастомная панель заголовка ---
-        Rectangle {
-            id: titleBar
-            Layout.fillWidth: true
-            height: 30 // Высота нашей кастомной полоски
-            color: "#1E1E1E" // Цвет, соответствующий твоему дизайну
 
-            Image {
-                id: windowIcon
-                source: "qrc:/VisionCompass/icons/compass-icon.png"
-                width: 20
-                height: 20
-                anchors.left: parent.left
-                anchors.leftMargin: 110
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            // Установи dragging для перемещения окна
-            MouseArea {
-                anchors.fill: parent
-                drag.target: null
-                onPressed: mouse.accepted = true
-                onMouseXChanged: {} // нужно указать хоть одно изменение, чтобы onPressed работал
-                onPressedChanged: {
-                    if (pressed) {
-                        mainWindow.startSystemMove(); // перемещение окна
-                    }
-                }
-            }
-
-            RowLayout {
-                anchors.fill: parent
-                spacing: 0
-
-                Text {
-                    id: windowTitleText
-                    text: mainWindow.title // Используем заголовок окна
-                    color: "white"
-                    font.pointSize: 10
-                    verticalAlignment: Text.AlignVCenter
-                    Layout.leftMargin: 10
-                    Layout.fillWidth: true // Занимает всё доступное пространство
-                }
-                // Кнопка свернуть
-                Rectangle {
-                    width: 40
-                    height: parent.height
-                    color: minimizeMouseArea.containsMouse ? "#3A3A3A" : "#1E1E1E"
-
-                    Text {
-                        text: "—"
-                        color: "white"
-                        font.bold: true
-                        font.pointSize: 12
-                        anchors.centerIn: parent
-                    }
-
-                    MouseArea {
-                        id: minimizeMouseArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        onClicked: mainWindow.showMinimized()
-                    }
-                }
-
-                // Кнопка закрыть
-                Rectangle {
-                    width: 40
-                    height: parent.height
-                    color: closeMouseArea.containsMouse ? "#CC4444" : "#1E1E1E"
-
-                    Text {
-                        text: "✕"
-                        color: "white"
-                        font.bold: true
-                        font.pointSize: 12
-                        anchors.centerIn: parent
-                    }
-
-                    MouseArea {
-                        id: closeMouseArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        onClicked: mainWindow.close()
-                    }
-                }
-            }
-        }
-        // --- Конец кастомной панели заголовка ---
 
         // --- Top Section (half of big circle) ---
         Item {
             id: topSection
             Layout.fillWidth: true
-            Layout.preferredHeight:  375
+            Layout.preferredHeight: Math.max(300, parent.height * 0.5) // Адаптивная высота
 
             // Gray background
             Rectangle {
