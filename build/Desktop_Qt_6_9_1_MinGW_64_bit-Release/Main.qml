@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls 2.15
 import QtQuick.Layouts
 import QtQuick.Window
+import QtQuick.Effects
 
 
 ApplicationWindow {
@@ -595,34 +596,43 @@ ApplicationWindow {
             }
 
             // Кнопка добавления SubGoal (справа сверху на желтой области)
-            Rectangle {
+            Item {
                 id: addSubGoalButtonTop
-                    width: 50
-                    height: 50
-                    anchors.bottom: subGoalsContainer.top
-                    anchors.right: parent.right
-                    anchors.bottomMargin: 20
-                    anchors.rightMargin: 80
-                color: "#2D2D2D"
-                radius: 25
-                border.color: "#F3C44A"
-                border.width: 2
+                width: 50
+                height: 50
+                anchors.bottom: subGoalsContainer.top
+                anchors.right: parent.right
+                anchors.bottomMargin: 20
+                anchors.rightMargin: 80
 
                 Rectangle {
-                    anchors.centerIn: parent
-                    width: 30
-                    height: 30
-                    radius: 15
-                    color: "#F3C44A"
+                    id: mainButton
+                    anchors.fill: parent
+                    color: "#F3C44A"  // Делаем полностью желтой
+                    radius: 25
+                    border.color: "#F5D665"  // Светло-желтая граница
+                    border.width: 2
 
                     Text {
                         text: "+"
                         anchors.centerIn: parent
-                        anchors.verticalCenterOffset: -2  // Поднимаем на 2 пикселя вверх
+                        anchors.verticalCenterOffset: -2
                         font.pointSize: 18
                         font.bold: true
                         color: "#1E1E1E"
                     }
+                }
+
+                MultiEffect {
+                    source: mainButton
+                    anchors.fill: mainButton
+                    shadowEnabled: true
+                    shadowOpacity: 0.5
+                    shadowColor: "#000000"
+                    shadowHorizontalOffset: 3
+                    shadowVerticalOffset: 3
+                    shadowBlur: 0.8
+                    z: -1
                 }
 
                 MouseArea {
@@ -631,13 +641,12 @@ ApplicationWindow {
                         addSubGoalDialog.open()
                     }
                     hoverEnabled: true
-                    onEntered: parent.color = "#353535"
-                    onExited: parent.color = "#2D2D2D"
+                    onEntered: mainButton.color = "#F5D665"
+                    onExited: mainButton.color = "#F3C44A"
                 }
             }
-
             // Data Management Menu Button
-            Rectangle {
+            Item {
                 id: dataMenuButton
                 width: 50
                 height: 50
@@ -645,17 +654,34 @@ ApplicationWindow {
                 anchors.left: parent.left
                 anchors.bottomMargin: 20
                 anchors.leftMargin: 80
-                color: "#2D2D2D"
-                radius: 25
-                border.color: "#F3C44A"
-                border.width: 2
 
-                Image {
-                    source: "qrc:/VisionCompass/icons/export_import-icon.png"
-                    width: 20
-                    height: 20
-                    anchors.centerIn: parent
-                    fillMode: Image.PreserveAspectFit
+                Rectangle {
+                    id: dataButton
+                    anchors.fill: parent
+                    color: "#F3C44A"
+                    radius: 25
+                    border.color: "#F5D665"
+                    border.width: 2
+
+                    Image {
+                        source: "qrc:/VisionCompass/icons/export_import-icon.png"
+                        width: 20
+                        height: 20
+                        anchors.centerIn: parent
+                        fillMode: Image.PreserveAspectFit
+                    }
+                }
+
+                MultiEffect {
+                    source: dataButton
+                    anchors.fill: dataButton
+                    shadowEnabled: true
+                    shadowOpacity: 0.5
+                    shadowColor: "#000000"
+                    shadowHorizontalOffset: 3
+                    shadowVerticalOffset: 3
+                    shadowBlur: 0.8
+                    z: -1
                 }
 
                 MouseArea {
@@ -664,13 +690,12 @@ ApplicationWindow {
                         dataManagementDialog.open()
                     }
                     hoverEnabled: true
-                    onEntered: parent.color = "#353535"
-                    onExited: parent.color = "#2D2D2D"
+                    onEntered: dataButton.color = "#F5D665"
+                    onExited: dataButton.color = "#F3C44A"
                 }
             }
-
             // Info Button
-            Rectangle {
+            Item {
                 id: infoButton
                 width: 50
                 height: 50
@@ -678,18 +703,35 @@ ApplicationWindow {
                 anchors.left: dataMenuButton.right
                 anchors.bottomMargin: 20
                 anchors.leftMargin: 15
-                color: "#2D2D2D"
-                radius: 25
-                border.color: "#F3C44A"
-                border.width: 2
 
-                Text {
-                    text: "i"
-                    anchors.centerIn: parent
-                    font.pointSize: 20
-                    font.bold: true
+                Rectangle {
+                    id: infoButtonRect
+                    anchors.fill: parent
                     color: "#F3C44A"
-                    font.italic: true
+                    radius: 25
+                    border.color: "#F5D665"
+                    border.width: 2
+
+                    Text {
+                        text: "i"
+                        anchors.centerIn: parent
+                        font.pointSize: 20
+                        font.bold: true
+                        color: "#1E1E1E"
+                        font.italic: true
+                    }
+                }
+
+                MultiEffect {
+                    source: infoButtonRect
+                    anchors.fill: infoButtonRect
+                    shadowEnabled: true
+                    shadowOpacity: 0.5
+                    shadowColor: "#000000"
+                    shadowHorizontalOffset: 3
+                    shadowVerticalOffset: 3
+                    shadowBlur: 0.8
+                    z: -1
                 }
 
                 MouseArea {
@@ -698,11 +740,10 @@ ApplicationWindow {
                         infoDialog.open()
                     }
                     hoverEnabled: true
-                    onEntered: parent.color = "#353535"
-                    onExited: parent.color = "#2D2D2D"
+                    onEntered: infoButtonRect.color = "#F5D665"
+                    onExited: infoButtonRect.color = "#F3C44A"
                 }
-            }
-        }
+            }}
 
         // --- Нижняя секция (Задачи) ---
         Rectangle {
