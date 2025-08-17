@@ -7,8 +7,8 @@ import QtQuick.Window
 ApplicationWindow {
     id: mainWindow
     visible: true
-    width: 800
-    height: 750
+    width: 1000
+    height: 900
 
     minimumWidth: 600
     minimumHeight: 500
@@ -128,7 +128,28 @@ ApplicationWindow {
         anchors.fill: parent
         spacing: 0
 
+        // Единый фон для всего приложения
+        Rectangle {
+            anchors.fill: parent
+            color: "#1E1E1E"
+            z: -1
+        }
 
+        Canvas {
+            id: bigCircle
+            anchors.fill: parent
+            z: 0
+            onPaint: {
+                var ctx = getContext("2d");
+                ctx.clearRect(0, 0, width, height);
+                var radius = width * 0.9;
+                ctx.beginPath();
+                ctx.arc(width / 2, 0, radius / 2, 0, Math.PI, false);
+                ctx.closePath();
+                ctx.fillStyle = "#F3C44A";
+                ctx.fill();
+            }
+        }
 
         // --- Top Section (half of big circle) ---
         Item {
@@ -136,27 +157,6 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.preferredHeight: Math.max(300, parent.height * 0.5) // Адаптивная высота
 
-            // Gray background
-            Rectangle {
-                anchors.fill: parent
-                color: "#1E1E1E"
-                z: 0
-            }
-
-            Canvas {
-                id: bigCircle
-                anchors.fill: parent
-                onPaint: {
-                    var ctx = getContext("2d");
-                    ctx.clearRect(0, 0, width, height);
-                    var radius = width * 0.9;
-                    ctx.beginPath();
-                    ctx.arc(width / 2, 0, radius / 2, 0, Math.PI, false);
-                    ctx.closePath();
-                    ctx.fillStyle = "#F3C44A";
-                    ctx.fill();
-                }
-            }
 
             // Red circle (Goal)
             Rectangle {
@@ -709,7 +709,7 @@ ApplicationWindow {
             id: bottomSection
             Layout.fillWidth: true
             Layout.fillHeight: true // Занимает оставшееся место
-            color: "#1E1E1E" // Более темный фон для задач
+            color: "transparent"
 
             ColumnLayout {
                 anchors.fill: parent
@@ -810,42 +810,32 @@ ApplicationWindow {
                         }
 
                         delegate: Rectangle {
-                            width: taskListView.width
-                            height: 80
+                            width: taskListView.width * 0.8
+                            height: 60
+                            anchors.horizontalCenter: parent.horizontalCenter
                             color: "#2D2D2D"
                             radius: 15
                             border.color: "#444444"
                             border.width: 1
                             opacity: modelData.completed ? 0.7 : 1.0
 
-                            // Левая цветная полоска
-                            Rectangle {
-                                width: 5
-                                height: parent.height - 10
-                                anchors.left: parent.left
-                                anchors.leftMargin: 5
-                                anchors.verticalCenter: parent.verticalCenter
-                                color: "#F3C44A"
-                                radius: 2
-                            }
-
                             // Основное содержимое задачи
                             RowLayout {
                                 anchors.fill: parent
-                                anchors.margins: 15
-                                spacing: 15
+                                anchors.margins: 12
+                                spacing: 12
 
                                 // Иконка задачи
                                 Rectangle {
-                                    width: 40
-                                    height: 40
+                                    width: 35
+                                    height: 35
                                     color: modelData.completed ? "#66BB6A" : "#F3C44A"
                                     radius: 8
 
                                     Text {
                                         text: modelData.completed ? "✓" : "☐"
                                         anchors.centerIn: parent
-                                        font.pointSize: 18
+                                        font.pointSize: 16
                                         color: "#1E1E1E"
                                         font.bold: true
                                     }
@@ -870,33 +860,28 @@ ApplicationWindow {
 
                                     Text {
                                         color: "#FFFFFF"
-                                        font.pointSize: 14
+                                        font.pointSize: 12
                                         font.bold: true
                                         Layout.fillWidth: true
                                         wrapMode: Text.WordWrap
+                                        maximumLineCount: 2
+                                        elide: Text.ElideRight
                                         textFormat: Text.RichText
                                         text: modelData.completed ? "<s>" + modelData.name + "</s>" : modelData.name
-                                    }
-
-                                    Text {
-                                        text: modelData.completed ? "Completed" : "Active task"
-                                        color: modelData.completed ? "#66BB6A" : "#AAAAAA"
-                                        font.pointSize: 11
-                                        Layout.fillWidth: true
                                     }
                                 }
 
                                 // Кнопка удаления
                                 Rectangle {
-                                    width: 35
-                                    height: 35
+                                    width: 30
+                                    height: 30
                                     color: "#E95B5B"
-                                    radius: 17
+                                    radius: 15
 
                                     Text {
                                         text: "✕"
                                         anchors.centerIn: parent
-                                        font.pointSize: 16
+                                        font.pointSize: 14
                                         color: "#FFFFFF"
                                         font.bold: true
                                     }
@@ -915,15 +900,15 @@ ApplicationWindow {
 
                                 // Кнопка редактирования задачи
                                 Rectangle {
-                                    width: 35
-                                    height: 35
+                                    width: 30
+                                    height: 30
                                     color: "#F3C44A"
-                                    radius: 17
+                                    radius: 15
 
                                     Text {
                                         text: "✎"
                                         anchors.centerIn: parent
-                                        font.pointSize: 16
+                                        font.pointSize: 14
                                         color: "#1E1E1E"
                                         font.bold: true
                                     }
