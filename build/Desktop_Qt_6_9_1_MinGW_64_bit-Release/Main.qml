@@ -143,7 +143,7 @@ ApplicationWindow {
             onPaint: {
                 var ctx = getContext("2d");
                 ctx.clearRect(0, 0, width, height);
-                var radius = width * 0.9;
+                var radius = 800;
                 ctx.beginPath();
                 ctx.arc(width / 2, 0, radius / 2, 0, Math.PI, false);
                 ctx.closePath();
@@ -162,8 +162,8 @@ ApplicationWindow {
             // Red circle (Goal)
             Rectangle {
                 id: goalCircle
-                width: topSection.height * 1
-                height: width
+                width: 400  // Фиксированная ширина
+                height: 400
                 radius: width / 2
                 color: "#E95B5B"
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -600,10 +600,8 @@ ApplicationWindow {
                 id: addSubGoalButtonTop
                 width: 50
                 height: 50
-                anchors.bottom: subGoalsContainer.top
-                anchors.right: parent.right
-                anchors.bottomMargin: 20
-                anchors.rightMargin: 80
+                x: parent.width / 2 + 210
+                y: 180
 
                 Rectangle {
                     id: mainButton
@@ -650,10 +648,8 @@ ApplicationWindow {
                 id: dataMenuButton
                 width: 50
                 height: 50
-                anchors.bottom: subGoalsContainer.top
-                anchors.left: parent.left
-                anchors.bottomMargin: 20
-                anchors.leftMargin: 80
+                x: parent.width / 2 - 310
+                y: 180
 
                 Rectangle {
                     id: dataButton
@@ -699,10 +695,8 @@ ApplicationWindow {
                 id: infoButton
                 width: 50
                 height: 50
-                anchors.bottom: subGoalsContainer.top
-                anchors.left: dataMenuButton.right
-                anchors.bottomMargin: 20
-                anchors.leftMargin: 15
+                x: parent.width / 2 - 230
+                y: 180
 
                 Rectangle {
                     id: infoButtonRect
@@ -743,7 +737,8 @@ ApplicationWindow {
                     onEntered: infoButtonRect.color = "#F5D665"
                     onExited: infoButtonRect.color = "#F3C44A"
                 }
-            }}
+            }
+        }
 
         // --- Нижняя секция (Задачи) ---
         Rectangle {
@@ -851,25 +846,26 @@ ApplicationWindow {
                         }
 
                         delegate: Rectangle {
-                            width: taskListView.width * 0.8
-                            height: 60
+                            width: 600
+                            height: Math.max(50, taskContent.implicitHeight + 16)
                             anchors.horizontalCenter: parent.horizontalCenter
                             color: "#2D2D2D"
-                            radius: 15
+                            radius: 12
                             border.color: "#444444"
                             border.width: 1
                             opacity: modelData.completed ? 0.7 : 1.0
 
                             // Основное содержимое задачи
                             RowLayout {
+                                id: taskContent
                                 anchors.fill: parent
-                                anchors.margins: 12
-                                spacing: 12
+                                anchors.margins: 8
+                                spacing: 10
 
                                 // Иконка задачи
                                 Rectangle {
-                                    width: 35
-                                    height: 35
+                                    width: 30
+                                    height: 30
                                     color: modelData.completed ? "#66BB6A" : "#F3C44A"
                                     radius: 8
 
@@ -905,8 +901,6 @@ ApplicationWindow {
                                         font.bold: true
                                         Layout.fillWidth: true
                                         wrapMode: Text.WordWrap
-                                        maximumLineCount: 2
-                                        elide: Text.ElideRight
                                         textFormat: Text.RichText
                                         text: modelData.completed ? "<s>" + modelData.name + "</s>" : modelData.name
                                     }

@@ -87,3 +87,11 @@ To see the global goals of life and plan according to them.
 
 ## 2025-08-09
 - Changes to the visual state of the Subgoal cell (possibly adding a green stroke) if all tasks in the task list have been completed. [done]
+
+## 2025-08-17
+- Fix the size of elements (task rows, yellow circle) [done]
+- Raise the yellow buttons (add subgoal, info, export) [done]
+- The edit and delete buttons only appear when hovering over a task
+- Adjust font sizes (main goal, subgoals smaller)
+
+- Redesign confirmation and editing windows to make them simpler and more concise
