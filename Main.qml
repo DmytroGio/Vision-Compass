@@ -1009,9 +1009,10 @@ ApplicationWindow {
                     Rectangle {
                         id: customVerticalScrollBar
                         anchors.top: parent.top
-                        anchors.bottom: parent.bottom
                         anchors.right: parent.right
                         width: 8
+                        // ИСПРАВЛЕНИЕ: Ограничиваем высоту скроллбара высотой ListView
+                        height: Math.min(parent.height, mainWindow.height - topSection.height - 120) // 120px для отступов и заголовка
                         color: "#3A3A3A"
                         border.color: "#444444"
                         border.width: 1

@@ -91,7 +91,8 @@ To see the global goals of life and plan according to them.
 ## 2025-08-17
 - Fix the size of elements (task rows, yellow circle) [done]
 - Raise the yellow buttons (add subgoal, info, export) [done]
-- Centering buttons and descriptions
+- Centering buttons and descriptions [done]
+- Limit the scrollbar for Tasks to the bottom window - it goes down
 - The edit and delete buttons only appear when hovering over a task
 - Adjust font sizes (main goal, subgoals smaller)
 
