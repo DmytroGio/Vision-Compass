@@ -21,6 +21,9 @@ ApplicationWindow {
     // Load data when the application starts
     Component.onCompleted: {
         AppViewModel.loadData()
+        Qt.callLater(function() {
+            scrollToSelectedItem()
+        })
     }
 
     // Функция для автоматического скролла к выбранному элементу
@@ -156,7 +159,7 @@ ApplicationWindow {
         Item {
             id: topSection
             Layout.fillWidth: true
-            Layout.preferredHeight: Math.max(300, parent.height * 0.5) // Адаптивная высота
+            Layout.preferredHeight: 450
 
 
             // Red circle (Goal)
@@ -254,345 +257,363 @@ ApplicationWindow {
                         Layout.preferredHeight: 90
                         color: "transparent"
 
-                        ScrollView {
-                            id: subGoalsScrollView
-                            anchors.fill: parent
-                            anchors.bottomMargin: -10  // Место для скроллбара
+                        // Центрированный контейнер с ограниченной шириной
+                        Item {
+                            id: centeredContainer
+                            width: Math.min(parent.width, 5 * (180 + 15) - 15) // Максимум 5 слотов (180px + 15px spacing, минус последний spacing)
+                            height: parent.height
+                            anchors.horizontalCenter: parent.horizontalCenter
 
-                            clip: true
-
-                            // Отключаем вертикальный скроллбар
-                            ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-
-                            // Включаем горизонтальный скроллбар
-                            ScrollBar.horizontal.policy: ScrollBar.AsNeeded
-
-                            // MouseArea для прокрутки колесиком мыши
-                            MouseArea {
+                            ScrollView {
+                                id: subGoalsScrollView
                                 anchors.fill: parent
-                                onWheel: {
-                                    // Прокрутка горизонтального скроллбара колесиком мыши
-                                    var delta = wheel.angleDelta.y > 0 ? -30 : 30;
-                                    subGoalsList.contentX = Math.max(0,
-                                        Math.min(subGoalsList.contentWidth - subGoalsList.width,
-                                        subGoalsList.contentX + delta));
-                                }
-                                // Пропускаем клики через MouseArea к элементам ниже
-                                propagateComposedEvents: true
-                                z: -1
-                            }
+                                anchors.bottomMargin: -10  // Место для скроллбара
 
-                            ListView {
-                                id: subGoalsList
-                                orientation: ListView.Horizontal
-                                anchors.fill: parent
-
-                                model: AppViewModel.subGoalsListModel
-                                spacing: 15
                                 clip: true
 
-                                // Отступы от краев
-                                leftMargin: 5
-                                rightMargin: 5
+                                // Отключаем вертикальный скроллбар
+                                ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
-                                // Сохранение позиции скролла
-                                property real savedContentX: 0
+                                // Включаем горизонтальный скроллбар
+                                ScrollBar.horizontal.policy: ScrollBar.AsNeeded
 
-                                onModelChanged: {
-                                    // Восстанавливаем позицию после обновления модели
-                                    if (savedContentX > 0 && contentWidth > width) {
-                                        contentX = Math.min(savedContentX, contentWidth - width);
+                                // MouseArea для прокрутки колесиком мыши
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onWheel: {
+                                        // Прокрутка горизонтального скроллбара колесиком мыши
+                                        var delta = wheel.angleDelta.y > 0 ? -30 : 30;
+                                        subGoalsList.contentX = Math.max(0,
+                                            Math.min(subGoalsList.contentWidth - subGoalsList.width,
+                                            subGoalsList.contentX + delta));
                                     }
+                                    // Пропускаем клики через MouseArea к элементам ниже
+                                    propagateComposedEvents: true
+                                    z: -1
                                 }
 
-                                delegate: Rectangle {
-                                    id: subGoalItem
-                                    width: 180
-                                    height: 80
-                                    radius: 15
-                                    border.width: 2
+                                ListView {
+                                    id: subGoalsList
+                                    orientation: ListView.Horizontal
+                                    anchors.fill: parent
 
-                                    property bool isSelected: modelData.id === AppViewModel.selectedSubGoalId
-                                    property bool isHovered: false
+                                    model: AppViewModel.subGoalsListModel
+                                    spacing: 15
+                                    clip: true
 
-                                    property bool allTasksCompleted: {
-                                        let completionStatus = AppViewModel.subGoalCompletionStatus;
-                                        for (let i = 0; i < completionStatus.length; i++) {
-                                            if (completionStatus[i].subGoalId === modelData.id) {
-                                                return completionStatus[i].allTasksCompleted && completionStatus[i].hasAnyTasks;
-                                            }
-                                        }
-                                        return false;
-                                    }
+                                    // Отступы от краев
+                                    leftMargin: 5
+                                    rightMargin: 5
 
-                                    Rectangle {
-                                            anchors.fill: parent
-                                            anchors.topMargin: isSelected ? 8 : 4
-                                            anchors.leftMargin: isSelected ? 8 : 4
-                                            radius: parent.radius
-                                            color: "#000000"
-                                            opacity: isSelected ? 0.6 : 0.4
-                                            z: -1
-                                        }
+                                    // Сохранение позиции скролла
+                                    property real savedContentX: 0
 
-                                    // Основной фон
-                                    color: {
-                                        if (allTasksCompleted) {
-                                            return isSelected ? "#66BB6A" : "#4CAF50";
-                                        } else {
-                                            return isSelected ? "#F3C44A" : "#2D2D2D";
-                                        }
-                                    }
-
-                                    border.color: {
-                                        if (allTasksCompleted) {
-                                            return isSelected ? "#76CC7A" : "#66BB6A";
-                                        } else {
-                                            return isSelected ? "#F5D665" : "#F3C44A";
-                                        }
-                                    }
-
-                                    // Эффект при наведении для НЕвыбранных элементов
-                                    Rectangle {
-                                        anchors.fill: parent
-                                        radius: parent.radius
-                                        color: allTasksCompleted ? "#81C784" : "#FF8C42"
-                                        opacity: 0.6
-                                        visible: !isSelected && isHovered
-                                    }
-
-                                    // Номер шортката (внизу справа, выходит за границы)
-                                    Rectangle {
-                                        width: 24
-                                        height: 24
-                                        anchors.bottom: parent.bottom
-                                        anchors.right: parent.right
-                                        anchors.bottomMargin: -8
-                                        anchors.rightMargin: 8
-                                        color: "#F3C44A"
-                                        radius: 8
-                                        visible: index < 9
-                                        z: 10
-
-                                        // Черная тень для цифры выбранной subgoal
-                                        Text {
-                                            text: (index + 1).toString()
-                                            anchors.centerIn: parent
-                                            anchors.horizontalCenterOffset: 1
-                                            anchors.verticalCenterOffset: 1
-                                            font.pointSize: 11
-                                            font.bold: true
-                                            color: "black"
-                                            opacity: subGoalItem.isSelected ? 0.6 : 0
-                                            z: 0
-                                        }
-
-                                        Text {
-                                            text: (index + 1).toString()
-                                            anchors.centerIn: parent
-                                            font.pointSize: 11
-                                            font.bold: true
-                                            color: subGoalItem.isSelected ? "#1E1E1E" : "#1E1E1E"
-                                        }
-                                    }
-
-                                    // Основное содержимое SubGoal
-                                    RowLayout {
-                                        anchors.fill: parent
-                                        anchors.margins: 12
-                                        spacing: 10
-
-                                        // Текст SubGoal
-                                        ColumnLayout {
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            spacing: 2
-
-                                            Text {
-                                                text: modelData.name || "Unnamed SubGoal"
-                                                color: subGoalItem.isSelected ? "#1E1E1E" : "#FFFFFF"
-                                                font.pointSize: 12
-                                                font.bold: true
-                                                Layout.fillWidth: true
-                                                wrapMode: Text.WordWrap
-                                                maximumLineCount: 2
-                                                elide: Text.ElideRight
-                                            }
-                                        }
-
-                                        // Контейнер для кнопок
-                                        RowLayout {
-                                            Layout.alignment: Qt.AlignTop
-                                            spacing: 5
-
-
-                                            // Кнопка редактирования SubGoal
-                                            Rectangle {
-                                                id: editButton
-                                                width: 25
-                                                height: 25
-                                                radius: 12
-
-                                                // Стабильная логика цвета: зависит только от состояния выбора и наведения
-                                                property bool isHovered: false
-                                                property color baseColor: subGoalItem.isSelected ? "#1E1E1E" : "#F3C44A"
-                                                property color hoveredColor: subGoalItem.isSelected ? "#2D2D2D" : "#F5D665"
-
-                                                color: isHovered ? hoveredColor : baseColor
-
-                                                Text {
-                                                    text: "✎"
-                                                    anchors.centerIn: parent
-                                                    font.pointSize: 12
-                                                    color: subGoalItem.isSelected ? "#F3C44A" : "#1E1E1E"
-                                                    font.bold: true
-                                                }
-
-                                                MouseArea {
-                                                    anchors.fill: parent
-                                                    hoverEnabled: true
-
-                                                    onClicked: {
-                                                        editSubGoalDialog.openForEditing(modelData)
-                                                    }
-
-                                                    onEntered: {
-                                                        editButton.isHovered = true
-                                                    }
-
-                                                    onExited: {
-                                                        editButton.isHovered = false
-                                                    }
-                                                }
-                                            }
-                                            // Кнопка удаления SubGoal
-                                            Rectangle {
-                                                width: 25
-                                                height: 25
-                                                color: "#E95B5B"
-                                                radius: 12
-                                                visible: AppViewModel.subGoalsListModel.length > 1
-
-                                                Text {
-                                                    text: "✕"
-                                                    anchors.centerIn: parent
-                                                    font.pointSize: 12
-                                                    color: "#FFFFFF"
-                                                    font.bold: true
-                                                }
-
-                                                MouseArea {
-                                                    anchors.fill: parent
-                                                    onClicked: {
-                                                        confirmationDialog.open()
-                                                        confirmationDialog.subGoalToRemove = modelData
-                                                    }
-                                                    hoverEnabled: true
-                                                    onEntered: parent.color = "#F76B6B"
-                                                    onExited: parent.color = "#E95B5B"
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    // MouseArea для выбора и эффектов наведения
-                                    MouseArea {
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        onEntered: {
-                                            subGoalItem.isHovered = true
-                                        }
-                                        onExited: {
-                                            subGoalItem.isHovered = false
-                                        }
-                                        onClicked: {
-                                            AppViewModel.selectSubGoal(modelData.id)
-                                        }
-                                        z: -1
-                                    }
-                                }
-                            }// Кастомный горизонтальный скроллбар - размещаем ВНУТРИ Rectangle
-                            // Кастомный скроллбар без использования ScrollBar
-                            Rectangle {
-                                id: customScrollBar
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-                                anchors.bottom: parent.bottom
-                                height: 8
-                                color: "#3A3A3A"
-                                border.color: "#444444"
-                                border.width: 1
-                                radius: 4
-
-                                visible: subGoalsList.contentWidth > subGoalsList.width
-
-                                // Принудительная установка радиуса при создании
-                                Component.onCompleted: {
-                                    radius = 4
-                                }
-
-                                Rectangle {
-                                    id: scrollHandle
-                                    height: parent.height - 2
-                                    // ИЗМЕНЕНИЕ: Адаптивная ширина вместо фиксированной
-                                    width: {
-                                        if (subGoalsList.contentWidth <= subGoalsList.width) {
-                                            return parent.width - 2; // Полная ширина если контент помещается
-                                        }
-                                        // Пропорциональная ширина: отношение видимой области к общему контенту
-                                        var ratio = subGoalsList.width / subGoalsList.contentWidth;
-                                        var minWidth = 30; // Минимальная ширина ползунка
-                                        return Math.max(minWidth, parent.width * ratio);
-                                    }
-                                    y: 1
-                                    radius: 3  // Чуть меньше радиус для лучшего отображения
-
-                                    // Принудительная установка начальной позиции
                                     Component.onCompleted: {
-                                        radius = 3;
-                                        x = Qt.binding(function() {
-                                            if (subGoalsList.contentWidth <= subGoalsList.width) {
-                                                return 1;
+                                        // Принудительно устанавливаем начальную позицию
+                                        contentX = 0
+                                        // Если есть выбранный SubGoal, центрируем его
+                                        Qt.callLater(function() {
+                                            if (AppViewModel.selectedSubGoalId > 0) {
+                                                scrollToSelectedItem()
                                             }
-                                            var ratio = subGoalsList.contentX / (subGoalsList.contentWidth - subGoalsList.width);
-                                            return Math.max(1, Math.min(maxX - 1, ratio * maxX));
                                         })
                                     }
 
-                                    property real maxX: parent.width - width - 2  // Учитываем границы
-                                    x: 1
+                                    onModelChanged: {
+                                        // Восстанавливаем позицию после обновления модели
+                                        if (savedContentX > 0 && contentWidth > width) {
+                                            contentX = Math.min(savedContentX, contentWidth - width);
+                                        }
+                                    }
 
-                                    // Принудительное обновление при любых изменениях
-                                    onXChanged: radius = 3
-                                    onWidthChanged: radius = 3
-                                    onHeightChanged: radius = 3
+                                    delegate: Rectangle {
+                                        id: subGoalItem
+                                        width: 180
+                                        height: 80
+                                        radius: 15
+                                        border.width: 2
 
-                                    color: scrollMouseArea.containsMouse ? "#FF8C42" : "#F3C44A"
+                                        property bool isSelected: modelData.id === AppViewModel.selectedSubGoalId
+                                        property bool isHovered: false
 
-                                    border.color: scrollMouseArea.containsMouse ? "#D4A017" : "#C0392B"
+                                        property bool allTasksCompleted: {
+                                            let completionStatus = AppViewModel.subGoalCompletionStatus;
+                                            for (let i = 0; i < completionStatus.length; i++) {
+                                                if (completionStatus[i].subGoalId === modelData.id) {
+                                                    return completionStatus[i].allTasksCompleted && completionStatus[i].hasAnyTasks;
+                                                }
+                                            }
+                                            return false;
+                                        }
+
+                                        Rectangle {
+                                                anchors.fill: parent
+                                                anchors.topMargin: isSelected ? 8 : 4
+                                                anchors.leftMargin: isSelected ? 8 : 4
+                                                radius: parent.radius
+                                                color: "#000000"
+                                                opacity: isSelected ? 0.6 : 0.4
+                                                z: -1
+                                            }
+
+                                        // Основной фон
+                                        color: {
+                                            if (allTasksCompleted) {
+                                                return isSelected ? "#66BB6A" : "#4CAF50";
+                                            } else {
+                                                return isSelected ? "#F3C44A" : "#2D2D2D";
+                                            }
+                                        }
+
+                                        border.color: {
+                                            if (allTasksCompleted) {
+                                                return isSelected ? "#76CC7A" : "#66BB6A";
+                                            } else {
+                                                return isSelected ? "#F5D665" : "#F3C44A";
+                                            }
+                                        }
+
+                                        // Эффект при наведении для НЕвыбранных элементов
+                                        Rectangle {
+                                            anchors.fill: parent
+                                            radius: parent.radius
+                                            color: allTasksCompleted ? "#81C784" : "#FF8C42"
+                                            opacity: 0.6
+                                            visible: !isSelected && isHovered
+                                        }
+
+                                        // Номер шортката (внизу справа, выходит за границы)
+                                        Rectangle {
+                                            width: 24
+                                            height: 24
+                                            anchors.bottom: parent.bottom
+                                            anchors.right: parent.right
+                                            anchors.bottomMargin: -8
+                                            anchors.rightMargin: 8
+                                            color: "#F3C44A"
+                                            radius: 8
+                                            visible: index < 9
+                                            z: 10
+
+                                            // Черная тень для цифры выбранной subgoal
+                                            Text {
+                                                text: (index + 1).toString()
+                                                anchors.centerIn: parent
+                                                anchors.horizontalCenterOffset: 1
+                                                anchors.verticalCenterOffset: 1
+                                                font.pointSize: 11
+                                                font.bold: true
+                                                color: "black"
+                                                opacity: subGoalItem.isSelected ? 0.6 : 0
+                                                z: 0
+                                            }
+
+                                            Text {
+                                                text: (index + 1).toString()
+                                                anchors.centerIn: parent
+                                                font.pointSize: 11
+                                                font.bold: true
+                                                color: subGoalItem.isSelected ? "#1E1E1E" : "#1E1E1E"
+                                            }
+                                        }
+
+                                        // Основное содержимое SubGoal
+                                        RowLayout {
+                                            anchors.fill: parent
+                                            anchors.margins: 12
+                                            spacing: 10
+
+                                            // Текст SubGoal
+                                            ColumnLayout {
+                                                Layout.fillWidth: true
+                                                Layout.fillHeight: true
+                                                spacing: 2
+
+                                                Text {
+                                                    text: modelData.name || "Unnamed SubGoal"
+                                                    color: subGoalItem.isSelected ? "#1E1E1E" : "#FFFFFF"
+                                                    font.pointSize: 12
+                                                    font.bold: true
+                                                    Layout.fillWidth: true
+                                                    wrapMode: Text.WordWrap
+                                                    maximumLineCount: 2
+                                                    elide: Text.ElideRight
+                                                }
+                                            }
+
+                                            // Контейнер для кнопок
+                                            RowLayout {
+                                                Layout.alignment: Qt.AlignTop
+                                                spacing: 5
+
+
+                                                // Кнопка редактирования SubGoal
+                                                Rectangle {
+                                                    id: editButton
+                                                    width: 25
+                                                    height: 25
+                                                    radius: 12
+
+                                                    // Стабильная логика цвета: зависит только от состояния выбора и наведения
+                                                    property bool isHovered: false
+                                                    property color baseColor: subGoalItem.isSelected ? "#1E1E1E" : "#F3C44A"
+                                                    property color hoveredColor: subGoalItem.isSelected ? "#2D2D2D" : "#F5D665"
+
+                                                    color: isHovered ? hoveredColor : baseColor
+
+                                                    Text {
+                                                        text: "✎"
+                                                        anchors.centerIn: parent
+                                                        font.pointSize: 12
+                                                        color: subGoalItem.isSelected ? "#F3C44A" : "#1E1E1E"
+                                                        font.bold: true
+                                                    }
+
+                                                    MouseArea {
+                                                        anchors.fill: parent
+                                                        hoverEnabled: true
+
+                                                        onClicked: {
+                                                            editSubGoalDialog.openForEditing(modelData)
+                                                        }
+
+                                                        onEntered: {
+                                                            editButton.isHovered = true
+                                                        }
+
+                                                        onExited: {
+                                                            editButton.isHovered = false
+                                                        }
+                                                    }
+                                                }
+                                                // Кнопка удаления SubGoal
+                                                Rectangle {
+                                                    width: 25
+                                                    height: 25
+                                                    color: "#E95B5B"
+                                                    radius: 12
+                                                    visible: AppViewModel.subGoalsListModel.length > 1
+
+                                                    Text {
+                                                        text: "✕"
+                                                        anchors.centerIn: parent
+                                                        font.pointSize: 12
+                                                        color: "#FFFFFF"
+                                                        font.bold: true
+                                                    }
+
+                                                    MouseArea {
+                                                        anchors.fill: parent
+                                                        onClicked: {
+                                                            confirmationDialog.open()
+                                                            confirmationDialog.subGoalToRemove = modelData
+                                                        }
+                                                        hoverEnabled: true
+                                                        onEntered: parent.color = "#F76B6B"
+                                                        onExited: parent.color = "#E95B5B"
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        // MouseArea для выбора и эффектов наведения
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            onEntered: {
+                                                subGoalItem.isHovered = true
+                                            }
+                                            onExited: {
+                                                subGoalItem.isHovered = false
+                                            }
+                                            onClicked: {
+                                                AppViewModel.selectSubGoal(modelData.id)
+                                            }
+                                            z: -1
+                                        }
+                                    }
+                                }// Кастомный горизонтальный скроллбар - размещаем ВНУТРИ Rectangle
+                                // Кастомный скроллбар без использования ScrollBar
+                                Rectangle {
+                                    id: customScrollBar
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.bottom: parent.bottom
+                                    height: 8
+                                    color: "#3A3A3A"
+                                    border.color: "#444444"
                                     border.width: 1
+                                    radius: 4
 
-                                    MouseArea {
-                                        id: scrollMouseArea
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        drag.target: parent
-                                        drag.axis: Drag.XAxis
-                                        drag.minimumX: 1
-                                        drag.maximumX: parent.maxX - 1
+                                    visible: subGoalsList.contentWidth > subGoalsList.width
 
-                                        onPositionChanged: {
-                                            if (drag.active && subGoalsList.contentWidth > subGoalsList.width) {
-                                                var ratio = parent.x / parent.maxX
-                                                subGoalsList.contentX = ratio * (subGoalsList.contentWidth - subGoalsList.width)
+                                    // Принудительная установка радиуса при создании
+                                    Component.onCompleted: {
+                                        radius = 4
+                                    }
+
+                                    Rectangle {
+                                        id: scrollHandle
+                                        height: parent.height - 2
+                                        // ИЗМЕНЕНИЕ: Адаптивная ширина вместо фиксированной
+                                        width: {
+                                            if (subGoalsList.contentWidth <= subGoalsList.width) {
+                                                return parent.width - 2; // Полная ширина если контент помещается
+                                            }
+                                            // Пропорциональная ширина: отношение видимой области к общему контенту
+                                            var ratio = subGoalsList.width / subGoalsList.contentWidth;
+                                            var minWidth = 30; // Минимальная ширина ползунка
+                                            return Math.max(minWidth, parent.width * ratio);
+                                        }
+                                        y: 1
+                                        radius: 3  // Чуть меньше радиус для лучшего отображения
+
+                                        // Принудительная установка начальной позиции
+                                        Component.onCompleted: {
+                                            radius = 3;
+                                            x = Qt.binding(function() {
+                                                if (subGoalsList.contentWidth <= subGoalsList.width) {
+                                                    return 1;
+                                                }
+                                                var ratio = subGoalsList.contentX / (subGoalsList.contentWidth - subGoalsList.width);
+                                                return Math.max(1, Math.min(maxX - 1, ratio * maxX));
+                                            })
+                                        }
+
+                                        property real maxX: parent.width - width - 2  // Учитываем границы
+                                        x: 1
+
+                                        // Принудительное обновление при любых изменениях
+                                        onXChanged: radius = 3
+                                        onWidthChanged: radius = 3
+                                        onHeightChanged: radius = 3
+
+                                        color: scrollMouseArea.containsMouse ? "#FF8C42" : "#F3C44A"
+
+                                        border.color: scrollMouseArea.containsMouse ? "#D4A017" : "#C0392B"
+                                        border.width: 1
+
+                                        MouseArea {
+                                            id: scrollMouseArea
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            drag.target: parent
+                                            drag.axis: Drag.XAxis
+                                            drag.minimumX: 1
+                                            drag.maximumX: parent.maxX - 1
+
+                                            onPositionChanged: {
+                                                if (drag.active && subGoalsList.contentWidth > subGoalsList.width) {
+                                                    var ratio = parent.x / parent.maxX
+                                                    subGoalsList.contentX = ratio * (subGoalsList.contentWidth - subGoalsList.width)
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                }
+                }   }
             }
 
             // Кнопка добавления SubGoal (справа сверху на желтой области)
@@ -745,6 +766,7 @@ ApplicationWindow {
             id: bottomSection
             Layout.fillWidth: true
             Layout.fillHeight: true // Занимает оставшееся место
+            Layout.minimumHeight: 500
             color: "transparent"
 
             ColumnLayout {
