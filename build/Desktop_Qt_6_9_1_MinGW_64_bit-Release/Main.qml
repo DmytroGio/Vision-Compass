@@ -239,13 +239,13 @@ ApplicationWindow {
                     spacing: 10
 
                     // Заголовок секции SubGoals
+                    // Заголовок секции SubGoals
                     Text {
                         text: "Sub Goals"
-                        color: "#F5D665"  // Светлее желтого круга
+                        color: "#F5D665"
                         font.pointSize: 17
                         font.bold: true
-                        anchors.left: parent.left
-                        anchors.leftMargin: parent.width / 4.5
+                        Layout.alignment: Qt.AlignHCenter
                     }
 
                     // Контейнер для горизонтального скролла SubGoals
@@ -753,53 +753,65 @@ ApplicationWindow {
                 spacing: 15
 
                 // Заголовок секции с кнопкой добавления
-                RowLayout {
+                Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 50
 
-                    // Заголовок слева
-                    Text {
-                        text: AppViewModel.subGoalsListModel.length > 0 ? AppViewModel.selectedSubGoalName : "No SubGoals Available"
-                        color: "#FFFFFF"
-                        font.pointSize: 18
-                        font.bold: true
-                        Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-
-                    // Кнопка добавления справа
-                    Rectangle {
-                        Layout.preferredWidth: 150
-                        Layout.preferredHeight: 40
-                        color: "#3A3A3A"
-                        radius: 10
-                        border.color: "#F3C44A"
-                        border.width: 2
+                    // Контейнер с шириной слотов задач (600px)
+                    Item {
+                        width: 600
+                        height: parent.height
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.horizontalCenterOffset: -7
 
                         RowLayout {
-                            anchors.centerIn: parent
-                            spacing: 8
-
-                            Text {
-                                text: "Add Task"
-                                color: "#FFFFFF"
-                                font.pointSize: 12
-                                font.bold: true
-                            }
-                        }
-
-                        MouseArea {
                             anchors.fill: parent
-                            onClicked: {
-                                addTaskDialog.open()
+                            spacing: 20
+
+                            // Заголовок слева
+                            Text {
+                                text: AppViewModel.subGoalsListModel.length > 0 ? AppViewModel.selectedSubGoalName : "No SubGoals Available"
+                                color: "#FFFFFF"
+                                font.pointSize: 18
+                                font.bold: true
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignVCenter
                             }
-                            hoverEnabled: true
-                            onEntered: parent.color = "#4A4A4A"
-                            onExited: parent.color = "#3A3A3A"
+
+                            // Кнопка справа
+                            Rectangle {
+                                Layout.preferredWidth: 150
+                                Layout.preferredHeight: 40
+                                color: "#3A3A3A"
+                                radius: 10
+                                border.color: "#666666"
+                                border.width: 1
+
+                                RowLayout {
+                                    anchors.centerIn: parent
+                                    spacing: 8
+
+                                    Text {
+                                        text: "Add Task"
+                                        color: "#FFFFFF"
+                                        font.pointSize: 12
+                                        font.bold: true
+                                    }
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        addTaskDialog.open()
+                                    }
+                                    hoverEnabled: true
+                                    onEntered: parent.color = "#4A4A4A"
+                                    onExited: parent.color = "#3A3A3A"
+                                }
+                            }
                         }
                     }
                 }
-
                 // Список задач
 
                 Rectangle {
