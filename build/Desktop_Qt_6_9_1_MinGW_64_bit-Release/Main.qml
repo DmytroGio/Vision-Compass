@@ -453,6 +453,7 @@ ApplicationWindow {
                                                     width: 25
                                                     height: 25
                                                     radius: 12
+                                                    visible: subGoalItem.isHovered
 
                                                     // Стабильная логика цвета: зависит только от состояния выбора и наведения
                                                     property bool isHovered: false
@@ -492,7 +493,7 @@ ApplicationWindow {
                                                     height: 25
                                                     color: "#E95B5B"
                                                     radius: 12
-                                                    visible: AppViewModel.subGoalsListModel.length > 1
+                                                    visible: AppViewModel.subGoalsListModel.length > 1 && subGoalItem.isHovered
 
                                                     Text {
                                                         text: "✕"
@@ -881,6 +882,7 @@ ApplicationWindow {
                         }
 
                         delegate: Rectangle {
+                            id: taskItem
                             width: 600
                             height: Math.max(50, taskContent.implicitHeight + 16)
                             anchors.horizontalCenter: parent.horizontalCenter
@@ -889,6 +891,8 @@ ApplicationWindow {
                             border.color: "#444444"
                             border.width: 1
                             opacity: modelData.completed ? 0.7 : 1.0
+
+                            property bool isTaskHovered: false
 
                             // Основное содержимое задачи
                             RowLayout {
@@ -947,7 +951,7 @@ ApplicationWindow {
                                     height: 30
                                     color: "#E95B5B"
                                     radius: 15
-
+                                    visible: taskItem.isTaskHovered
                                     Text {
                                         text: "✕"
                                         anchors.centerIn: parent
@@ -974,6 +978,7 @@ ApplicationWindow {
                                     height: 30
                                     color: "#F3C44A"
                                     radius: 15
+                                    visible: taskItem.isTaskHovered
 
                                     Text {
                                         text: "✎"
@@ -999,8 +1004,14 @@ ApplicationWindow {
                             MouseArea {
                                 anchors.fill: parent
                                 hoverEnabled: true
-                                onEntered: parent.color = "#353535"
-                                onExited: parent.color = "#2D2D2D"
+                                onEntered: {
+                                    parent.color = "#353535"
+                                    taskItem.isTaskHovered = true  // Добавить
+                                }
+                                onExited: {
+                                    parent.color = "#2D2D2D"
+                                    taskItem.isTaskHovered = false  // Добавить
+                                }
                                 z: -1
                             }
                         }
