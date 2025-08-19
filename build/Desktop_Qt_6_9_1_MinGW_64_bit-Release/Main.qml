@@ -765,8 +765,9 @@ ApplicationWindow {
         Rectangle {
             id: bottomSection
             Layout.fillWidth: true
-            Layout.fillHeight: true // Занимает оставшееся место
+            Layout.fillHeight: true
             Layout.minimumHeight: 500
+            Layout.maximumHeight: mainWindow.height - topSection.height - 40
             color: "transparent"
 
             ColumnLayout {
