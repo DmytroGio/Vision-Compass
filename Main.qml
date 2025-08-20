@@ -517,10 +517,12 @@ ApplicationWindow {
                                             }
                                         }
 
-                                        // MouseArea для выбора и эффектов наведения
+                                        // MouseArea для выбора и эффектов наведения - поверх всего
                                         MouseArea {
                                             anchors.fill: parent
                                             hoverEnabled: true
+                                            z: 100  // Поверх всех элементов
+
                                             onEntered: {
                                                 subGoalItem.isHovered = true
                                             }
@@ -530,7 +532,9 @@ ApplicationWindow {
                                             onClicked: {
                                                 AppViewModel.selectSubGoal(modelData.id)
                                             }
-                                            z: -1
+
+                                            // Пропускаем клики к дочерним элементам (кнопкам)
+                                            onPressed: mouse.accepted = false
                                         }
                                     }
                                 }// Кастомный горизонтальный скроллбар - размещаем ВНУТРИ Rectangle
@@ -919,7 +923,6 @@ ApplicationWindow {
                                     MouseArea {
                                         anchors.fill: parent
                                         onClicked: {
-                                            // Сохраняем текущую позицию перед изменением
                                             taskListView.savedContentY = taskListView.contentY;
                                             AppViewModel.completeTask(modelData.id);
                                         }
@@ -942,33 +945,6 @@ ApplicationWindow {
                                         wrapMode: Text.WordWrap
                                         textFormat: Text.RichText
                                         text: modelData.completed ? "<s>" + modelData.name + "</s>" : modelData.name
-                                    }
-                                }
-
-                                // Кнопка удаления
-                                Rectangle {
-                                    width: 30
-                                    height: 30
-                                    color: "#E95B5B"
-                                    radius: 15
-                                    visible: taskItem.isTaskHovered
-                                    Text {
-                                        text: "✕"
-                                        anchors.centerIn: parent
-                                        font.pointSize: 14
-                                        color: "#FFFFFF"
-                                        font.bold: true
-                                    }
-
-                                    MouseArea {
-                                        anchors.fill: parent
-                                        onClicked: {
-                                            taskConfirmationDialog.open()
-                                            taskConfirmationDialog.taskToRemove = modelData
-                                        }
-                                        hoverEnabled: true
-                                        onEntered: parent.color = "#F76B6B"
-                                        onExited: parent.color = "#E95B5B"
                                     }
                                 }
 
@@ -998,21 +974,52 @@ ApplicationWindow {
                                         onExited: parent.color = "#F3C44A"
                                     }
                                 }
+
+                                // Кнопка удаления
+                                Rectangle {
+                                    width: 30
+                                    height: 30
+                                    color: "#E95B5B"
+                                    radius: 15
+                                    visible: taskItem.isTaskHovered
+                                    Text {
+                                        text: "✕"
+                                        anchors.centerIn: parent
+                                        font.pointSize: 14
+                                        color: "#FFFFFF"
+                                        font.bold: true
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onClicked: {
+                                            taskConfirmationDialog.open()
+                                            taskConfirmationDialog.taskToRemove = modelData
+                                        }
+                                        hoverEnabled: true
+                                        onEntered: parent.color = "#F76B6B"
+                                        onExited: parent.color = "#E95B5B"
+                                    }
+                                }
                             }
 
-                            // Эффект при наведении
+                            // ГЛАВНАЯ MouseArea для всей ячейки - размещаем поверх всего
                             MouseArea {
                                 anchors.fill: parent
                                 hoverEnabled: true
+                                z: 100  // Поверх всех элементов
+
                                 onEntered: {
-                                    parent.color = "#353535"
-                                    taskItem.isTaskHovered = true  // Добавить
+                                    taskItem.color = "#353535"
+                                    taskItem.isTaskHovered = true
                                 }
                                 onExited: {
-                                    parent.color = "#2D2D2D"
-                                    taskItem.isTaskHovered = false  // Добавить
+                                    taskItem.color = "#2D2D2D"
+                                    taskItem.isTaskHovered = false
                                 }
-                                z: -1
+
+                                // Пропускаем клики к дочерним элементам
+                                onPressed: mouse.accepted = false
                             }
                         }
                     }
