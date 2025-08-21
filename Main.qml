@@ -326,6 +326,7 @@ ApplicationWindow {
                                         }
                                     }
 
+                                    // ЗАМЕНИТЬ ЭТОТ ДЕЛЕГАТ
                                     delegate: Rectangle {
                                         id: subGoalItem
                                         width: 180
@@ -333,8 +334,21 @@ ApplicationWindow {
                                         radius: 15
                                         border.width: 2
 
+
+                                        // 1. Привязываем isHovered к свойству containsMouse у главной MouseArea
+                                        property bool isHovered: mainMouseArea.containsMouse || editButton.isButtonHovered || deleteButton.isButtonHovered
+
+                                        MouseArea {
+                                            id: mainMouseArea
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+
+                                            onClicked: {
+                                                AppViewModel.selectSubGoal(modelData.id);
+                                            }
+                                        }
+
                                         property bool isSelected: modelData.id === AppViewModel.selectedSubGoalId
-                                        property bool isHovered: false
 
                                         property bool allTasksCompleted: {
                                             let completionStatus = AppViewModel.subGoalCompletionStatus;
@@ -346,15 +360,16 @@ ApplicationWindow {
                                             return false;
                                         }
 
+                                        // Тень
                                         Rectangle {
-                                                anchors.fill: parent
-                                                anchors.topMargin: isSelected ? 8 : 4
-                                                anchors.leftMargin: isSelected ? 8 : 4
-                                                radius: parent.radius
-                                                color: "#000000"
-                                                opacity: isSelected ? 0.6 : 0.4
-                                                z: -1
-                                            }
+                                            anchors.fill: parent
+                                            anchors.topMargin: isSelected ? 8 : 4
+                                            anchors.leftMargin: isSelected ? 8 : 4
+                                            radius: parent.radius
+                                            color: "#000000"
+                                            opacity: isSelected ? 0.6 : 0.4
+                                            z: -1
+                                        }
 
                                         // Основной фон
                                         color: {
@@ -382,7 +397,7 @@ ApplicationWindow {
                                             visible: !isSelected && isHovered
                                         }
 
-                                        // Номер шортката (внизу справа, выходит за границы)
+                                        // Номер шортката
                                         Rectangle {
                                             width: 24
                                             height: 24
@@ -393,9 +408,8 @@ ApplicationWindow {
                                             color: "#F3C44A"
                                             radius: 8
                                             visible: index < 9
-                                            z: 10
+                                            z: 2
 
-                                            // Черная тень для цифры выбранной subgoal
                                             Text {
                                                 text: (index + 1).toString()
                                                 anchors.centerIn: parent
@@ -443,9 +457,9 @@ ApplicationWindow {
 
                                             // Контейнер для кнопок
                                             RowLayout {
+                                                //id: buttonsContainer
                                                 Layout.alignment: Qt.AlignTop
                                                 spacing: 5
-
 
                                                 // Кнопка редактирования SubGoal
                                                 Rectangle {
@@ -455,11 +469,10 @@ ApplicationWindow {
                                                     radius: 12
                                                     visible: subGoalItem.isHovered
 
-                                                    // Стабильная логика цвета: зависит только от состояния выбора и наведения
                                                     property bool isHovered: false
+                                                    property bool isButtonHovered: editMouseArea.containsMouse  // Новое свойство
                                                     property color baseColor: subGoalItem.isSelected ? "#1E1E1E" : "#F3C44A"
                                                     property color hoveredColor: subGoalItem.isSelected ? "#2D2D2D" : "#F5D665"
-
                                                     color: isHovered ? hoveredColor : baseColor
 
                                                     Text {
@@ -471,29 +484,27 @@ ApplicationWindow {
                                                     }
 
                                                     MouseArea {
+                                                        id: editMouseArea
                                                         anchors.fill: parent
                                                         hoverEnabled: true
-
+                                                        propagateComposedEvents: false
                                                         onClicked: {
-                                                            editSubGoalDialog.openForEditing(modelData)
+                                                            editSubGoalDialog.openForEditing(modelData);
                                                         }
-
-                                                        onEntered: {
-                                                            editButton.isHovered = true
-                                                        }
-
-                                                        onExited: {
-                                                            editButton.isHovered = false
-                                                        }
+                                                        onEntered: editButton.isHovered = true
+                                                        onExited: editButton.isHovered = false
                                                     }
                                                 }
                                                 // Кнопка удаления SubGoal
                                                 Rectangle {
+                                                    id: deleteButton
                                                     width: 25
                                                     height: 25
                                                     color: "#E95B5B"
                                                     radius: 12
                                                     visible: AppViewModel.subGoalsListModel.length > 1 && subGoalItem.isHovered
+
+                                                    property bool isButtonHovered: deleteMouseArea.containsMouse  // Новое свойство
 
                                                     Text {
                                                         text: "✕"
@@ -504,37 +515,19 @@ ApplicationWindow {
                                                     }
 
                                                     MouseArea {
+                                                        id: deleteMouseArea
                                                         anchors.fill: parent
-                                                        onClicked: {
-                                                            confirmationDialog.open()
-                                                            confirmationDialog.subGoalToRemove = modelData
-                                                        }
                                                         hoverEnabled: true
+                                                        propagateComposedEvents: false
+                                                        onClicked: {
+                                                            confirmationDialog.open();
+                                                            confirmationDialog.subGoalToRemove = modelData;
+                                                        }
                                                         onEntered: parent.color = "#F76B6B"
                                                         onExited: parent.color = "#E95B5B"
                                                     }
                                                 }
                                             }
-                                        }
-
-                                        // MouseArea для выбора и эффектов наведения - поверх всего
-                                        MouseArea {
-                                            anchors.fill: parent
-                                            hoverEnabled: true
-                                            z: 100  // Поверх всех элементов
-
-                                            onEntered: {
-                                                subGoalItem.isHovered = true
-                                            }
-                                            onExited: {
-                                                subGoalItem.isHovered = false
-                                            }
-                                            onClicked: {
-                                                AppViewModel.selectSubGoal(modelData.id)
-                                            }
-
-                                            // Пропускаем клики к дочерним элементам (кнопкам)
-                                            onPressed: mouse.accepted = false
                                         }
                                     }
                                 }// Кастомный горизонтальный скроллбар - размещаем ВНУТРИ Rectangle

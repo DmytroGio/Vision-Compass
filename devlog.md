@@ -92,8 +92,22 @@ To see the global goals of life and plan according to them.
 - Fix the size of elements (task rows, yellow circle) [done]
 - Raise the yellow buttons (add subgoal, info, export) [done]
 - Centering buttons and descriptions [done]
-- Limit the scrollbar for Tasks to the bottom window - it goes down [done]
-- The edit and delete buttons only appear when hovering over a task
-- Adjust font sizes (main goal, subgoals smaller)
+- Limit the scrollbar for Tasks to the bottom window - it goes down. Fix task list container height to prevent cutoff at bottom of window [done]
+- The edit and delete buttons only appear when hovering over a task [done]
 
 - Redesign confirmation and editing windows to make them simpler and more concise
+
+## 2025-08-21
+- Does not highlight the necessary Subgoal on the LCM
+- Redesign of pop-ups (confirmations, additions, edits) - more stylish minimalist design. Correct markup for tooltips and input text
+- Shading of the program window during pop-ups - currently everything turns light white.
+
+
+- Refine export correctly - file name, location. (Add a key so that we can import only our files)
+- Import with file specification
+
+
+- Description window more minimalistic and taking into account the new design of pop-ups.
+
+
+- Adjust font sizes (main goal, subgoals smaller, titles)
