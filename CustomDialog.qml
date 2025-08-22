@@ -40,11 +40,15 @@ Dialog {
     }
 
     // Semi-transparent background overlay
+    Overlay.modal: Rectangle {
+        color: "#80000000" // 50% transparent black overlay
+    }
+
     background: Rectangle {
-        color: "#CC000000" // 80% transparent black
+        color: "#2D2D2D"
         radius: 10
-        anchors.fill: parent
-        anchors.margins: 5
+        border.color: "#444444"
+        border.width: 1
     }
 
     // Main dialog panel

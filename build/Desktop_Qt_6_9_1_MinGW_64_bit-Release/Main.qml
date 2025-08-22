@@ -1213,7 +1213,7 @@ ApplicationWindow {
             TextField {
                 id: editNameField
                 text: editSubGoalDialog.subGoalToEdit ? (editSubGoalDialog.subGoalToEdit.name || "") : ""
-                placeholderText: "Edit sub-goal name..."
+                placeholderText: text.length === 0 ? "Edit sub-goal name..." : ""
                 Layout.fillWidth: true
                 Layout.preferredHeight: 45
                 color: "#FFFFFF"
@@ -1226,6 +1226,10 @@ ApplicationWindow {
                 }
                 padding: 10
                 placeholderTextColor: "#AAAAAA"
+
+                onTextChanged: {
+                    placeholderText = text.length === 0 ? "Edit sub-goal name..." : ""
+                }
 
                 onAccepted: {
                     if (text.trim() !== "" && editSubGoalDialog.subGoalToEdit) {
@@ -1362,7 +1366,7 @@ ApplicationWindow {
             TextField {
                 id: editTaskNameField
                 text: editTaskDialog.taskToEdit ? (editTaskDialog.taskToEdit.name || "") : ""
-                placeholderText: "Edit task name..."
+                placeholderText: ""
                 Layout.fillWidth: true
                 Layout.preferredHeight: 45
                 color: "#FFFFFF"
@@ -1375,6 +1379,16 @@ ApplicationWindow {
                 }
                 padding: 10
                 placeholderTextColor: "#AAAAAA"
+
+                Component.onCompleted: {
+                    if (text.length === 0) {
+                        placeholderText = "Edit task name..."
+                    }
+                }
+
+                onTextChanged: {
+                    placeholderText = text.length === 0 ? "Edit task name..." : ""
+                }
 
                 onAccepted: {
                     if (text.trim() !== "" && editTaskDialog.taskToEdit) {
@@ -1412,18 +1426,11 @@ ApplicationWindow {
                 ColumnLayout {
                     spacing: 15
 
-                    Text {
-                        text: "Main Goal Name:"
-                        color: "#FFFFFF"
-                        font.pointSize: 12
-                        font.bold: true
-                    }
-
                     TextField {
                         id: editGoalNameField
                         objectName: "goalNameField"
                         text: AppViewModel.currentGoalText
-                        placeholderText: "Enter main goal name..."
+                        placeholderText: text.length === 0 ? "Enter main goal name..." : ""
                         Layout.fillWidth: true
                         Layout.preferredHeight: 45
                         color: "#FFFFFF"
@@ -1437,9 +1444,12 @@ ApplicationWindow {
                         padding: 10
                         placeholderTextColor: "#AAAAAA"
 
+                        onTextChanged: {
+                            placeholderText = text.length === 0 ? "Enter main goal name..." : ""
+                        }
+
                         onAccepted: {
-                            // Сохраняем изменения при нажатии Enter
-                            let descField = parent.children[3]; // editGoalDescriptionField
+                            let descField = parent.children[1]; // editGoalDescriptionField
                             if (text.trim() !== "" && descField && descField.text.trim() !== "") {
                                 AppViewModel.setMainGoal(text.trim(), descField.text.trim());
                                 editGoalDialog.close();
@@ -1447,18 +1457,11 @@ ApplicationWindow {
                         }
                     }
 
-                    Text {
-                        text: "Main Goal Description (Target Date):"
-                        color: "#FFFFFF"
-                        font.pointSize: 12
-                        font.bold: true
-                    }
-
                     TextField {
                         id: editGoalDescriptionField
                         objectName: "goalDescField"
                         text: AppViewModel.currentGoalDescription
-                        placeholderText: "Enter goal description or target date..."
+                        placeholderText: text.length === 0 ? "Enter goal description or target date..." : ""
                         Layout.fillWidth: true
                         Layout.preferredHeight: 45
                         color: "#FFFFFF"
@@ -1472,9 +1475,12 @@ ApplicationWindow {
                         padding: 10
                         placeholderTextColor: "#AAAAAA"
 
+                        onTextChanged: {
+                            placeholderText = text.length === 0 ? "Enter goal description or target date..." : ""
+                        }
+
                         onAccepted: {
-                            // Сохраняем изменения при нажатии Enter
-                            let nameField = parent.children[1]; // editGoalNameField
+                            let nameField = parent.children[0]; // editGoalNameField
                             if (text.trim() !== "" && nameField && nameField.text.trim() !== "") {
                                 AppViewModel.setMainGoal(nameField.text.trim(), text.trim());
                                 editGoalDialog.close();
