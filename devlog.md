@@ -98,10 +98,10 @@ To see the global goals of life and plan according to them.
 - Redesign confirmation and editing windows to make them simpler and more concise
 
 ## 2025-08-21
-- Does not highlight the necessary Subgoal on the LCM
-- Redesign of pop-ups (confirmations, additions, edits) - more stylish minimalist design. Correct markup for tooltips and input text
-- Shading of the program window during pop-ups - currently everything turns light white.
-
+- Does not highlight the necessary Subgoal on the LCM [done]
+- Redesign of pop-ups (confirmations, additions, edits) - more stylish minimalist design. Correct markup for tooltips and input text [done]
+- Shading of the program window during pop-ups - currently everything turns light white. [done]
+- Fix hints in lines
 
 - Refine export correctly - file name, location. (Add a key so that we can import only our files)
 - Import with file specification

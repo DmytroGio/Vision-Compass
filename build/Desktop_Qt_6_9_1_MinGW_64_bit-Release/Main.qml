@@ -1143,28 +1143,59 @@ ApplicationWindow {
         id: addSubGoalDialog
         dialogWidth: 400
 
+        onOpened: {
+            if (contentLoader.item) {
+                contentLoader.item.forceActiveFocus()
+            }
+        }
+
         content: Component {
-            TextField {
-                id: subGoalNameField
-                placeholderText: "Enter sub-goal name..."
-                Layout.fillWidth: true
-                Layout.preferredHeight: 45
-                color: "#FFFFFF"
-                font.pointSize: 12
-                background: Rectangle {
+            ColumnLayout {
+                spacing: 15
+
+                Text {
+                    text: "Add New SubGoal"
+                    color: "#F3C44A"
+                    font.pointSize: 16
+                    font.bold: true
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 45
                     color: "#3A3A3A"
                     radius: 8
                     border.color: "#F3C44A"
                     border.width: 1
-                }
-                padding: 10
-                placeholderTextColor: "#AAAAAA"
 
-                onAccepted: {
-                    if (text.trim() !== "") {
-                        AppViewModel.addSubGoal(text.trim());
-                        text = "";
-                        addSubGoalDialog.close();
+                    TextInput {
+                        id: subGoalNameInput
+                        anchors.fill: parent
+                        anchors.margins: 10
+                        color: "#FFFFFF"
+                        font.pointSize: 12
+                        verticalAlignment: TextInput.AlignVCenter
+                        selectByMouse: true
+                        clip: true
+
+                        onAccepted: {
+                            if (text.trim() !== "") {
+                                AppViewModel.addSubGoal(text.trim());
+                                text = "";
+                                addSubGoalDialog.close();
+                            }
+                        }
+                    }
+
+                    Text {
+                        text: "Enter sub-goal name..."
+                        color: "#AAAAAA"
+                        font.pointSize: 12
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: subGoalNameInput.text.length === 0
                     }
                 }
             }
@@ -1176,10 +1207,10 @@ ApplicationWindow {
                 color: "#F3C44A",
                 textColor: "#1E1E1E",
                 onClicked: function() {
-                    let nameField = addSubGoalDialog.contentItem.children[0].children[1].item;
-                    if (nameField && nameField.text.trim() !== "") {
-                        AppViewModel.addSubGoal(nameField.text.trim());
-                        nameField.text = "";
+                    let inputField = addSubGoalDialog.contentItem.children[0].children[1].item.children[1].children[1];
+                    if (inputField && inputField.text.trim() !== "") {
+                        AppViewModel.addSubGoal(inputField.text.trim());
+                        inputField.text = "";
                     }
                 }
             },
@@ -1213,22 +1244,24 @@ ApplicationWindow {
             TextField {
                 id: editNameField
                 text: editSubGoalDialog.subGoalToEdit ? (editSubGoalDialog.subGoalToEdit.name || "") : ""
-                placeholderText: text.length === 0 ? "Edit sub-goal name..." : ""
+                placeholderText: "Edit sub-goal name..."
                 Layout.fillWidth: true
                 Layout.preferredHeight: 45
                 color: "#FFFFFF"
                 font.pointSize: 12
+                placeholderTextColor: "#AAAAAA"
+
+                verticalAlignment: TextInput.AlignVCenter
+                leftPadding: 10
+                rightPadding: 10
+                topPadding: 0
+                bottomPadding: 0
+
                 background: Rectangle {
                     color: "#3A3A3A"
                     radius: 8
                     border.color: "#F3C44A"
                     border.width: 1
-                }
-                padding: 10
-                placeholderTextColor: "#AAAAAA"
-
-                onTextChanged: {
-                    placeholderText = text.length === 0 ? "Edit sub-goal name..." : ""
                 }
 
                 onAccepted: {
@@ -1304,14 +1337,20 @@ ApplicationWindow {
                 Layout.preferredHeight: 45
                 color: "#FFFFFF"
                 font.pointSize: 12
+                placeholderTextColor: "#AAAAAA"
+
+                verticalAlignment: TextInput.AlignVCenter
+                leftPadding: 10
+                rightPadding: 10
+                topPadding: 0
+                bottomPadding: 0
+
                 background: Rectangle {
                     color: "#3A3A3A"
                     radius: 8
                     border.color: "#F3C44A"
                     border.width: 1
                 }
-                padding: 10
-                placeholderTextColor: "#AAAAAA"
 
                 onAccepted: {
                     if (text.trim() !== "") {
@@ -1366,28 +1405,24 @@ ApplicationWindow {
             TextField {
                 id: editTaskNameField
                 text: editTaskDialog.taskToEdit ? (editTaskDialog.taskToEdit.name || "") : ""
-                placeholderText: ""
+                placeholderText: "Edit task name..."
                 Layout.fillWidth: true
                 Layout.preferredHeight: 45
                 color: "#FFFFFF"
                 font.pointSize: 12
+                placeholderTextColor: "#AAAAAA"
+
+                verticalAlignment: TextInput.AlignVCenter
+                leftPadding: 10
+                rightPadding: 10
+                topPadding: 0
+                bottomPadding: 0
+
                 background: Rectangle {
                     color: "#3A3A3A"
                     radius: 8
                     border.color: "#F3C44A"
                     border.width: 1
-                }
-                padding: 10
-                placeholderTextColor: "#AAAAAA"
-
-                Component.onCompleted: {
-                    if (text.length === 0) {
-                        placeholderText = "Edit task name..."
-                    }
-                }
-
-                onTextChanged: {
-                    placeholderText = text.length === 0 ? "Edit task name..." : ""
                 }
 
                 onAccepted: {
@@ -1430,22 +1465,24 @@ ApplicationWindow {
                         id: editGoalNameField
                         objectName: "goalNameField"
                         text: AppViewModel.currentGoalText
-                        placeholderText: text.length === 0 ? "Enter main goal name..." : ""
+                        placeholderText: "Enter main goal name..."
                         Layout.fillWidth: true
                         Layout.preferredHeight: 45
                         color: "#FFFFFF"
                         font.pointSize: 12
+                        placeholderTextColor: "#AAAAAA"
+
+                        verticalAlignment: TextInput.AlignVCenter
+                        leftPadding: 10
+                        rightPadding: 10
+                        topPadding: 0
+                        bottomPadding: 0
+
                         background: Rectangle {
                             color: "#3A3A3A"
                             radius: 8
                             border.color: "#E95B5B"
                             border.width: 1
-                        }
-                        padding: 10
-                        placeholderTextColor: "#AAAAAA"
-
-                        onTextChanged: {
-                            placeholderText = text.length === 0 ? "Enter main goal name..." : ""
                         }
 
                         onAccepted: {
@@ -1461,22 +1498,24 @@ ApplicationWindow {
                         id: editGoalDescriptionField
                         objectName: "goalDescField"
                         text: AppViewModel.currentGoalDescription
-                        placeholderText: text.length === 0 ? "Enter goal description or target date..." : ""
+                        placeholderText: "Enter goal description or target date..."
                         Layout.fillWidth: true
                         Layout.preferredHeight: 45
                         color: "#FFFFFF"
                         font.pointSize: 12
+                        placeholderTextColor: "#AAAAAA"
+
+                        verticalAlignment: TextInput.AlignVCenter
+                        leftPadding: 10
+                        rightPadding: 10
+                        topPadding: 0
+                        bottomPadding: 0
+
                         background: Rectangle {
                             color: "#3A3A3A"
                             radius: 8
                             border.color: "#E95B5B"
                             border.width: 1
-                        }
-                        padding: 10
-                        placeholderTextColor: "#AAAAAA"
-
-                        onTextChanged: {
-                            placeholderText = text.length === 0 ? "Enter goal description or target date..." : ""
                         }
 
                         onAccepted: {
