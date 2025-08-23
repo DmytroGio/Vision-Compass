@@ -1222,74 +1222,93 @@ ApplicationWindow {
 
     // Dialog for editing a SubGoal
     CustomDialog {
-        id: editSubGoalDialog
-        dialogWidth: 400
-        property var subGoalToEdit: null
+            id: editSubGoalDialog
+            dialogWidth: 400
+            property var subGoalToEdit: null
 
-        function openForEditing(itemData) {
-            subGoalToEdit = itemData;
-            open();
-            // Set text after dialog is opened to ensure the component is loaded
-            Qt.callLater(function() {
-                let nameField = editSubGoalDialog.contentItem.children[0].children[1].item;
-                if (nameField && itemData) {
-                    nameField.text = itemData.name || "";
-                    nameField.selectAll();
-                    nameField.forceActiveFocus();
-                }
-            });
-        }
+            function openForEditing(itemData) {
+                subGoalToEdit = itemData;
+                open();
+                // Set text after dialog is opened to ensure the component is loaded
+                Qt.callLater(function() {
+                    let nameField = editSubGoalDialog.contentItem.children[0].children[1].item.children[1];
+                    if (nameField && itemData) {
+                        nameField.text = itemData.name || "";
+                        nameField.selectAll();
+                        nameField.forceActiveFocus();
+                    }
+                });
+            }
 
-        content: Component {
-            TextField {
-                id: editNameField
-                text: editSubGoalDialog.subGoalToEdit ? (editSubGoalDialog.subGoalToEdit.name || "") : ""
-                placeholderText: "Edit sub-goal name..."
-                Layout.fillWidth: true
-                Layout.preferredHeight: 45
-                color: "#FFFFFF"
-                font.pointSize: 12
-                placeholderTextColor: "#AAAAAA"
+            content: Component {
+                ColumnLayout {
+                    spacing: 15
 
-                verticalAlignment: TextInput.AlignVCenter
-                leftPadding: 10
-                rightPadding: 10
-                topPadding: 0
-                bottomPadding: 0
+                    Text {
+                        text: "Edit SubGoal"
+                        color: "#F3C44A"
+                        font.pointSize: 16
+                        font.bold: true
+                        Layout.alignment: Qt.AlignHCenter
+                    }
 
-                background: Rectangle {
-                    color: "#3A3A3A"
-                    radius: 8
-                    border.color: "#F3C44A"
-                    border.width: 1
-                }
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 45
+                        color: "#3A3A3A"
+                        radius: 8
+                        border.color: "#F3C44A"
+                        border.width: 1
 
-                onAccepted: {
-                    if (text.trim() !== "" && editSubGoalDialog.subGoalToEdit) {
-                        AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, text.trim());
-                        editSubGoalDialog.close();
+                        TextInput {
+                            id: editSubGoalNameInput
+                            anchors.fill: parent
+                            anchors.margins: 10
+                            color: "#FFFFFF"
+                            font.pointSize: 12
+                            verticalAlignment: TextInput.AlignVCenter
+                            selectByMouse: true
+                            clip: true
+                            text: editSubGoalDialog.subGoalToEdit ? (editSubGoalDialog.subGoalToEdit.name || "") : ""
+
+                            onAccepted: {
+                                if (text.trim() !== "" && editSubGoalDialog.subGoalToEdit) {
+                                    AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, text.trim());
+                                    editSubGoalDialog.close();
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: "Edit sub-goal name..."
+                            color: "#AAAAAA"
+                            font.pointSize: 12
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: editSubGoalNameInput.text.length === 0
+                        }
                     }
                 }
             }
-        }
 
-        buttons: [
-            {
-                text: "Save Changes",
-                color: "#F3C44A",
-                textColor: "#1E1E1E",
-                onClicked: function() {
-                    let nameField = editSubGoalDialog.contentItem.children[0].children[1].item;
-                    if (nameField && nameField.text.trim() !== "" && editSubGoalDialog.subGoalToEdit) {
-                        AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, nameField.text.trim());
+            buttons: [
+                {
+                    text: "Save Changes",
+                    color: "#F3C44A",
+                    textColor: "#1E1E1E",
+                    onClicked: function() {
+                        let inputField = editSubGoalDialog.contentItem.children[0].children[1].item.children[1].children[1];
+                        if (inputField && inputField.text.trim() !== "" && editSubGoalDialog.subGoalToEdit) {
+                            AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, inputField.text.trim());
+                        }
                     }
+                },
+                {
+                    text: "Cancel"
                 }
-            },
-            {
-                text: "Cancel"
-            }
-        ]
-    }
+            ]
+        }
 
     // Dialog for confirming Task deletion
     CustomDialog {
@@ -1326,131 +1345,169 @@ ApplicationWindow {
 
     // Dialog for adding a new Task
     CustomDialog {
-        id: addTaskDialog
-        dialogWidth: 400
+            id: addTaskDialog
+            dialogWidth: 400
 
-        content: Component {
-            TextField {
-                id: taskNameField
-                placeholderText: "Enter task name..."
-                Layout.fillWidth: true
-                Layout.preferredHeight: 45
-                color: "#FFFFFF"
-                font.pointSize: 12
-                placeholderTextColor: "#AAAAAA"
+            content: Component {
+                ColumnLayout {
+                    spacing: 15
 
-                verticalAlignment: TextInput.AlignVCenter
-                leftPadding: 10
-                rightPadding: 10
-                topPadding: 0
-                bottomPadding: 0
+                    Text {
+                        text: "Add New Task"
+                        color: "#F3C44A"
+                        font.pointSize: 16
+                        font.bold: true
+                        Layout.alignment: Qt.AlignHCenter
+                    }
 
-                background: Rectangle {
-                    color: "#3A3A3A"
-                    radius: 8
-                    border.color: "#F3C44A"
-                    border.width: 1
-                }
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 45
+                        color: "#3A3A3A"
+                        radius: 8
+                        border.color: "#F3C44A"
+                        border.width: 1
 
-                onAccepted: {
-                    if (text.trim() !== "") {
-                        AppViewModel.addTask(text.trim());
-                        text = "";
-                        addTaskDialog.close();
+                        TextInput {
+                            id: taskNameInput
+                            anchors.fill: parent
+                            anchors.margins: 10
+                            color: "#FFFFFF"
+                            font.pointSize: 12
+                            verticalAlignment: TextInput.AlignVCenter
+                            selectByMouse: true
+                            clip: true
+
+                            onAccepted: {
+                                if (text.trim() !== "") {
+                                    AppViewModel.addTask(text.trim());
+                                    text = "";
+                                    addTaskDialog.close();
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: "Enter task name..."
+                            color: "#AAAAAA"
+                            font.pointSize: 12
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: taskNameInput.text.length === 0
+                        }
                     }
                 }
             }
+
+            buttons: [
+                {
+                    text: "Add Task",
+                    color: "#F3C44A",
+                    textColor: "#1E1E1E",
+                    onClicked: function() {
+                        let inputField = addTaskDialog.contentItem.children[0].children[1].item.children[1].children[1];
+                        if (inputField && inputField.text.trim() !== "") {
+                            AppViewModel.addTask(inputField.text.trim());
+                            inputField.text = "";
+                        }
+                    }
+                },
+                {
+                    text: "Cancel"
+                }
+            ]
         }
-
-        buttons: [
-            {
-                text: "Add Task",
-                color: "#F3C44A",
-                textColor: "#1E1E1E",
-                onClicked: function() {
-                    let nameField = addTaskDialog.contentItem.children[0].children[1].item;
-                    if (nameField && nameField.text.trim() !== "") {
-                        AppViewModel.addTask(nameField.text.trim());
-                        nameField.text = "";
-                    }
-                }
-            },
-            {
-                text: "Cancel"
-            }
-        ]
-    }
 
     // Dialog for editing a Task
     CustomDialog {
-        id: editTaskDialog
-        dialogWidth: 400
-        property var taskToEdit: null
+            id: editTaskDialog
+            dialogWidth: 400
+            property var taskToEdit: null
 
-        function openForEditing(itemData) {
-            taskToEdit = itemData;
-            open();
-            // Set text after dialog is opened to ensure the component is loaded
-            Qt.callLater(function() {
-                let nameField = editTaskDialog.contentItem.children[0].children[1].item;
-                if (nameField && itemData) {
-                    nameField.text = itemData.name || "";
-                    nameField.selectAll();
-                    nameField.forceActiveFocus();
-                }
-            });
-        }
+            function openForEditing(itemData) {
+                taskToEdit = itemData;
+                open();
+                // Set text after dialog is opened to ensure the component is loaded
+                Qt.callLater(function() {
+                    let nameField = editTaskDialog.contentItem.children[0].children[1].item.children[1];
+                    if (nameField && itemData) {
+                        nameField.text = itemData.name || "";
+                        nameField.selectAll();
+                        nameField.forceActiveFocus();
+                    }
+                });
+            }
 
-        content: Component {
-            TextField {
-                id: editTaskNameField
-                text: editTaskDialog.taskToEdit ? (editTaskDialog.taskToEdit.name || "") : ""
-                placeholderText: "Edit task name..."
-                Layout.fillWidth: true
-                Layout.preferredHeight: 45
-                color: "#FFFFFF"
-                font.pointSize: 12
-                placeholderTextColor: "#AAAAAA"
+            content: Component {
+                ColumnLayout {
+                    spacing: 15
 
-                verticalAlignment: TextInput.AlignVCenter
-                leftPadding: 10
-                rightPadding: 10
-                topPadding: 0
-                bottomPadding: 0
+                    Text {
+                        text: "Edit Task"
+                        color: "#F3C44A"
+                        font.pointSize: 16
+                        font.bold: true
+                        Layout.alignment: Qt.AlignHCenter
+                    }
 
-                background: Rectangle {
-                    color: "#3A3A3A"
-                    radius: 8
-                    border.color: "#F3C44A"
-                    border.width: 1
-                }
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 45
+                        color: "#3A3A3A"
+                        radius: 8
+                        border.color: "#F3C44A"
+                        border.width: 1
 
-                onAccepted: {
-                    if (text.trim() !== "" && editTaskDialog.taskToEdit) {
-                        AppViewModel.editTask(editTaskDialog.taskToEdit.id, text.trim());
-                        editTaskDialog.close();
+                        TextInput {
+                            id: editTaskNameInput
+                            anchors.fill: parent
+                            anchors.margins: 10
+                            color: "#FFFFFF"
+                            font.pointSize: 12
+                            verticalAlignment: TextInput.AlignVCenter
+                            selectByMouse: true
+                            clip: true
+                            text: editTaskDialog.taskToEdit ? (editTaskDialog.taskToEdit.name || "") : ""
+
+                            onAccepted: {
+                                if (text.trim() !== "" && editTaskDialog.taskToEdit) {
+                                    AppViewModel.editTask(editTaskDialog.taskToEdit.id, text.trim());
+                                    editTaskDialog.close();
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: "Edit task name..."
+                            color: "#AAAAAA"
+                            font.pointSize: 12
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: editTaskNameInput.text.length === 0
+                        }
                     }
                 }
             }
-        }
 
-        buttons: [
-            {
-                text: "Save Changes",
-                color: "#F3C44A",
-                textColor: "#1E1E1E",
-                onClicked: function() {
-                    let nameField = editTaskDialog.contentItem.children[0].children[1].item;
-                    if (nameField && nameField.text.trim() !== "" && editTaskDialog.taskToEdit) {
-                        AppViewModel.editTask(editTaskDialog.taskToEdit.id, nameField.text.trim());
+            buttons: [
+                {
+                    text: "Save Changes",
+                    color: "#F3C44A",
+                    textColor: "#1E1E1E",
+                    onClicked: function() {
+                        let inputField = editTaskDialog.contentItem.children[0].children[1].item.children[1].children[1];
+                        if (inputField && inputField.text.trim() !== "" && editTaskDialog.taskToEdit) {
+                            AppViewModel.editTask(editTaskDialog.taskToEdit.id, inputField.text.trim());
+                        }
                     }
+                },
+                {
+                    text: "Cancel"
                 }
-            },
-            {
-                text: "Cancel"
-            }
-        ]
-    }
+            ]
+        }
 
     // Dialog for editing the main Goal
     CustomDialog {
@@ -1461,69 +1518,81 @@ ApplicationWindow {
                 ColumnLayout {
                     spacing: 15
 
-                    TextField {
-                        id: editGoalNameField
-                        objectName: "goalNameField"
-                        text: AppViewModel.currentGoalText
-                        placeholderText: "Enter main goal name..."
+                    Text {
+                        text: "Edit Main Goal"
+                        color: "#E95B5B"
+                        font.pointSize: 16
+                        font.bold: true
+                        Layout.alignment: Qt.AlignHCenter
+                    }
+
+                    Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 45
-                        color: "#FFFFFF"
-                        font.pointSize: 12
-                        placeholderTextColor: "#AAAAAA"
+                        color: "#3A3A3A"
+                        radius: 8
+                        border.color: "#E95B5B"
+                        border.width: 1
 
-                        verticalAlignment: TextInput.AlignVCenter
-                        leftPadding: 10
-                        rightPadding: 10
-                        topPadding: 0
-                        bottomPadding: 0
-
-                        background: Rectangle {
-                            color: "#3A3A3A"
-                            radius: 8
-                            border.color: "#E95B5B"
-                            border.width: 1
+                        TextInput {
+                            id: editGoalNameInput
+                            anchors.fill: parent
+                            anchors.margins: 10
+                            color: "#FFFFFF"
+                            font.pointSize: 12
+                            verticalAlignment: TextInput.AlignVCenter
+                            selectByMouse: true
+                            clip: true
+                            text: AppViewModel.currentGoalText
                         }
 
-                        onAccepted: {
-                            let descField = parent.children[1]; // editGoalDescriptionField
-                            if (text.trim() !== "" && descField && descField.text.trim() !== "") {
-                                AppViewModel.setMainGoal(text.trim(), descField.text.trim());
-                                editGoalDialog.close();
-                            }
+                        Text {
+                            text: "Enter main goal name..."
+                            color: "#AAAAAA"
+                            font.pointSize: 12
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: editGoalNameInput.text.length === 0
                         }
                     }
 
-                    TextField {
-                        id: editGoalDescriptionField
-                        objectName: "goalDescField"
-                        text: AppViewModel.currentGoalDescription
-                        placeholderText: "Enter goal description or target date..."
+                    Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 45
-                        color: "#FFFFFF"
-                        font.pointSize: 12
-                        placeholderTextColor: "#AAAAAA"
+                        color: "#3A3A3A"
+                        radius: 8
+                        border.color: "#E95B5B"
+                        border.width: 1
 
-                        verticalAlignment: TextInput.AlignVCenter
-                        leftPadding: 10
-                        rightPadding: 10
-                        topPadding: 0
-                        bottomPadding: 0
+                        TextInput {
+                            id: editGoalDescriptionInput
+                            anchors.fill: parent
+                            anchors.margins: 10
+                            color: "#FFFFFF"
+                            font.pointSize: 12
+                            verticalAlignment: TextInput.AlignVCenter
+                            selectByMouse: true
+                            clip: true
+                            text: AppViewModel.currentGoalDescription
 
-                        background: Rectangle {
-                            color: "#3A3A3A"
-                            radius: 8
-                            border.color: "#E95B5B"
-                            border.width: 1
+                            onAccepted: {
+                                let nameField = parent.parent.children[1].children[1];
+                                if (text.trim() !== "" && nameField && nameField.text.trim() !== "") {
+                                    AppViewModel.setMainGoal(nameField.text.trim(), text.trim());
+                                    editGoalDialog.close();
+                                }
+                            }
                         }
 
-                        onAccepted: {
-                            let nameField = parent.children[0]; // editGoalNameField
-                            if (text.trim() !== "" && nameField && nameField.text.trim() !== "") {
-                                AppViewModel.setMainGoal(nameField.text.trim(), text.trim());
-                                editGoalDialog.close();
-                            }
+                        Text {
+                            text: "Enter goal description or target date..."
+                            color: "#AAAAAA"
+                            font.pointSize: 12
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: editGoalDescriptionInput.text.length === 0
                         }
                     }
                 }
@@ -1534,27 +1603,11 @@ ApplicationWindow {
                     text: "Save Goal",
                     color: "#E95B5B",
                     onClicked: function() {
-                        // Ищем поля по objectName
-                        function findChildByObjectName(parent, objectName) {
-                            if (parent.objectName === objectName) return parent;
-                            if (parent.children) {
-                                for (var i = 0; i < parent.children.length; i++) {
-                                    var result = findChildByObjectName(parent.children[i], objectName);
-                                    if (result) return result;
-                                }
-                            }
-                            return null;
-                        }
-
-                        let contentRoot = editGoalDialog.contentItem;
-                        let nameField = findChildByObjectName(contentRoot, "goalNameField");
-                        let descField = findChildByObjectName(contentRoot, "goalDescField");
+                        let nameField = editGoalDialog.contentItem.children[0].children[1].item.children[1].children[1];
+                        let descField = editGoalDialog.contentItem.children[0].children[1].item.children[2].children[1];
 
                         if (nameField && descField && nameField.text.trim() !== "") {
-                            console.log("Saving goal:", nameField.text, descField.text); // Отладка
                             AppViewModel.setMainGoal(nameField.text.trim(), descField.text.trim());
-                        } else {
-                            console.log("Fields not found or empty"); // Отладка
                         }
                     }
                 },
@@ -1562,7 +1615,7 @@ ApplicationWindow {
                     text: "Cancel"
                 }
             ]
-    }
+        }
 
     // Data Management Dialog
     CustomDialog {
