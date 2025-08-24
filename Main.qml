@@ -174,6 +174,7 @@ ApplicationWindow {
 
                 Column {
                     anchors.centerIn: parent
+                    anchors.verticalCenterOffset: 20
                     spacing: 10
 
                     Text {
@@ -274,20 +275,33 @@ ApplicationWindow {
                                 // Отключаем вертикальный скроллбар
                                 ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
-                                // Включаем горизонтальный скроллбар
-                                ScrollBar.horizontal.policy: ScrollBar.AsNeeded
+                                // Включаем горизонтальный скроллбар?? - это работает
+                                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
                                 // MouseArea для прокрутки колесиком мыши
                                 MouseArea {
                                     anchors.fill: parent
                                     onWheel: {
-                                        // Прокрутка горизонтального скроллбара колесиком мыши
+                                        if (customScrollBar.visible &&
+                                            wheel.y >= customScrollBar.y &&
+                                            wheel.y <= (customScrollBar.y + customScrollBar.height)) {
+                                            return;
+                                        }
+
                                         var delta = wheel.angleDelta.y > 0 ? -30 : 30;
                                         subGoalsList.contentX = Math.max(0,
                                             Math.min(subGoalsList.contentWidth - subGoalsList.width,
                                             subGoalsList.contentX + delta));
                                     }
-                                    // Пропускаем клики через MouseArea к элементам ниже
+
+                                    onPressed: {
+                                        if (customScrollBar.visible &&
+                                            mouse.y >= customScrollBar.y &&
+                                            mouse.y <= (customScrollBar.y + customScrollBar.height)) {
+                                            mouse.accepted = false;
+                                        }
+                                    }
+
                                     propagateComposedEvents: true
                                     z: -1
                                 }
@@ -530,66 +544,78 @@ ApplicationWindow {
                                             }
                                         }
                                     }
-                                }// Кастомный горизонтальный скроллбар - размещаем ВНУТРИ Rectangle
-                                // Кастомный скроллбар без использования ScrollBar
+                                }
+                                // Минималистичный горизонтальный скроллбар
                                 Rectangle {
                                     id: customScrollBar
                                     anchors.left: parent.left
                                     anchors.right: parent.right
                                     anchors.bottom: parent.bottom
-                                    height: 8
-                                    color: "#3A3A3A"
-                                    border.color: "#444444"
-                                    border.width: 1
-                                    radius: 4
+                                    height: 6
+                                    color: "transparent"
+                                    radius: 2
 
                                     visible: subGoalsList.contentWidth > subGoalsList.width
 
-                                    // Принудительная установка радиуса при создании
-                                    Component.onCompleted: {
-                                        radius = 4
+                                    // MouseArea для всей зоны скроллбара
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        onWheel: {
+                                            if (subGoalsList.contentWidth > subGoalsList.width) {
+                                                var delta = wheel.angleDelta.y > 0 ? -30 : 30;
+                                                subGoalsList.contentX = Math.max(0,
+                                                    Math.min(subGoalsList.contentWidth - subGoalsList.width,
+                                                    subGoalsList.contentX + delta));
+                                            }
+                                        }
+
+                                        onClicked: {
+                                            // Клик по зоне скроллбара для перемещения ползунка
+                                            if (subGoalsList.contentWidth > subGoalsList.width) {
+                                                var ratio = mouse.x / width;
+                                                subGoalsList.contentX = ratio * (subGoalsList.contentWidth - subGoalsList.width);
+                                            }
+                                        }
                                     }
 
                                     Rectangle {
                                         id: scrollHandle
-                                        height: parent.height - 2
-                                        // ИЗМЕНЕНИЕ: Адаптивная ширина вместо фиксированной
+                                        height: parent.height
                                         width: {
                                             if (subGoalsList.contentWidth <= subGoalsList.width) {
-                                                return parent.width - 2; // Полная ширина если контент помещается
+                                                return parent.width;
                                             }
-                                            // Пропорциональная ширина: отношение видимой области к общему контенту
                                             var ratio = subGoalsList.width / subGoalsList.contentWidth;
-                                            var minWidth = 30; // Минимальная ширина ползунка
+                                            var minWidth = 20;
                                             return Math.max(minWidth, parent.width * ratio);
                                         }
-                                        y: 1
-                                        radius: 3  // Чуть меньше радиус для лучшего отображения
+                                        y: 0
+                                        radius: 2
 
-                                        // Принудительная установка начальной позиции
                                         Component.onCompleted: {
-                                            radius = 3;
                                             x = Qt.binding(function() {
                                                 if (subGoalsList.contentWidth <= subGoalsList.width) {
-                                                    return 1;
+                                                    return 0;
                                                 }
                                                 var ratio = subGoalsList.contentX / (subGoalsList.contentWidth - subGoalsList.width);
-                                                return Math.max(1, Math.min(maxX - 1, ratio * maxX));
+                                                return Math.max(0, Math.min(maxX, ratio * maxX));
                                             })
                                         }
 
-                                        property real maxX: parent.width - width - 2  // Учитываем границы
-                                        x: 1
+                                        property real maxX: parent.width - width
+                                        x: 0
 
-                                        // Принудительное обновление при любых изменениях
-                                        onXChanged: radius = 3
-                                        onWidthChanged: radius = 3
-                                        onHeightChanged: radius = 3
+                                        color: scrollMouseArea.pressed ? "#888888" : (scrollMouseArea.containsMouse ? "#AAAAAA" : "#666666")
+                                        opacity: scrollMouseArea.pressed ? 1.0 : (scrollMouseArea.containsMouse ? 0.8 : 0.5)
 
-                                        color: scrollMouseArea.containsMouse ? "#FF8C42" : "#F3C44A"
+                                        Behavior on opacity {
+                                            NumberAnimation { duration: 200 }
+                                        }
 
-                                        border.color: scrollMouseArea.containsMouse ? "#D4A017" : "#C0392B"
-                                        border.width: 1
+                                        Behavior on color {
+                                            ColorAnimation { duration: 200 }
+                                        }
 
                                         MouseArea {
                                             id: scrollMouseArea
@@ -597,8 +623,8 @@ ApplicationWindow {
                                             hoverEnabled: true
                                             drag.target: parent
                                             drag.axis: Drag.XAxis
-                                            drag.minimumX: 1
-                                            drag.maximumX: parent.maxX - 1
+                                            drag.minimumX: 0
+                                            drag.maximumX: parent.maxX
 
                                             onPositionChanged: {
                                                 if (drag.active && subGoalsList.contentWidth > subGoalsList.width) {
@@ -1017,63 +1043,59 @@ ApplicationWindow {
                         }
                     }
 
-                    // Кастомный вертикальный скроллбар
+                    // Минималистичный вертикальный скроллбар
                     Rectangle {
                         id: customVerticalScrollBar
                         anchors.top: parent.top
                         anchors.right: parent.right
-                        width: 8
-                        // ИСПРАВЛЕНИЕ: Ограничиваем высоту скроллбара высотой ListView
-                        height: Math.min(parent.height, mainWindow.height - topSection.height - 120) // 120px для отступов и заголовка
-                        color: "#3A3A3A"
-                        border.color: "#444444"
-                        border.width: 1
-                        radius: 6
+                        width: 6
+                        height: Math.min(parent.height, mainWindow.height - topSection.height - 120)
+                        color: "transparent"
+                        radius: 3
 
                         visible: taskListView.contentHeight > taskListView.height
 
-                        Component.onCompleted: {
-                            radius = 6
-                        }
-
                         Rectangle {
                             id: verticalScrollHandle
-                            width: parent.width - 2
-                            // ИЗМЕНЕНИЕ: Адаптивная высота вместо фиксированной
+                            width: parent.width
+                            // Адаптивная высота
                             height: {
                                 if (taskListView.contentHeight <= taskListView.height) {
-                                    return parent.height - 2; // Полная высота если контент помещается
+                                    return parent.height;
                                 }
-                                // Пропорциональная высота: отношение видимой области к общему контенту
                                 var ratio = taskListView.height / taskListView.contentHeight;
-                                var minHeight = 30; // Минимальная высота ползунка
+                                var minHeight = 20;
                                 return Math.max(minHeight, parent.height * ratio);
                             }
-                            x: 1
-                            radius: 5
+                            x: 0
+                            radius: 3
 
                             Component.onCompleted: {
-                                // Принудительно обновляем позицию при загрузке
                                 y = Qt.binding(function() {
                                     if (taskListView.contentHeight <= taskListView.height) {
-                                        return 1; // Если контент помещается, ползунок вверху
+                                        return 0;
                                     }
 
                                     var ratio = taskListView.contentY / (taskListView.contentHeight - taskListView.height);
                                     var calculatedY = ratio * maxY;
 
-                                    // ИСПРАВЛЕНИЕ: Принудительно ограничиваем позицию ползунка
-                                    return Math.max(1, Math.min(maxY - 1, calculatedY));
+                                    return Math.max(0, Math.min(maxY, calculatedY));
                                 })
                             }
 
-                            property real maxY: parent.height - height - 2
-                            y: 1
+                            property real maxY: parent.height - height
+                            y: 0
 
-                            color: verticalScrollMouseArea.containsMouse ? "#FF8C42" : "#F3C44A"
+                            color: verticalScrollMouseArea.pressed ? "#888888" : (verticalScrollMouseArea.containsMouse ? "#AAAAAA" : "#666666")
+                            opacity: verticalScrollMouseArea.pressed ? 1.0 : (verticalScrollMouseArea.containsMouse ? 0.8 : 0.5)
 
-                            border.color: verticalScrollMouseArea.containsMouse ? "#D4A017" : "#C0392B"
-                            border.width: 1
+                            Behavior on opacity {
+                                NumberAnimation { duration: 200 }
+                            }
+
+                            Behavior on color {
+                                ColorAnimation { duration: 200 }
+                            }
 
                             MouseArea {
                                 id: verticalScrollMouseArea
@@ -1081,15 +1103,14 @@ ApplicationWindow {
                                 hoverEnabled: true
                                 drag.target: parent
                                 drag.axis: Drag.YAxis
-                                drag.minimumY: 1
-                                drag.maximumY: parent.maxY - 1
+                                drag.minimumY: 0
+                                drag.maximumY: parent.maxY
 
                                 onPositionChanged: {
                                     if (drag.active && taskListView.contentHeight > taskListView.height) {
                                         var ratio = Math.max(0, Math.min(1, parent.y / parent.maxY));
                                         var newContentY = ratio * (taskListView.contentHeight - taskListView.height);
 
-                                        // ИСПРАВЛЕНИЕ: Дополнительная проверка границ
                                         taskListView.contentY = Math.max(0,
                                             Math.min(taskListView.contentHeight - taskListView.height, newContentY));
                                     }
