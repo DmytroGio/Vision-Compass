@@ -340,14 +340,12 @@ ApplicationWindow {
                                         }
                                     }
 
-                                    // ЗАМЕНИТЬ ЭТОТ ДЕЛЕГАТ
                                     delegate: Rectangle {
                                         id: subGoalItem
                                         width: 180
                                         height: 80
                                         radius: 15
-                                        border.width: 2
-
+                                        border.width: 0  // Убираем обводку
 
                                         // 1. Привязываем isHovered к свойству containsMouse у главной MouseArea
                                         property bool isHovered: mainMouseArea.containsMouse || editButton.isButtonHovered || deleteButton.isButtonHovered
@@ -385,64 +383,48 @@ ApplicationWindow {
                                             z: -1
                                         }
 
-                                        // Основной фон
+                                        // Основной фон с новыми цветами
                                         color: {
                                             if (allTasksCompleted) {
-                                                return isSelected ? "#66BB6A" : "#4CAF50";
+                                                return "#323232"; // Выполненные будут с градиентом поверх
+                                            } else if (isSelected) {
+                                                return "#F4A652"; // Выбранная subgoal
+                                            } else if (isHovered) {
+                                                return "#786738"; // С наведенным курсором
                                             } else {
-                                                return isSelected ? "#F3C44A" : "#2D2D2D";
+                                                return "#323232"; // Не выделенная subgoal
                                             }
                                         }
 
-                                        border.color: {
-                                            if (allTasksCompleted) {
-                                                return isSelected ? "#76CC7A" : "#66BB6A";
-                                            } else {
-                                                return isSelected ? "#F5D665" : "#F3C44A";
-                                            }
-                                        }
-
-                                        // Эффект при наведении для НЕвыбранных элементов
+                                        // Градиент для выполненных subgoals
                                         Rectangle {
                                             anchors.fill: parent
                                             radius: parent.radius
-                                            color: allTasksCompleted ? "#81C784" : "#FF8C42"
-                                            opacity: 0.6
-                                            visible: !isSelected && isHovered
+                                            visible: allTasksCompleted
+                                            gradient: Gradient {
+                                                GradientStop {
+                                                    position: 0.0
+                                                    color: isHovered ? "#F67272" : "#F46262" // Подсветка при наведении
+                                                }
+                                                GradientStop {
+                                                    position: 1.0
+                                                    color: isHovered ? "#F5D665" : "#F3C44A" // Подсветка при наведении
+                                                }
+                                            }
                                         }
 
-                                        // Номер шортката
-                                        Rectangle {
-                                            width: 24
-                                            height: 24
+                                        // Номерация шорткатов в правом нижнем углу (без круга)
+                                        Text {
+                                            text: (index + 1).toString()
                                             anchors.bottom: parent.bottom
                                             anchors.right: parent.right
-                                            anchors.bottomMargin: -8
-                                            anchors.rightMargin: 8
-                                            color: "#F3C44A"
-                                            radius: 8
+                                            anchors.bottomMargin: 5
+                                            anchors.rightMargin: 12
+                                            font.pointSize: 9
+                                            font.bold: true
+                                            color: "#FFFFFF" // Всегда белый
                                             visible: index < 9
-                                            z: 2
-
-                                            Text {
-                                                text: (index + 1).toString()
-                                                anchors.centerIn: parent
-                                                anchors.horizontalCenterOffset: 1
-                                                anchors.verticalCenterOffset: 1
-                                                font.pointSize: 11
-                                                font.bold: true
-                                                color: "black"
-                                                opacity: subGoalItem.isSelected ? 0.6 : 0
-                                                z: 0
-                                            }
-
-                                            Text {
-                                                text: (index + 1).toString()
-                                                anchors.centerIn: parent
-                                                font.pointSize: 11
-                                                font.bold: true
-                                                color: subGoalItem.isSelected ? "#1E1E1E" : "#1E1E1E"
-                                            }
+                                            z: 10
                                         }
 
                                         // Основное содержимое SubGoal
@@ -459,10 +441,12 @@ ApplicationWindow {
 
                                                 Text {
                                                     text: modelData.name || "Unnamed SubGoal"
-                                                    color: subGoalItem.isSelected ? "#1E1E1E" : "#FFFFFF"
+                                                    color: "#FFFFFF" // Всегда белый
                                                     font.pointSize: 12
                                                     font.bold: true
                                                     Layout.fillWidth: true
+                                                    Layout.alignment: Qt.AlignCenter // Центрирование
+                                                    horizontalAlignment: Text.AlignHCenter // Горизонтальное центрирование
                                                     wrapMode: Text.WordWrap
                                                     maximumLineCount: 2
                                                     elide: Text.ElideRight
@@ -471,7 +455,6 @@ ApplicationWindow {
 
                                             // Контейнер для кнопок
                                             RowLayout {
-                                                //id: buttonsContainer
                                                 Layout.alignment: Qt.AlignTop
                                                 spacing: 5
 
@@ -484,16 +467,16 @@ ApplicationWindow {
                                                     visible: subGoalItem.isHovered
 
                                                     property bool isHovered: false
-                                                    property bool isButtonHovered: editMouseArea.containsMouse  // Новое свойство
-                                                    property color baseColor: subGoalItem.isSelected ? "#1E1E1E" : "#F3C44A"
-                                                    property color hoveredColor: subGoalItem.isSelected ? "#2D2D2D" : "#F5D665"
+                                                    property bool isButtonHovered: editMouseArea.containsMouse
+                                                    property color baseColor: (subGoalItem.isSelected || subGoalItem.allTasksCompleted) ? "#1E1E1E" : "#F3C44A"
+                                                    property color hoveredColor: (subGoalItem.isSelected || subGoalItem.allTasksCompleted) ? "#2D2D2D" : "#F5D665"
                                                     color: isHovered ? hoveredColor : baseColor
 
                                                     Text {
                                                         text: "✎"
                                                         anchors.centerIn: parent
                                                         font.pointSize: 12
-                                                        color: subGoalItem.isSelected ? "#F3C44A" : "#1E1E1E"
+                                                        color: (subGoalItem.isSelected || subGoalItem.allTasksCompleted) ? "#F3C44A" : "#1E1E1E"
                                                         font.bold: true
                                                     }
 
@@ -509,6 +492,7 @@ ApplicationWindow {
                                                         onExited: editButton.isHovered = false
                                                     }
                                                 }
+
                                                 // Кнопка удаления SubGoal
                                                 Rectangle {
                                                     id: deleteButton
@@ -518,7 +502,7 @@ ApplicationWindow {
                                                     radius: 12
                                                     visible: AppViewModel.subGoalsListModel.length > 1 && subGoalItem.isHovered
 
-                                                    property bool isButtonHovered: deleteMouseArea.containsMouse  // Новое свойство
+                                                    property bool isButtonHovered: deleteMouseArea.containsMouse
 
                                                     Text {
                                                         text: "✕"
