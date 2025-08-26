@@ -372,21 +372,10 @@ ApplicationWindow {
                                             return false;
                                         }
 
-                                        // Тень
-                                        Rectangle {
-                                            anchors.fill: parent
-                                            anchors.topMargin: isSelected ? 8 : 4
-                                            anchors.leftMargin: isSelected ? 8 : 4
-                                            radius: parent.radius
-                                            color: "#000000"
-                                            opacity: isSelected ? 0.6 : 0.4
-                                            z: -1
-                                        }
-
                                         // Основной фон с новыми цветами
                                         color: {
                                             if (allTasksCompleted) {
-                                                return "#323232"; // Выполненные будут с градиентом поверх
+                                                return "transparent"; // Полностью прозрачный для выполненных
                                             } else if (isSelected) {
                                                 return "#F4A652"; // Выбранная subgoal
                                             } else if (isHovered) {
@@ -404,11 +393,17 @@ ApplicationWindow {
                                             gradient: Gradient {
                                                 GradientStop {
                                                     position: 0.0
-                                                    color: isHovered ? "#F67272" : "#F46262" // Подсветка при наведении
+                                                    color: {
+                                                        if (isSelected) {
+                                                            return "#FF4848"; // Выбранное выполненное - красный верх
+                                                        } else {
+                                                            return isHovered ? "#F67272" : "#F46262"; // Обычное состояние
+                                                        }
+                                                    }
                                                 }
                                                 GradientStop {
                                                     position: 1.0
-                                                    color: isHovered ? "#F5D665" : "#F3C44A" // Подсветка при наведении
+                                                    color: "#F3C44A" // Желтый низ для всех выполненных
                                                 }
                                             }
                                         }
