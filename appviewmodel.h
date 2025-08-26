@@ -60,9 +60,10 @@ public:
     // Data management methods
     Q_INVOKABLE void exportData(const QString& filePath);
     Q_INVOKABLE void importData(const QString& filePath);
-    Q_INVOKABLE void importDataWithDialog();
     Q_INVOKABLE void clearAllData();
     Q_INVOKABLE QString getDefaultDataPath() const;
+    Q_INVOKABLE QString getDefaultExportFileName() const;
+    Q_INVOKABLE QString getDefaultImportPath() const;
 
 signals:
     void currentGoalChanged();

@@ -406,11 +406,35 @@ Qt6QmlWorkerScript_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QmlWorkerScript
 //The directory containing a CMake configuration file for Qt6Qml.
 Qt6Qml_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6Qml
 
+//The directory containing a CMake configuration file for Qt6QuickControls2ImplPrivate.
+Qt6QuickControls2ImplPrivate_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickControls2ImplPrivate
+
+//The directory containing a CMake configuration file for Qt6QuickControls2Impl.
+Qt6QuickControls2Impl_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickControls2Impl
+
 //The directory containing a CMake configuration file for Qt6QuickControls2Private.
 Qt6QuickControls2Private_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickControls2Private
 
 //The directory containing a CMake configuration file for Qt6QuickControls2.
 Qt6QuickControls2_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickControls2
+
+//The directory containing a CMake configuration file for Qt6QuickDialogs2Private.
+Qt6QuickDialogs2Private_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickDialogs2Private
+
+//The directory containing a CMake configuration file for Qt6QuickDialogs2QuickImplPrivate.
+Qt6QuickDialogs2QuickImplPrivate_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickDialogs2QuickImplPrivate
+
+//The directory containing a CMake configuration file for Qt6QuickDialogs2QuickImpl.
+Qt6QuickDialogs2QuickImpl_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickDialogs2QuickImpl
+
+//The directory containing a CMake configuration file for Qt6QuickDialogs2UtilsPrivate.
+Qt6QuickDialogs2UtilsPrivate_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickDialogs2UtilsPrivate
+
+//The directory containing a CMake configuration file for Qt6QuickDialogs2Utils.
+Qt6QuickDialogs2Utils_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickDialogs2Utils
+
+//The directory containing a CMake configuration file for Qt6QuickDialogs2.
+Qt6QuickDialogs2_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickDialogs2
 
 //The directory containing a CMake configuration file for Qt6QuickPrivate.
 Qt6QuickPrivate_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickPrivate

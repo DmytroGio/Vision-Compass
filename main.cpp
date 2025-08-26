@@ -4,7 +4,9 @@
 #include "appviewmodel.h" // Include the AppViewModel header
 #include <QtQuickControls2/QtQuickControls2>
 #include <QQuickWindow>
+#include <QFileDialog>
 #include <QIcon>
+#include <QtQml>
 
 
 int main(int argc, char *argv[])
@@ -38,6 +40,8 @@ int main(int argc, char *argv[])
                          if (!obj && url == objUrl)
                              QCoreApplication::exit(-1);
                      }, Qt::QueuedConnection);
+
+    qmlRegisterType<QObject>("Qt.labs.platform", 1, 1, "StandardPaths");
 
     engine.load(url);
 

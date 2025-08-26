@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts
 import QtQuick.Window
 import QtQuick.Effects
+import Qt.labs.platform 1.0
 
 
 ApplicationWindow {
@@ -135,7 +136,7 @@ ApplicationWindow {
         // Единый фон для всего приложения
         Rectangle {
             anchors.fill: parent
-            color: "#1E1E1E"
+            color: "#282828"
             z: -1
         }
 
@@ -395,7 +396,7 @@ ApplicationWindow {
                                                     position: 0.0
                                                     color: {
                                                         if (isSelected) {
-                                                            return "#FF4848"; // Выбранное выполненное - красный верх
+                                                            return "#FF5353"; // Выбранное выполненное - красный верх
                                                         } else {
                                                             return isHovered ? "#F67272" : "#F46262"; // Обычное состояние
                                                         }
@@ -1617,6 +1618,121 @@ ApplicationWindow {
             ]
         }
 
+    // Простой диалог для экспорта
+    CustomDialog {
+        id: exportPathDialog
+        dialogWidth: 500
+
+        content: Component {
+            ColumnLayout {
+                spacing: 15
+
+                Text {
+                    text: "Export Data"
+                    color: "#F3C44A"
+                    font.pointSize: 16
+                    font.bold: true
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Text {
+                    text: "Enter file path for export:"
+                    color: "#FFFFFF"
+                    font.pointSize: 12
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 40
+                    color: "#2D2D2D"
+                    border.color: "#444444"
+                    border.width: 1
+                    radius: 5
+
+                    TextInput {
+                        id: exportPathInput
+                        anchors.fill: parent
+                        anchors.margins: 10
+                        color: "#FFFFFF"
+                        font.pointSize: 12
+                        text: AppViewModel.getDefaultDataPath() + "/" + AppViewModel.getDefaultExportFileName()
+                        selectByMouse: true
+                    }
+                }
+            }
+        }
+
+        buttons: [
+            {
+                text: "Export",
+                action: function() {
+                    AppViewModel.exportData(exportPathInput.text)
+                    exportPathDialog.close()
+                }
+            },
+            {
+                text: "Cancel"
+            }
+        ]
+    }
+
+    // Простой диалог для импорта
+    CustomDialog {
+        id: importPathDialog
+        dialogWidth: 500
+
+        content: Component {
+            ColumnLayout {
+                spacing: 15
+
+                Text {
+                    text: "Import Data"
+                    color: "#F3C44A"
+                    font.pointSize: 16
+                    font.bold: true
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Text {
+                    text: "Enter file path for import:"
+                    color: "#FFFFFF"
+                    font.pointSize: 12
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 40
+                    color: "#2D2D2D"
+                    border.color: "#444444"
+                    border.width: 1
+                    radius: 5
+
+                    TextInput {
+                        id: importPathInput
+                        anchors.fill: parent
+                        anchors.margins: 10
+                        color: "#FFFFFF"
+                        font.pointSize: 12
+                        text: AppViewModel.getDefaultDataPath() + "/"
+                        selectByMouse: true
+                    }
+                }
+            }
+        }
+
+        buttons: [
+            {
+                text: "Import",
+                action: function() {
+                    AppViewModel.importData(importPathInput.text)
+                    importPathDialog.close()
+                }
+            },
+            {
+                text: "Cancel"
+            }
+        ]
+    }
     // Data Management Dialog
     CustomDialog {
         id: dataManagementDialog
@@ -1691,10 +1807,10 @@ ApplicationWindow {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    Qt.callLater(function() {
-                                        AppViewModel.exportData("")
-                                    }) // This will now show file dialog
                                     dataManagementDialog.close()
+                                    Qt.callLater(function() {
+                                        exportPathDialog.open()
+                                    })
                                 }
                                 hoverEnabled: true
                                 onEntered: parent.color = "#76CC7A"
@@ -1761,10 +1877,10 @@ ApplicationWindow {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    Qt.callLater(function() {
-                                        AppViewModel.importDataWithDialog()
-                                    })
                                     dataManagementDialog.close()
+                                    Qt.callLater(function() {
+                                        importPathDialog.open()
+                                    })
                                 }
                                 hoverEnabled: true
                                 onEntered: parent.color = "#52B5FF"

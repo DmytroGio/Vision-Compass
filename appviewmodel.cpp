@@ -408,41 +408,6 @@ void AppViewModel::exportData(const QString& filePath) {
     }
 }
 
-void AppViewModel::importDataWithDialog() {
-    // Простая версия: импортируем последний экспортированный файл
-    QString documentsPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-
-    // Ищем последний файл backup в папке Documents
-    QDir dir(documentsPath);
-    QStringList filters;
-    filters << "VisionCompass_backup_*.json";
-    QFileInfoList files = dir.entryInfoList(filters, QDir::Files, QDir::Time);
-
-    if (!files.isEmpty()) {
-        QString latestFile = files.first().absoluteFilePath();
-        qDebug() << "Found latest backup file:" << latestFile;
-        importData(latestFile);
-        qDebug() << "Import completed from latest backup";
-    } else {
-        qDebug() << "No backup files found in Documents folder";
-
-        // Попробуем найти любой JSON файл VisionCompass
-        filters.clear();
-        filters << "*.json";
-        files = dir.entryInfoList(filters, QDir::Files, QDir::Time);
-
-        for (const QFileInfo& file : files) {
-            if (file.fileName().contains("VisionCompass", Qt::CaseInsensitive)) {
-                qDebug() << "Found VisionCompass file:" << file.absoluteFilePath();
-                importData(file.absoluteFilePath());
-                return;
-            }
-        }
-
-        qDebug() << "No VisionCompass files found for import";
-    }
-}
-
 void AppViewModel::clearAllData() {
     // Clear all data and reset to defaults
     m_taskManager = TaskManager(); // Reset to default state
@@ -473,5 +438,15 @@ void AppViewModel::clearAllData() {
 }
 
 QString AppViewModel::getDefaultDataPath() const {
+    return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+}
+
+QString AppViewModel::getDefaultExportFileName() const {
+    return "VisionCompass_backup_"
+           + QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss")
+           + ".json";
+}
+
+QString AppViewModel::getDefaultImportPath() const {
     return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
 }

@@ -380,8 +380,8 @@ E:/Projects/C++/task-manager/appviewmodel.h
  mdp:E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/task-manager_autogen/moc_predefs.h
  mdp:E:/Projects/C++/task-manager/json.hpp
  mdp:E:/Projects/C++/task-manager/task_manager.hpp
-E:/Projects/C++/task-manager/appviewmodel.cpp
 E:/Projects/C++/task-manager/json.hpp
+E:/Projects/C++/task-manager/appviewmodel.cpp
 E:/Projects/C++/task-manager/task_manager.hpp
 E:/Projects/C++/task-manager/user.hpp
 E:/Projects/C++/task-manager/main.cpp
