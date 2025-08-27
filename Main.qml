@@ -3,7 +3,8 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts
 import QtQuick.Window
 import QtQuick.Effects
-import Qt.labs.platform 1.0
+import Qt.labs.platform 1.1 as Platform
+import com.visioncompass 1.0
 
 
 ApplicationWindow {
@@ -1618,121 +1619,103 @@ ApplicationWindow {
             ]
         }
 
-    // Простой диалог для экспорта
-    CustomDialog {
-        id: exportPathDialog
-        dialogWidth: 500
+    FileManager {
+        id: fileManager
 
-        content: Component {
-            ColumnLayout {
-                spacing: 15
-
-                Text {
-                    text: "Export Data"
-                    color: "#F3C44A"
-                    font.pointSize: 16
-                    font.bold: true
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                Text {
-                    text: "Enter file path for export:"
-                    color: "#FFFFFF"
-                    font.pointSize: 12
-                }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 40
-                    color: "#2D2D2D"
-                    border.color: "#444444"
-                    border.width: 1
-                    radius: 5
-
-                    TextInput {
-                        id: exportPathInput
-                        anchors.fill: parent
-                        anchors.margins: 10
-                        color: "#FFFFFF"
-                        font.pointSize: 12
-                        text: AppViewModel.getDefaultDataPath() + "/" + AppViewModel.getDefaultExportFileName()
-                        selectByMouse: true
-                    }
-                }
+        onExportCompleted: function(success, message, actualPath) {
+            if (success) {
+                // Показать успешное сообщение
+                statusMessage.show("Export successful: " + actualPath, "#66BB6A")
+            } else {
+                // Показать ошибку
+                statusMessage.show("Export failed: " + message, "#E95B5B")
             }
         }
 
-        buttons: [
-            {
-                text: "Export",
-                action: function() {
-                    AppViewModel.exportData(exportPathInput.text)
-                    exportPathDialog.close()
-                }
-            },
-            {
-                text: "Cancel"
-            }
-        ]
-    }
-
-    // Простой диалог для импорта
-    CustomDialog {
-        id: importPathDialog
-        dialogWidth: 500
-
-        content: Component {
-            ColumnLayout {
-                spacing: 15
-
-                Text {
-                    text: "Import Data"
-                    color: "#F3C44A"
-                    font.pointSize: 16
-                    font.bold: true
-                    Layout.alignment: Qt.AlignHCenter
-                }
-
-                Text {
-                    text: "Enter file path for import:"
-                    color: "#FFFFFF"
-                    font.pointSize: 12
-                }
-
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 40
-                    color: "#2D2D2D"
-                    border.color: "#444444"
-                    border.width: 1
-                    radius: 5
-
-                    TextInput {
-                        id: importPathInput
-                        anchors.fill: parent
-                        anchors.margins: 10
-                        color: "#FFFFFF"
-                        font.pointSize: 12
-                        text: AppViewModel.getDefaultDataPath() + "/"
-                        selectByMouse: true
-                    }
-                }
+        onImportCompleted: function(success, message, jsonData) {
+            if (success) {
+                AppViewModel.loadDataFromJson(jsonData)
+                statusMessage.show("Import successful!", "#66BB6A")
+            } else {
+                statusMessage.show("Import failed: " + message, "#E95B5B")
             }
         }
-
-        buttons: [
-            {
-                text: "Import",
-                action: function() {
-                    AppViewModel.importData(importPathInput.text)
-                    importPathDialog.close()
-                }
-            },
-            {
-                text: "Cancel"
-            }
-        ]
     }
+
+    Platform.FileDialog {
+        id: exportDialog
+        title: "Export Data - Save Backup"
+        fileMode: Platform.FileDialog.SaveFile
+        nameFilters: ["JSON files (*.json)", "All files (*)"]
+        defaultSuffix: "json"
+        currentFile: Platform.StandardPaths.writableLocation(Platform.StandardPaths.DocumentsLocation) + "/VisionCompass_backup_" + new Date().toISOString().slice(0,19).replace(/:/g, "-") + ".json"
+
+        onAccepted: {
+            var jsonData = AppViewModel.getCurrentDataAsJson()
+            fileManager.exportToFile(file.toString(), jsonData)
+        }
+    }
+
+    Platform.FileDialog {
+        id: importDialog
+        title: "Import Data - Load Backup"
+        fileMode: Platform.FileDialog.OpenFile
+        nameFilters: ["JSON files (*.json)", "All files (*)"]
+        currentFolder: Platform.StandardPaths.writableLocation(Platform.StandardPaths.DocumentsLocation)
+
+        onAccepted: {
+            fileManager.importFromFile(file.toString())
+        }
+    }
+
+    // Компонент для показа статус сообщений
+    Rectangle {
+        id: statusMessage
+        visible: false
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.topMargin: 20
+        width: Math.min(parent.width - 40, 400)
+        height: 60
+        color: "#2D2D2D"
+        radius: 10
+        border.width: 2
+        z: 1000
+
+        property string messageText: ""
+        property color messageColor: "#66BB6A"
+
+        function show(text, color) {
+            messageText = text
+            messageColor = color
+            border.color = color
+            visible = true
+            hideTimer.restart()
+        }
+
+        Text {
+            anchors.centerIn: parent
+            text: statusMessage.messageText
+            color: statusMessage.messageColor
+            font.pointSize: 11
+            font.bold: true
+            wrapMode: Text.WordWrap
+            width: parent.width - 20
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        Timer {
+            id: hideTimer
+            interval: 4000
+            onTriggered: statusMessage.visible = false
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: statusMessage.visible = false
+        }
+    }
+
     // Data Management Dialog
     CustomDialog {
         id: dataManagementDialog
@@ -1808,9 +1791,7 @@ ApplicationWindow {
                                 anchors.fill: parent
                                 onClicked: {
                                     dataManagementDialog.close()
-                                    Qt.callLater(function() {
-                                        exportPathDialog.open()
-                                    })
+                                    exportDialog.open()
                                 }
                                 hoverEnabled: true
                                 onEntered: parent.color = "#76CC7A"
@@ -1878,9 +1859,7 @@ ApplicationWindow {
                                 anchors.fill: parent
                                 onClicked: {
                                     dataManagementDialog.close()
-                                    Qt.callLater(function() {
-                                        importPathDialog.open()
-                                    })
+                                    importDialog.open()
                                 }
                                 hoverEnabled: true
                                 onEntered: parent.color = "#52B5FF"
@@ -1890,7 +1869,7 @@ ApplicationWindow {
                     }
                 }
 
-                // Clear Data Section
+                // Clear Data Section - ОСТАЕТСЯ БЕЗ ИЗМЕНЕНИЙ
                 Rectangle {
                     Layout.fillWidth: true
                     height: 60
@@ -1962,68 +1941,6 @@ ApplicationWindow {
         buttons: [
             {
                 text: "Close"
-            }
-        ]
-    }
-
-    // File Import Dialog (Note: This is a simplified version - for full file dialog you'd need C++ FileDialog)
-    CustomDialog {
-        id: importFileDialog
-        dialogWidth: 400
-
-        content: Component {
-            ColumnLayout {
-                spacing: 15
-
-                Text {
-                    text: "Import Data File"
-                    color: "#FFFFFF"
-                    font.pointSize: 14
-                    font.bold: true
-                }
-
-                TextField {
-                    id: importPathField
-                    placeholderText: "Enter file path or drag & drop JSON file..."
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 45
-                    color: "#FFFFFF"
-                    font.pointSize: 12
-                    background: Rectangle {
-                        color: "#3A3A3A"
-                        radius: 8
-                        border.color: "#42A5F5"
-                        border.width: 1
-                    }
-                    padding: 10
-                    placeholderTextColor: "#AAAAAA"
-                }
-
-                Text {
-                    text: "⚠️ This will replace all current data. Make sure to export current data first!"
-                    color: "#E95B5B"
-                    font.pointSize: 10
-                    Layout.fillWidth: true
-                    wrapMode: Text.WordWrap
-                }
-            }
-        }
-
-        buttons: [
-            {
-                text: "Import",
-                color: "#42A5F5",
-                onClicked: function() {
-                    let pathField = importFileDialog.contentItem.children[0].children[1].item;
-                    if (pathField && pathField.text.trim() !== "") {
-                        AppViewModel.importData(pathField.text.trim());
-                        pathField.text = "";
-                        dataManagementDialog.close();
-                    }
-                }
-            },
-            {
-                text: "Cancel"
             }
         ]
     }

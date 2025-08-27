@@ -58,12 +58,12 @@ public:
     Q_INVOKABLE void removeTask(const QVariantMap& taskData); // For QML compatibility
 
     // Data management methods
-    Q_INVOKABLE void exportData(const QString& filePath);
-    Q_INVOKABLE void importData(const QString& filePath);
     Q_INVOKABLE void clearAllData();
     Q_INVOKABLE QString getDefaultDataPath() const;
     Q_INVOKABLE QString getDefaultExportFileName() const;
     Q_INVOKABLE QString getDefaultImportPath() const;
+    Q_INVOKABLE QString getCurrentDataAsJson() const;
+    Q_INVOKABLE void loadDataFromJson(const QString& jsonData);
 
 signals:
     void currentGoalChanged();

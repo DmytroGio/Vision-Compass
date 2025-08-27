@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QIcon>
 #include <QtQml>
+#include "filemanager.h"
 
 
 int main(int argc, char *argv[])
@@ -41,7 +42,7 @@ int main(int argc, char *argv[])
                              QCoreApplication::exit(-1);
                      }, Qt::QueuedConnection);
 
-    qmlRegisterType<QObject>("Qt.labs.platform", 1, 1, "StandardPaths");
+    qmlRegisterType<FileManager>("com.visioncompass", 1, 0, "FileManager");
 
     engine.load(url);
 

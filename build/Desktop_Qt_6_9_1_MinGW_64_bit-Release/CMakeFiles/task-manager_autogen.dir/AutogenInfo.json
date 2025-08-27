@@ -1062,6 +1062,12 @@
 			null
 		],
 		[
+			"E:/Projects/C++/task-manager/filemanager.h",
+			"MU",
+			"EWIEGA46WW/moc_filemanager.cpp",
+			null
+		],
+		[
 			"E:/Projects/C++/task-manager/json.hpp",
 			"MU",
 			"EWIEGA46WW/moc_json.cpp",
@@ -1182,6 +1188,7 @@
 	"SOURCES" : 
 	[
 		[ "E:/Projects/C++/task-manager/appviewmodel.cpp", "MU", null ],
+		[ "E:/Projects/C++/task-manager/filemanager.cpp", "MU", null ],
 		[ "E:/Projects/C++/task-manager/main.cpp", "MU", null ],
 		[ "E:/Projects/C++/task-manager/task_manager.cpp", "MU", null ]
 	],

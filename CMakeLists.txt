@@ -19,6 +19,8 @@ set(PROJECT_SOURCES
         appviewmodel.h
         task_manager.cpp
         task_manager.hpp
+        filemanager.cpp
+        filemanager.h
         user.hpp
         json.hpp
         resources.qrc
@@ -38,6 +40,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(task-manager
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        filemanager.h filemanager.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET task-manager APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

@@ -336,77 +336,6 @@ QString AppViewModel::getTasksFilePath() const {
     return dataPath + "/tasks.json";
 }
 
-void AppViewModel::importData(const QString& filePath) {
-    try {
-        if (filePath.isEmpty()) {
-            qDebug() << "Import cancelled: empty file path";
-            return;
-        }
-
-        qDebug() << "Importing data from:" << filePath;
-
-        // Create backup of current data before importing
-        QString backupPath = getTasksFilePath() + ".backup";
-        m_taskManager.saveToFile(backupPath.toStdString());
-        qDebug() << "Created backup at:" << backupPath;
-
-        // Load new data
-        m_taskManager.loadFromFile(filePath.toStdString());
-
-        // Update UI
-        updateGoalProperties();
-        updateSubGoalListModel();
-
-        // Select first subgoal if available
-        if (!m_subGoals.empty()) {
-            selectSubGoal(m_subGoals[0].id);
-        } else {
-            m_selectedSubGoalId = 0;
-            updateTasksListModel();
-            emit selectedSubGoalChanged();
-        }
-
-        qDebug() << "Import completed successfully";
-
-    } catch (const std::exception& e) {
-        qDebug() << "Import error:" << e.what();
-        // Restore from backup if import failed
-        QString backupPath = getTasksFilePath() + ".backup";
-        try {
-            m_taskManager.loadFromFile(backupPath.toStdString());
-            updateGoalProperties();
-            updateSubGoalListModel();
-            updateTasksListModel();
-            qDebug() << "Restored from backup after failed import";
-        } catch (const std::exception& restoreError) {
-            qDebug() << "Failed to restore from backup:" << restoreError.what();
-        }
-    }
-}
-
-void AppViewModel::exportData(const QString& filePath) {
-    try {
-        QString actualPath = filePath;
-
-        if (actualPath.isEmpty()) {
-            actualPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
-            + "/VisionCompass_backup_"
-                + QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss")
-                + ".json";
-        }
-
-        if (!actualPath.endsWith(".json", Qt::CaseInsensitive)) {
-            actualPath += ".json";
-        }
-
-        qDebug() << "Exporting data to:" << actualPath;
-        m_taskManager.saveToFile(actualPath.toStdString());
-        qDebug() << "Export completed successfully to:" << actualPath;
-
-    } catch (const std::exception& e) {
-        qDebug() << "Export error:" << e.what();
-    }
-}
 
 void AppViewModel::clearAllData() {
     // Clear all data and reset to defaults
@@ -449,4 +378,89 @@ QString AppViewModel::getDefaultExportFileName() const {
 
 QString AppViewModel::getDefaultImportPath() const {
     return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+}
+
+QString AppViewModel::getCurrentDataAsJson() const {
+    QString tempPath = getTasksFilePath() + ".temp";
+    m_taskManager.saveToFile(tempPath.toStdString());
+
+    QFile file(tempPath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Failed to read temporary JSON data";
+        return QString();
+    }
+
+    QTextStream in(&file);
+    QString jsonData = in.readAll();
+    file.close();
+
+    // Clean up temp file
+    QFile::remove(tempPath);
+
+    return jsonData;
+}
+
+void AppViewModel::loadDataFromJson(const QString& jsonData) {
+    try {
+        if (jsonData.isEmpty()) {
+            qDebug() << "Import cancelled: empty JSON data";
+            return;
+        }
+
+        qDebug() << "Loading data from JSON";
+
+        // Create backup of current data before importing
+        QString backupPath = getTasksFilePath() + ".backup";
+        m_taskManager.saveToFile(backupPath.toStdString());
+        qDebug() << "Created backup at:" << backupPath;
+
+        // Save JSON to temporary file and load
+        QString tempPath = getTasksFilePath() + ".import_temp";
+        QFile tempFile(tempPath);
+        if (!tempFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            qDebug() << "Failed to create temporary import file";
+            return;
+        }
+
+        QTextStream out(&tempFile);
+        out << jsonData;
+        tempFile.close();
+
+        // Load from temporary file
+        m_taskManager.loadFromFile(tempPath.toStdString());
+
+        // Clean up temp file
+        QFile::remove(tempPath);
+
+        // Update UI
+        updateGoalProperties();
+        updateSubGoalListModel();
+
+        // Select first subgoal if available
+        if (!m_subGoals.empty()) {
+            selectSubGoal(m_subGoals[0].id);
+        } else {
+            m_selectedSubGoalId = 0;
+            updateTasksListModel();
+            emit selectedSubGoalChanged();
+        }
+
+        // Save the imported data
+        saveData();
+        qDebug() << "Import completed successfully";
+
+    } catch (const std::exception& e) {
+        qDebug() << "Import error:" << e.what();
+        // Restore from backup if import failed
+        QString backupPath = getTasksFilePath() + ".backup";
+        try {
+            m_taskManager.loadFromFile(backupPath.toStdString());
+            updateGoalProperties();
+            updateSubGoalListModel();
+            updateTasksListModel();
+            qDebug() << "Restored from backup after failed import";
+        } catch (const std::exception& restoreError) {
+            qDebug() << "Failed to restore from backup:" << restoreError.what();
+        }
+    }
 }

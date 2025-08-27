@@ -1,13 +1,18 @@
 task-manager_autogen/timestamp: \
+	C:/Qt/6.9.1/mingw_64/include/QtCore/QFile \
+	C:/Qt/6.9.1/mingw_64/include/QtCore/QFileInfo \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/QList \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/QMap \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/QObject \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/QString \
+	C:/Qt/6.9.1/mingw_64/include/QtCore/QTextStream \
+	C:/Qt/6.9.1/mingw_64/include/QtCore/QUrl \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/QVariant \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/QVariantList \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/QVariantMap \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/q17memory.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/q20functional.h \
+	C:/Qt/6.9.1/mingw_64/include/QtCore/q20iterator.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/q20memory.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/q20type_traits.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/q20utility.h \
@@ -26,6 +31,7 @@ task-manager_autogen/timestamp: \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qbytearrayalgorithms.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qbytearraylist.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qbytearrayview.h \
+	C:/Qt/6.9.1/mingw_64/include/QtCore/qcalendar.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qchar.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qcompare.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qcompare_impl.h \
@@ -39,8 +45,12 @@ task-manager_autogen/timestamp: \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qcontiguouscache.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qdarwinhelpers.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qdatastream.h \
+	C:/Qt/6.9.1/mingw_64/include/QtCore/qdatetime.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qdebug.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qexceptionhandling.h \
+	C:/Qt/6.9.1/mingw_64/include/QtCore/qfile.h \
+	C:/Qt/6.9.1/mingw_64/include/QtCore/qfiledevice.h \
+	C:/Qt/6.9.1/mingw_64/include/QtCore/qfileinfo.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qflags.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qfloat16.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qforeach.h \
@@ -51,11 +61,13 @@ task-manager_autogen/timestamp: \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qglobalstatic.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qhash.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qhashfunctions.h \
+	C:/Qt/6.9.1/mingw_64/include/QtCore/qiodevice.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qiodevicebase.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qiterable.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qiterator.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qlatin1stringview.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qlist.h \
+	C:/Qt/6.9.1/mingw_64/include/QtCore/qlocale.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qlogging.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qmalloc.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qmap.h \
@@ -80,6 +92,7 @@ task-manager_autogen/timestamp: \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qshareddata_impl.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qsharedpointer.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qsharedpointer_impl.h \
+	C:/Qt/6.9.1/mingw_64/include/QtCore/qspan.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qstdlibdetection.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qstring.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qstringalgorithms.h \
@@ -107,6 +120,7 @@ task-manager_autogen/timestamp: \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qtenvironmentvariables.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qtextstream.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qtformat_impl.h \
+	C:/Qt/6.9.1/mingw_64/include/QtCore/qtimezone.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qtmetamacros.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qtnoop.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qtpreprocessorsupport.h \
@@ -117,6 +131,7 @@ task-manager_autogen/timestamp: \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qtversionchecks.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qtypeinfo.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qtypes.h \
+	C:/Qt/6.9.1/mingw_64/include/QtCore/qurl.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qutf8stringview.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qvariant.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qvariantlist.h \
@@ -125,6 +140,8 @@ task-manager_autogen/timestamp: \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qversiontagging.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qxptype_traits.h \
 	C:/Qt/6.9.1/mingw_64/include/QtCore/qyieldcpu.h \
+	C:/Qt/6.9.1/mingw_64/include/QtQml/qqmlregistration.h \
+	C:/Qt/6.9.1/mingw_64/include/QtQmlIntegration/qqmlintegration.h \
 	C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6/FindWrapAtomic.cmake \
 	C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6/FindWrapVulkanHeaders.cmake \
 	C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6/Qt6Config.cmake \
@@ -880,6 +897,10 @@ task-manager_autogen/timestamp: \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/exception_ptr.h \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/forward_list.h \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/forward_list.tcc \
+	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/fs_dir.h \
+	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/fs_fwd.h \
+	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/fs_ops.h \
+	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/fs_path.h \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/functexcept.h \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/functional_hash.h \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/gslice.h \
@@ -971,6 +992,7 @@ task-manager_autogen/timestamp: \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/climits \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/clocale \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/cmath \
+	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/codecvt \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/compare \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/cstddef \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/cstdint \
@@ -990,6 +1012,7 @@ task-manager_autogen/timestamp: \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ext/numeric_traits.h \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ext/string_conversions.h \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/ext/type_traits.h \
+	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/filesystem \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/forward_list \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/functional \
 	C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/initializer_list \
@@ -1107,6 +1130,8 @@ task-manager_autogen/timestamp: \
 	E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/CMakeFiles/3.30.5/CMakeSystem.cmake \
 	E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/task-manager-qmlplugin_VisionCompassPlugin_in.cpp \
 	E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/task-manager_autogen/moc_predefs.h \
+	E:/Projects/C++/task-manager/filemanager.cpp \
+	E:/Projects/C++/task-manager/filemanager.h \
 	E:/Projects/C++/task-manager/json.hpp \
 	E:/Projects/C++/task-manager/main.cpp \
 	E:/Projects/C++/task-manager/resources.qrc \
