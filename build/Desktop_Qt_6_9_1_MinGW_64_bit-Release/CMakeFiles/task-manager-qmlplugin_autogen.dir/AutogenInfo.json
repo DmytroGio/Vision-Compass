@@ -1039,6 +1039,7 @@
 		"C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6/QtPublicWindowsHelpers.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
 		"C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6/Qt6Dependencies.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/GNUInstallDirs.cmake",
 		"C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6Core/Qt6CoreConfigureFileTemplate.in",
 		"C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6Qml/Qt6QmlPluginTemplate.cpp.in",
 		"C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6Qml/Qt6QmlModuleDirMappingTemplate.qrc.in",

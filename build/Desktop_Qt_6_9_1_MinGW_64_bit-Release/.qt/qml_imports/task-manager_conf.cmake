@@ -30,5 +30,5 @@ set(qml_import_scanner_import_27 "CLASSNAME;QtQuickControls2WindowsStyleImplPlug
 set(qml_import_scanner_import_28 "CLASSNAME;QtQuickControls2BasicStyleImplPlugin;LINKTARGET;Qt6::qtquickcontrols2basicstyleimplplugin;NAME;QtQuick.Controls.Basic.impl;PATH;C:/Qt/6.9.1/mingw_64/qml/QtQuick/Controls/Basic/impl;PLUGIN;qtquickcontrols2basicstyleimplplugin;PLUGINISOPTIONAL;;PREFER;:/qt-project.org/imports/QtQuick/Controls/Basic/impl/;RELATIVEPATH;QtQuick/Controls/Basic/impl;TYPE;module;")
 set(qml_import_scanner_import_29 "CLASSNAME;QtQmlLabsModelsPlugin;LINKTARGET;Qt6::labsmodelsplugin;NAME;Qt.labs.qmlmodels;PATH;C:/Qt/6.9.1/mingw_64/qml/Qt/labs/qmlmodels;PLUGIN;labsmodelsplugin;PLUGINISOPTIONAL;;PREFER;:/qt-project.org/imports/Qt/labs/qmlmodels/;RELATIVEPATH;Qt/labs/qmlmodels;TYPE;module;")
 set(qml_import_scanner_import_30 "CLASSNAME;QtLabsPlatformPlugin;LINKTARGET;Qt6::LabsPlatformplugin;NAME;Qt.labs.platform;PATH;C:/Qt/6.9.1/mingw_64/qml/Qt/labs/platform;PLUGIN;labsplatformplugin;PLUGINISOPTIONAL;;PREFER;:/qt-project.org/imports/Qt/labs/platform/;RELATIVEPATH;Qt/labs/platform;TYPE;module;")
-set(qml_import_scanner_import_31 "NAME;com.visioncompass.data;TYPE;module;")
+set(qml_import_scanner_import_31 "NAME;com.visioncompass;TYPE;module;")
 

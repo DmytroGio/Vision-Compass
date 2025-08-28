@@ -1,9 +1,9 @@
-import QtQuick
+import QtQuick 2.15
 import QtQuick.Controls 2.15
-import QtQuick.Layouts
+import QtQuick.Layouts 1.15
 import QtQuick.Window
 import QtQuick.Effects
-import Qt.labs.platform 1.1 as Platform
+//import Qt.labs.platform 1.1 as Platform
 import com.visioncompass 1.0
 
 
@@ -1642,30 +1642,16 @@ ApplicationWindow {
         }
     }
 
-    Platform.FileDialog {
-        id: exportDialog
-        title: "Export Data - Save Backup"
-        fileMode: Platform.FileDialog.SaveFile
-        nameFilters: ["JSON files (*.json)", "All files (*)"]
-        defaultSuffix: "json"
-        currentFile: Platform.StandardPaths.writableLocation(Platform.StandardPaths.DocumentsLocation) + "/VisionCompass_backup_" + new Date().toISOString().slice(0,19).replace(/:/g, "-") + ".json"
-
-        onAccepted: {
-            var jsonData = AppViewModel.getCurrentDataAsJson()
-            fileManager.exportToFile(file.toString(), jsonData)
-        }
+    function exportData() {
+        var jsonData = AppViewModel.getCurrentDataAsJson()
+        var defaultPath = AppViewModel.getDefaultDataPath() + "/" + AppViewModel.getDefaultExportFileName()
+        fileManager.exportToFile(defaultPath, jsonData)
     }
 
-    Platform.FileDialog {
-        id: importDialog
-        title: "Import Data - Load Backup"
-        fileMode: Platform.FileDialog.OpenFile
-        nameFilters: ["JSON files (*.json)", "All files (*)"]
-        currentFolder: Platform.StandardPaths.writableLocation(Platform.StandardPaths.DocumentsLocation)
-
-        onAccepted: {
-            fileManager.importFromFile(file.toString())
-        }
+    function importData() {
+        // Для импорта используем простой путь - пользователь может указать файл
+        var defaultPath = AppViewModel.getDefaultImportPath() + "/VisionCompass_backup.json"
+        fileManager.importFromFile(defaultPath)
     }
 
     // Компонент для показа статус сообщений
@@ -1791,7 +1777,7 @@ ApplicationWindow {
                                 anchors.fill: parent
                                 onClicked: {
                                     dataManagementDialog.close()
-                                    exportDialog.open()
+                                    exportData()
                                 }
                                 hoverEnabled: true
                                 onEntered: parent.color = "#76CC7A"
@@ -1859,7 +1845,7 @@ ApplicationWindow {
                                 anchors.fill: parent
                                 onClicked: {
                                     dataManagementDialog.close()
-                                    importDialog.open()
+                                    importData()
                                 }
                                 hoverEnabled: true
                                 onEntered: parent.color = "#52B5FF"

@@ -352,6 +352,15 @@ Qt6GuiTools_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6GuiTools
 //The directory containing a CMake configuration file for Qt6Gui.
 Qt6Gui_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6Gui
 
+//The directory containing a CMake configuration file for Qt6LabsPlatformPrivate.
+Qt6LabsPlatformPrivate_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6LabsPlatformPrivate
+
+//The directory containing a CMake configuration file for Qt6LabsPlatform.
+Qt6LabsPlatform_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6LabsPlatform
+
+//The directory containing a CMake configuration file for Qt6Labs.
+Qt6Labs_DIR:PATH=Qt6Labs_DIR-NOTFOUND
+
 //The directory containing a CMake configuration file for Qt6NetworkPrivate.
 Qt6NetworkPrivate_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6NetworkPrivate
 
@@ -435,6 +444,9 @@ Qt6QuickDialogs2Utils_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickDialogs2Ut
 
 //The directory containing a CMake configuration file for Qt6QuickDialogs2.
 Qt6QuickDialogs2_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickDialogs2
+
+//The directory containing a CMake configuration file for Qt6QuickDialogs.
+Qt6QuickDialogs_DIR:PATH=Qt6QuickDialogs_DIR-NOTFOUND
 
 //The directory containing a CMake configuration file for Qt6QuickPrivate.
 Qt6QuickPrivate_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickPrivate
