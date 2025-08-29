@@ -237,7 +237,7 @@ ApplicationWindow {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 20
-                height: 120
+                height: 160
                 color: "transparent"
 
                 ColumnLayout {
@@ -257,7 +257,7 @@ ApplicationWindow {
                     // Контейнер для горизонтального скролла SubGoals
                     Rectangle {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 90
+                        Layout.preferredHeight: 120
                         color: "transparent"
 
                         // Центрированный контейнер с ограниченной шириной
@@ -342,25 +342,9 @@ ApplicationWindow {
                                         }
                                     }
 
-                                    delegate: Rectangle {
-                                        id: subGoalItem
+                                    delegate: Item {
                                         width: 180
-                                        height: 80
-                                        radius: 15
-                                        border.width: 0  // Убираем обводку
-
-                                        // 1. Привязываем isHovered к свойству containsMouse у главной MouseArea
-                                        property bool isHovered: mainMouseArea.containsMouse || editButton.isButtonHovered || deleteButton.isButtonHovered
-
-                                        MouseArea {
-                                            id: mainMouseArea
-                                            anchors.fill: parent
-                                            hoverEnabled: true
-
-                                            onClicked: {
-                                                AppViewModel.selectSubGoal(modelData.id);
-                                            }
-                                        }
+                                        height: 110
 
                                         property bool isSelected: modelData.id === AppViewModel.selectedSubGoalId
 
@@ -374,152 +358,173 @@ ApplicationWindow {
                                             return false;
                                         }
 
-                                        // Основной фон с новыми цветами
-                                        color: {
-                                            if (allTasksCompleted) {
-                                                return "transparent"; // Полностью прозрачный для выполненных
-                                            } else if (isSelected) {
-                                                return "#F4A652"; // Выбранная subgoal
-                                            } else if (isHovered) {
-                                                return "#786738"; // С наведенным курсором
-                                            } else {
-                                                return "#323232"; // Не выделенная subgoal
+                                        // Объединяем зоны наведения
+                                        property bool isHovered: mainMouseArea.containsMouse || editButton.isButtonHovered || deleteButton.isButtonHovered
+
+                                        // Главная зона наведения
+                                        MouseArea {
+                                            id: mainMouseArea
+                                            anchors.fill: parent
+                                            hoverEnabled: true
+                                            onClicked: {
+                                                AppViewModel.selectSubGoal(modelData.id);
                                             }
                                         }
 
-                                        // Градиент для выполненных subgoals
-                                        Rectangle {
-                                            anchors.fill: parent
-                                            radius: parent.radius
-                                            visible: allTasksCompleted
-                                            gradient: Gradient {
-                                                GradientStop {
-                                                    position: 0.0
-                                                    color: {
-                                                        if (isSelected) {
-                                                            return "#FF5353"; // Выбранное выполненное - красный верх
-                                                        } else {
-                                                            return isHovered ? "#F67272" : "#F46262"; // Обычное состояние
-                                                        }
-                                                    }
-                                                }
-                                                GradientStop {
-                                                    position: 1.0
-                                                    color: "#F3C44A" // Желтый низ для всех выполненных
-                                                }
-                                            }
-                                        }
+                                        // Кнопки справа сверху от ячейки
+                                        Row {
+                                            anchors.top: subGoalRect.top
+                                            anchors.right: subGoalRect.right
+                                            anchors.topMargin: -25
+                                            anchors.rightMargin: 5
+                                            spacing: 5
+                                            visible: isHovered
+                                            z: 15
 
-                                        // Номерация шорткатов в правом нижнем углу (без круга)
-                                        Text {
-                                            text: (index + 1).toString()
-                                            anchors.bottom: parent.bottom
-                                            anchors.right: parent.right
-                                            anchors.bottomMargin: 5
-                                            anchors.rightMargin: 12
-                                            font.pointSize: 9
-                                            font.bold: true
-                                            color: "#FFFFFF" // Всегда белый
-                                            visible: index < 9
-                                            z: 10
-                                        }
+                                            // Кнопка редактирования
+                                            Rectangle {
+                                                id: editButton
+                                                width: 20
+                                                height: 20
+                                                radius: 10
+                                                color: "#404040"  // Более тёмный фон
 
-                                        // Основное содержимое SubGoal
-                                        RowLayout {
-                                            anchors.fill: parent
-                                            anchors.margins: 12
-                                            spacing: 10
-
-                                            // Текст SubGoal
-                                            ColumnLayout {
-                                                Layout.fillWidth: true
-                                                Layout.fillHeight: true
-                                                spacing: 2
+                                                property bool isButtonHovered: editMouseArea.containsMouse
 
                                                 Text {
-                                                    text: modelData.name || "Unnamed SubGoal"
-                                                    color: "#FFFFFF" // Всегда белый
-                                                    font.pointSize: 12
+                                                    text: "✎"
+                                                    anchors.centerIn: parent
+                                                    font.pointSize: 9
+                                                    color: "#FFFFFF"
                                                     font.bold: true
-                                                    Layout.fillWidth: true
-                                                    Layout.alignment: Qt.AlignCenter // Центрирование
-                                                    horizontalAlignment: Text.AlignHCenter // Горизонтальное центрирование
-                                                    wrapMode: Text.WordWrap
-                                                    maximumLineCount: 2
-                                                    elide: Text.ElideRight
+                                                }
+
+                                                MouseArea {
+                                                    id: editMouseArea
+                                                    anchors.fill: parent
+                                                    hoverEnabled: true
+                                                    onClicked: {
+                                                        editSubGoalDialog.openForEditing(modelData);
+                                                    }
+                                                    onEntered: parent.color = "#555555"  // Тёмный hover
+                                                    onExited: parent.color = "#404040"
                                                 }
                                             }
 
-                                            // Контейнер для кнопок
-                                            RowLayout {
-                                                Layout.alignment: Qt.AlignTop
-                                                spacing: 5
+                                            // Кнопка удаления
+                                            Rectangle {
+                                                id: deleteButton
+                                                width: 20
+                                                height: 20
+                                                radius: 10
+                                                color: "#404040"  // Более тёмный фон
+                                                visible: AppViewModel.subGoalsListModel.length > 1
 
-                                                // Кнопка редактирования SubGoal
-                                                Rectangle {
-                                                    id: editButton
-                                                    width: 25
-                                                    height: 25
-                                                    radius: 12
-                                                    visible: subGoalItem.isHovered
+                                                property bool isButtonHovered: deleteMouseArea.containsMouse
 
-                                                    property bool isHovered: false
-                                                    property bool isButtonHovered: editMouseArea.containsMouse
-                                                    property color baseColor: (subGoalItem.isSelected || subGoalItem.allTasksCompleted) ? "#1E1E1E" : "#F3C44A"
-                                                    property color hoveredColor: (subGoalItem.isSelected || subGoalItem.allTasksCompleted) ? "#2D2D2D" : "#F5D665"
-                                                    color: isHovered ? hoveredColor : baseColor
-
-                                                    Text {
-                                                        text: "✎"
-                                                        anchors.centerIn: parent
-                                                        font.pointSize: 12
-                                                        color: (subGoalItem.isSelected || subGoalItem.allTasksCompleted) ? "#F3C44A" : "#1E1E1E"
-                                                        font.bold: true
-                                                    }
-
-                                                    MouseArea {
-                                                        id: editMouseArea
-                                                        anchors.fill: parent
-                                                        hoverEnabled: true
-                                                        propagateComposedEvents: false
-                                                        onClicked: {
-                                                            editSubGoalDialog.openForEditing(modelData);
-                                                        }
-                                                        onEntered: editButton.isHovered = true
-                                                        onExited: editButton.isHovered = false
-                                                    }
+                                                Text {
+                                                    text: "✕"
+                                                    anchors.centerIn: parent
+                                                    font.pointSize: 9
+                                                    color: "#FFFFFF"
+                                                    font.bold: true
                                                 }
 
-                                                // Кнопка удаления SubGoal
-                                                Rectangle {
-                                                    id: deleteButton
-                                                    width: 25
-                                                    height: 25
-                                                    color: "#E95B5B"
-                                                    radius: 12
-                                                    visible: AppViewModel.subGoalsListModel.length > 1 && subGoalItem.isHovered
+                                                MouseArea {
+                                                    id: deleteMouseArea
+                                                    anchors.fill: parent
+                                                    hoverEnabled: true
+                                                    onClicked: {
+                                                        confirmationDialog.open();
+                                                        confirmationDialog.subGoalToRemove = modelData;
+                                                    }
+                                                    onEntered: parent.color = "#555555"  // Тёмный hover
+                                                    onExited: parent.color = "#404040"
+                                                }
+                                            }
+                                        }
 
-                                                    property bool isButtonHovered: deleteMouseArea.containsMouse
+                                        // Основная ячейка subgoal
+                                        Rectangle {
+                                            id: subGoalRect
+                                            anchors.bottom: parent.bottom
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            width: 180
+                                            height: 80
+                                            radius: 15
+                                            border.width: 0
+
+                                            color: {
+                                                if (allTasksCompleted) {
+                                                    return "transparent";
+                                                } else if (isSelected) {
+                                                    return "#F4A652";
+                                                } else if (isHovered) {
+                                                    return "#786738";
+                                                } else {
+                                                    return "#323232";
+                                                }
+                                            }
+
+                                            // Градиент для выполненных subgoals
+                                            Rectangle {
+                                                anchors.fill: parent
+                                                radius: parent.radius
+                                                visible: allTasksCompleted
+                                                gradient: Gradient {
+                                                    GradientStop {
+                                                        position: 0.0
+                                                        color: {
+                                                            if (isSelected) {
+                                                                return "#FF5353";
+                                                            } else {
+                                                                return isHovered ? "#F67272" : "#F46262";
+                                                            }
+                                                        }
+                                                    }
+                                                    GradientStop {
+                                                        position: 1.0
+                                                        color: "#F3C44A"
+                                                    }
+                                                }
+                                            }
+
+                                            // Нумерация шортката
+                                            Text {
+                                                text: (index + 1).toString()
+                                                anchors.bottom: parent.bottom
+                                                anchors.right: parent.right
+                                                anchors.bottomMargin: 5
+                                                anchors.rightMargin: 12
+                                                font.pointSize: 9
+                                                font.bold: true
+                                                color: "#FFFFFF"
+                                                visible: index < 9
+                                                z: 10
+                                            }
+
+                                            // Основное содержимое SubGoal
+                                            RowLayout {
+                                                anchors.fill: parent
+                                                anchors.margins: 12
+                                                spacing: 10
+
+                                                ColumnLayout {
+                                                    Layout.fillWidth: true
+                                                    Layout.fillHeight: true
+                                                    spacing: 2
 
                                                     Text {
-                                                        text: "✕"
-                                                        anchors.centerIn: parent
-                                                        font.pointSize: 12
+                                                        text: modelData.name || "Unnamed SubGoal"
                                                         color: "#FFFFFF"
+                                                        font.pointSize: 12
                                                         font.bold: true
-                                                    }
-
-                                                    MouseArea {
-                                                        id: deleteMouseArea
-                                                        anchors.fill: parent
-                                                        hoverEnabled: true
-                                                        propagateComposedEvents: false
-                                                        onClicked: {
-                                                            confirmationDialog.open();
-                                                            confirmationDialog.subGoalToRemove = modelData;
-                                                        }
-                                                        onEntered: parent.color = "#F76B6B"
-                                                        onExited: parent.color = "#E95B5B"
+                                                        Layout.fillWidth: true
+                                                        Layout.alignment: Qt.AlignCenter
+                                                        horizontalAlignment: Text.AlignHCenter
+                                                        wrapMode: Text.WordWrap
+                                                        maximumLineCount: 2
+                                                        elide: Text.ElideRight
                                                     }
                                                 }
                                             }
@@ -909,15 +914,16 @@ ApplicationWindow {
                                 Rectangle {
                                     width: 30
                                     height: 30
-                                    color: modelData.completed ? "#66BB6A" : "#F3C44A"
+                                    color: modelData.completed ? "#2D2D2D" : "#383838"
                                     radius: 8
+                                    border.color: modelData.completed ? "#F3C44A" : "#707070"
+                                    border.width: modelData.completed ? 0 : 2
 
-                                    Text {
-                                        text: modelData.completed ? "✓" : "☐"
-                                        anchors.centerIn: parent
-                                        font.pointSize: 16
-                                        color: "#1E1E1E"
-                                        font.bold: true
+                                    Rectangle {
+                                        anchors.fill: parent
+                                        radius: parent.radius
+                                        color: modelData.completed ? "#F3C44A" : "transparent"
+                                        visible: modelData.completed
                                     }
 
                                     MouseArea {
@@ -927,8 +933,20 @@ ApplicationWindow {
                                             AppViewModel.completeTask(modelData.id);
                                         }
                                         hoverEnabled: true
-                                        onEntered: parent.color = modelData.completed ? "#76CC7A" : "#F5D665"
-                                        onExited: parent.color = modelData.completed ? "#66BB6A" : "#F3C44A"
+                                        onEntered: {
+                                            if (modelData.completed) {
+                                                parent.children[0].color = "#F5D665"
+                                            } else {
+                                                parent.border.color = "#AAAAAA"
+                                            }
+                                        }
+                                        onExited: {
+                                            if (modelData.completed) {
+                                                parent.children[0].color = "#F3C44A"
+                                            } else {
+                                                parent.border.color = "#707070"
+                                            }
+                                        }
                                     }
                                 }
 
@@ -949,56 +967,57 @@ ApplicationWindow {
                                 }
 
                                 // Кнопка редактирования задачи
-                                Rectangle {
-                                    width: 30
-                                    height: 30
-                                    color: "#F3C44A"
-                                    radius: 15
+                                Item {
+                                    width: 25
+                                    height: 25
                                     visible: taskItem.isTaskHovered
 
                                     Text {
                                         text: "✎"
                                         anchors.centerIn: parent
-                                        font.pointSize: 14
-                                        color: "#1E1E1E"
+                                        font.pointSize: 12
+                                        color: "#CCCCCC"
                                         font.bold: true
                                     }
 
                                     MouseArea {
-                                        anchors.fill: parent
+                                        anchors.centerIn: parent
+                                        width: 20
+                                        height: 20
                                         onClicked: {
                                             editTaskDialog.openForEditing(modelData)
                                         }
                                         hoverEnabled: true
-                                        onEntered: parent.color = "#F5D665"
-                                        onExited: parent.color = "#F3C44A"
+                                        onEntered: parent.children[0].color = "#FFFFFF"
+                                        onExited: parent.children[0].color = "#CCCCCC"
                                     }
                                 }
 
                                 // Кнопка удаления
-                                Rectangle {
-                                    width: 30
-                                    height: 30
-                                    color: "#E95B5B"
-                                    radius: 15
+                                Item {
+                                    width: 25
+                                    height: 25
                                     visible: taskItem.isTaskHovered
+
                                     Text {
                                         text: "✕"
                                         anchors.centerIn: parent
-                                        font.pointSize: 14
-                                        color: "#FFFFFF"
+                                        font.pointSize: 12
+                                        color: "#CCCCCC"
                                         font.bold: true
                                     }
 
                                     MouseArea {
-                                        anchors.fill: parent
+                                        anchors.centerIn: parent
+                                        width: 20
+                                        height: 20
                                         onClicked: {
                                             taskConfirmationDialog.open()
                                             taskConfirmationDialog.taskToRemove = modelData
                                         }
                                         hoverEnabled: true
-                                        onEntered: parent.color = "#F76B6B"
-                                        onExited: parent.color = "#E95B5B"
+                                        onEntered: parent.children[0].color = "#FFFFFF"
+                                        onExited: parent.children[0].color = "#CCCCCC"
                                     }
                                 }
                             }
