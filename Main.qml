@@ -1644,8 +1644,8 @@ ApplicationWindow {
 
     function exportData() {
         var jsonData = AppViewModel.getCurrentDataAsJson()
-        var defaultPath = AppViewModel.getDefaultDataPath() + "/" + AppViewModel.getDefaultExportFileName()
-        fileManager.exportToFile(defaultPath, jsonData)
+        // Передаем пустую строку, чтобы fileManager сам создал путь в VisionCompass_Backups
+        fileManager.exportToFile("", jsonData)
     }
 
     function importData() {

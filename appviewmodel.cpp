@@ -367,7 +367,8 @@ void AppViewModel::clearAllData() {
 }
 
 QString AppViewModel::getDefaultDataPath() const {
-    return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    QString documentsDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    return QDir(documentsDir).filePath("VisionCompass_Backups");
 }
 
 QString AppViewModel::getDefaultExportFileName() const {

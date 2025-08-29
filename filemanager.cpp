@@ -14,11 +14,19 @@ void FileManager::exportToFile(const QString& filePath, const QString& jsonData)
     try {
         QString actualPath = normalizeFilePath(filePath);
 
-        // If path is empty, create default export path
+        // If path is empty, create default export path in organized folder
         if (actualPath.isEmpty()) {
-            QString defaultDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+            QString documentsDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+            QString backupsDir = QDir(documentsDir).filePath("VisionCompass_Backups");
+
+            // Create backups directory if it doesn't exist
+            QDir dir(backupsDir);
+            if (!dir.exists()) {
+                dir.mkpath(".");
+            }
+
             QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss");
-            actualPath = QDir(defaultDir).filePath(QString("VisionCompass_backup_%1.json").arg(timestamp));
+            actualPath = QDir(backupsDir).filePath(QString("VisionCompass_backup_%1.json").arg(timestamp));
         } else {
             actualPath = ensureJsonExtension(actualPath);
         }
@@ -43,6 +51,7 @@ void FileManager::exportToFile(const QString& filePath, const QString& jsonData)
 
         qDebug() << "Export completed successfully to:" << actualPath;
         emit exportCompleted(true, "Export completed successfully", actualPath);
+
 
     } catch (const std::exception& e) {
         QString errorMsg = QString("Export error: %1").arg(e.what());
