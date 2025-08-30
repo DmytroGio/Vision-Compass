@@ -269,14 +269,7 @@ ApplicationWindow {
                     anchors.fill: parent
                     spacing: 10
 
-                    // Заголовок секции SubGoals
-                    Text {
-                        text: "Sub Goals"
-                        color: "#F5D665"
-                        font.pointSize: 17
-                        font.bold: true
-                        Layout.alignment: Qt.AlignHCenter
-                    }
+
 
                     // Контейнер для горизонтального скролла SubGoals
                     Rectangle {
@@ -667,10 +660,8 @@ ApplicationWindow {
                 Rectangle {
                     id: mainButton
                     anchors.fill: parent
-                    color: "#F3C44A"  // Делаем полностью желтой
+                    color: "#383838"
                     radius: 25
-                    border.color: "#F5D665"  // Светло-желтая граница
-                    border.width: 2
 
                     Text {
                         text: "+"
@@ -678,7 +669,7 @@ ApplicationWindow {
                         anchors.verticalCenterOffset: -2
                         font.pointSize: 18
                         font.bold: true
-                        color: "#1E1E1E"
+                        color: "#F3C44A"
                     }
                 }
 
@@ -700,8 +691,8 @@ ApplicationWindow {
                         addSubGoalDialog.open()
                     }
                     hoverEnabled: true
-                    onEntered: mainButton.color = "#F5D665"
-                    onExited: mainButton.color = "#F3C44A"
+                    onEntered: mainButton.color = "#525252"
+                    onExited: mainButton.color = "#383838"
                 }
             }
             // Data Management Menu Button
@@ -715,17 +706,14 @@ ApplicationWindow {
                 Rectangle {
                     id: dataButton
                     anchors.fill: parent
-                    color: "#F3C44A"
+                    color: "#383838"
                     radius: 25
-                    border.color: "#F5D665"
-                    border.width: 2
 
-                    Image {
-                        source: "qrc:/VisionCompass/icons/export_import-icon.png"
-                        width: 20
-                        height: 20
+                    Text {
+                        text: "⇓"
                         anchors.centerIn: parent
-                        fillMode: Image.PreserveAspectFit
+                        font.pointSize: 14
+                        color: "#FFFFFF"
                     }
                 }
 
@@ -747,8 +735,8 @@ ApplicationWindow {
                         dataManagementDialog.open()
                     }
                     hoverEnabled: true
-                    onEntered: dataButton.color = "#F5D665"
-                    onExited: dataButton.color = "#F3C44A"
+                    onEntered: dataButton.color = "#525252"
+                    onExited: dataButton.color = "#383838"
                 }
             }
             // Info Button
@@ -762,17 +750,15 @@ ApplicationWindow {
                 Rectangle {
                     id: infoButtonRect
                     anchors.fill: parent
-                    color: "#F3C44A"
+                    color: "#383838"
                     radius: 25
-                    border.color: "#F5D665"
-                    border.width: 2
 
                     Text {
                         text: "i"
                         anchors.centerIn: parent
-                        font.pointSize: 20
+                        font.pointSize: 15
                         font.bold: true
-                        color: "#1E1E1E"
+                        color: "#F2F2F2"
                         font.italic: true
                     }
                 }
@@ -795,8 +781,8 @@ ApplicationWindow {
                         infoDialog.open()
                     }
                     hoverEnabled: true
-                    onEntered: infoButtonRect.color = "#F5D665"
-                    onExited: infoButtonRect.color = "#F3C44A"
+                    onEntered: infoButtonRect.color = "#525252"
+                    onExited: infoButtonRect.color = "#383838"
                 }
             }
         }
@@ -947,7 +933,7 @@ ApplicationWindow {
                                     color: modelData.completed ? "#2D2D2D" : "#383838"
                                     radius: 8
                                     border.color: modelData.completed ? "#F3C44A" : "#707070"
-                                    border.width: modelData.completed ? 0 : 2
+                                    border.width: modelData.completed ? 0 : 1
 
                                     Rectangle {
                                         anchors.fill: parent
@@ -987,8 +973,8 @@ ApplicationWindow {
 
                                     Text {
                                         color: "#FFFFFF"
-                                        font.pointSize: 12
-                                        font.bold: true
+                                        font.pointSize: 10
+                                        //font.bold: true
                                         Layout.fillWidth: true
                                         wrapMode: Text.WordWrap
                                         textFormat: Text.RichText

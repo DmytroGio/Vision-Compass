@@ -761,10 +761,10 @@ E:/Projects/C++/task-manager/filemanager.h
  mdp:C:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/wctype.h
  mdp:E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/task-manager_autogen/moc_predefs.h
  mdp:E:/Projects/C++/task-manager/filemanager.h
-E:/Projects/C++/task-manager/json.hpp
 E:/Projects/C++/task-manager/appviewmodel.cpp
+E:/Projects/C++/task-manager/json.hpp
 E:/Projects/C++/task-manager/task_manager.hpp
 E:/Projects/C++/task-manager/user.hpp
-E:/Projects/C++/task-manager/filemanager.cpp
 E:/Projects/C++/task-manager/main.cpp
+E:/Projects/C++/task-manager/filemanager.cpp
 E:/Projects/C++/task-manager/task_manager.cpp
