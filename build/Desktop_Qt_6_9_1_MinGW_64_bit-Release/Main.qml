@@ -152,9 +152,22 @@ ApplicationWindow {
                 ctx.beginPath();
                 ctx.arc(width / 2, 0, radius / 2, 0, Math.PI, false);
                 ctx.closePath();
-                ctx.fillStyle = "#F3C44A";
+                ctx.fillStyle = "#282828";
                 ctx.fill();
             }
+        }
+
+        // Тень для большого круга
+        MultiEffect {
+            source: bigCircle
+            anchors.fill: bigCircle
+            shadowEnabled: true
+            shadowOpacity: 0.4
+            shadowColor: "#F5BF2C"
+            shadowHorizontalOffset: 0
+            shadowVerticalOffset: 5
+            shadowBlur: 2.0
+            z: -1
         }
 
         // --- Top Section (half of big circle) ---
@@ -167,10 +180,10 @@ ApplicationWindow {
             // Red circle (Goal)
             Rectangle {
                 id: goalCircle
-                width: 400  // Фиксированная ширина
+                width: 400
                 height: 400
                 radius: width / 2
-                color: "#E95B5B"
+                color: "#282828"
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: -height / 3
 
@@ -219,17 +232,29 @@ ApplicationWindow {
                     }
 
                     onPositionChanged: {
-                        if (isInsideCircle && !parent.color.toString().includes("#FF8C42")) {
-                            parent.color = "#FF8C42"
-                        } else if (!isInsideCircle && !parent.color.toString().includes("#E95B5B")) {
-                            parent.color = "#E95B5B"
+                        if (isInsideCircle && !parent.color.toString().includes("#3A3A3A")) {
+                            parent.color = "#3A3A3A"
+                        } else if (!isInsideCircle && !parent.color.toString().includes("#282828")) {
+                            parent.color = "#282828"
                         }
                     }
 
-                    onExited: parent.color = "#E95B5B"
+                    onExited: parent.color = "#282828"
                 }
             }
 
+            // Тень для красного круга
+            MultiEffect {
+                source: goalCircle
+                anchors.fill: goalCircle
+                shadowEnabled: true
+                shadowOpacity: 0.5
+                shadowColor: "#E95B5B"
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 5
+                shadowBlur: 1.5
+                z: -1
+            }
             // Отображение SubGoals с использованием современного дизайна
             Rectangle {
                 id: subGoalsContainer
@@ -244,7 +269,6 @@ ApplicationWindow {
                     anchors.fill: parent
                     spacing: 10
 
-                    // Заголовок секции SubGoals
                     // Заголовок секции SubGoals
                     Text {
                         text: "Sub Goals"
@@ -454,37 +478,30 @@ ApplicationWindow {
                                             radius: 15
                                             border.width: 0
 
+                                            // Базовый цвет для subgoals
                                             color: {
-                                                if (allTasksCompleted) {
-                                                    return "transparent";
-                                                } else if (isSelected) {
-                                                    return "#F4A652";
+                                                if (isSelected) {
+                                                    return "transparent"; // Будет использоваться градиент
                                                 } else if (isHovered) {
-                                                    return "#786738";
+                                                    return "#3D3D39";
                                                 } else {
                                                     return "#323232";
                                                 }
                                             }
 
-                                            // Градиент для выполненных subgoals
+                                            // Градиент для выбранной subgoal (и выполненной, и невыполненной)
                                             Rectangle {
                                                 anchors.fill: parent
                                                 radius: parent.radius
-                                                visible: allTasksCompleted
+                                                visible: isSelected
                                                 gradient: Gradient {
                                                     GradientStop {
                                                         position: 0.0
-                                                        color: {
-                                                            if (isSelected) {
-                                                                return "#FF5353";
-                                                            } else {
-                                                                return isHovered ? "#F67272" : "#F46262";
-                                                            }
-                                                        }
+                                                        color: "#5B5B49"
                                                     }
                                                     GradientStop {
                                                         position: 1.0
-                                                        color: "#F3C44A"
+                                                        color: "#323232"
                                                     }
                                                 }
                                             }
@@ -517,7 +534,7 @@ ApplicationWindow {
                                                     Text {
                                                         text: modelData.name || "Unnamed SubGoal"
                                                         color: "#FFFFFF"
-                                                        font.pointSize: 12
+                                                        font.pointSize: 10
                                                         font.bold: true
                                                         Layout.fillWidth: true
                                                         Layout.alignment: Qt.AlignCenter
@@ -528,6 +545,19 @@ ApplicationWindow {
                                                     }
                                                 }
                                             }
+                                        }
+
+                                        // Эффект тени для subgoal
+                                        MultiEffect {
+                                            source: subGoalRect
+                                            anchors.fill: subGoalRect
+                                            shadowEnabled: true
+                                            shadowOpacity: 0.6
+                                            shadowColor: allTasksCompleted ? "#E95B5B" : "#000000"
+                                            //shadowHorizontalOffset: 3
+                                            shadowVerticalOffset: 3
+                                            shadowBlur: allTasksCompleted ? 1.2 : 0.8
+                                            z: -1
                                         }
                                     }
                                 }
@@ -658,7 +688,7 @@ ApplicationWindow {
                     shadowEnabled: true
                     shadowOpacity: 0.5
                     shadowColor: "#000000"
-                    shadowHorizontalOffset: 3
+                    //shadowHorizontalOffset: 3
                     shadowVerticalOffset: 3
                     shadowBlur: 0.8
                     z: -1
@@ -705,7 +735,7 @@ ApplicationWindow {
                     shadowEnabled: true
                     shadowOpacity: 0.5
                     shadowColor: "#000000"
-                    shadowHorizontalOffset: 3
+                    //shadowHorizontalOffset: 3
                     shadowVerticalOffset: 3
                     shadowBlur: 0.8
                     z: -1
@@ -753,7 +783,7 @@ ApplicationWindow {
                     shadowEnabled: true
                     shadowOpacity: 0.5
                     shadowColor: "#000000"
-                    shadowHorizontalOffset: 3
+                    //shadowHorizontalOffset: 3
                     shadowVerticalOffset: 3
                     shadowBlur: 0.8
                     z: -1
