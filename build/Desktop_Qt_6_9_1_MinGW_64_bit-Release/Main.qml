@@ -1149,20 +1149,33 @@ ApplicationWindow {
         property var subGoalToRemove: null
 
         content: Component {
-            Text {
-                text: "Are you sure you want to delete this sub-goal?"
-                font.pointSize: 14
-                color: "#FFFFFF"
-                horizontalAlignment: Text.AlignHCenter
-                Layout.fillWidth: true
-                wrapMode: Text.WordWrap
+            ColumnLayout {
+                spacing: 15
+
+                Text {
+                    text: "Delete SubGoal"
+                    color: "#FFFFFF"
+                    font.pointSize: 14
+                    font.weight: Font.Normal
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Text {
+                    text: "This action cannot be undone."
+                    font.pointSize: 11
+                    color: "#AAAAAA"
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                }
             }
         }
 
         buttons: [
             {
-                text: "Yes, Delete",
-                color: "#E95B5B",
+                text: "Delete",
+                color: "#2D2D2D",
+                textColor: "#CCCCCC",
                 onClicked: function() {
                     if (confirmationDialog.subGoalToRemove) {
                         AppViewModel.removeSubGoal(confirmationDialog.subGoalToRemove);
@@ -1170,7 +1183,9 @@ ApplicationWindow {
                 }
             },
             {
-                text: "Cancel"
+                text: "Cancel",
+                color: "#444444",
+                textColor: "#FFFFFF"
             }
         ]
     }
@@ -1188,30 +1203,30 @@ ApplicationWindow {
 
         content: Component {
             ColumnLayout {
-                spacing: 15
+                spacing: 20
 
                 Text {
-                    text: "Add New SubGoal"
-                    color: "#F3C44A"
-                    font.pointSize: 16
-                    font.bold: true
+                    text: "Add SubGoal"
+                    color: "#FFFFFF"
+                    font.pointSize: 14
+                    font.weight: Font.Normal
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 45
-                    color: "#3A3A3A"
-                    radius: 8
-                    border.color: "#F3C44A"
+                    Layout.preferredHeight: 40
+                    color: "#323232"
+                    radius: 6
+                    border.color: "#555555"
                     border.width: 1
 
                     TextInput {
                         id: subGoalNameInput
                         anchors.fill: parent
-                        anchors.margins: 10
+                        anchors.margins: 12
                         color: "#FFFFFF"
-                        font.pointSize: 12
+                        font.pointSize: 11
                         verticalAlignment: TextInput.AlignVCenter
                         selectByMouse: true
                         clip: true
@@ -1227,10 +1242,10 @@ ApplicationWindow {
 
                     Text {
                         text: "Enter sub-goal name..."
-                        color: "#AAAAAA"
-                        font.pointSize: 12
+                        color: "#888888"
+                        font.pointSize: 11
                         anchors.left: parent.left
-                        anchors.leftMargin: 10
+                        anchors.leftMargin: 12
                         anchors.verticalCenter: parent.verticalCenter
                         visible: subGoalNameInput.text.length === 0
                     }
@@ -1240,9 +1255,9 @@ ApplicationWindow {
 
         buttons: [
             {
-                text: "Add SubGoal",
-                color: "#F3C44A",
-                textColor: "#1E1E1E",
+                text: "Add",
+                color: "#444444",
+                textColor: "#FFFFFF",
                 onClicked: function() {
                     let inputField = addSubGoalDialog.contentItem.children[0].children[1].item.children[1].children[1];
                     if (inputField && inputField.text.trim() !== "") {
@@ -1252,101 +1267,103 @@ ApplicationWindow {
                 }
             },
             {
-                text: "Cancel"
+                text: "Cancel",
+                color: "#2D2D2D",
+                textColor: "#AAAAAA"
             }
         ]
     }
 
     // Dialog for editing a SubGoal
     CustomDialog {
-            id: editSubGoalDialog
-            dialogWidth: 400
-            property var subGoalToEdit: null
+        id: editSubGoalDialog
+        dialogWidth: 400
+        property var subGoalToEdit: null
 
-            function openForEditing(itemData) {
-                subGoalToEdit = itemData;
-                open();
-                // Set text after dialog is opened to ensure the component is loaded
-                Qt.callLater(function() {
-                    let nameField = editSubGoalDialog.contentItem.children[0].children[1].item.children[1];
-                    if (nameField && itemData) {
-                        nameField.text = itemData.name || "";
-                        nameField.selectAll();
-                        nameField.forceActiveFocus();
-                    }
-                });
-            }
-
-            content: Component {
-                ColumnLayout {
-                    spacing: 15
-
-                    Text {
-                        text: "Edit SubGoal"
-                        color: "#F3C44A"
-                        font.pointSize: 16
-                        font.bold: true
-                        Layout.alignment: Qt.AlignHCenter
-                    }
-
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 45
-                        color: "#3A3A3A"
-                        radius: 8
-                        border.color: "#F3C44A"
-                        border.width: 1
-
-                        TextInput {
-                            id: editSubGoalNameInput
-                            anchors.fill: parent
-                            anchors.margins: 10
-                            color: "#FFFFFF"
-                            font.pointSize: 12
-                            verticalAlignment: TextInput.AlignVCenter
-                            selectByMouse: true
-                            clip: true
-                            text: editSubGoalDialog.subGoalToEdit ? (editSubGoalDialog.subGoalToEdit.name || "") : ""
-
-                            onAccepted: {
-                                if (text.trim() !== "" && editSubGoalDialog.subGoalToEdit) {
-                                    AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, text.trim());
-                                    editSubGoalDialog.close();
-                                }
-                            }
-                        }
-
-                        Text {
-                            text: "Edit sub-goal name..."
-                            color: "#AAAAAA"
-                            font.pointSize: 12
-                            anchors.left: parent.left
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            visible: editSubGoalNameInput.text.length === 0
-                        }
-                    }
+        function openForEditing(itemData) {
+            subGoalToEdit = itemData;
+            open();
+            Qt.callLater(function() {
+                let nameField = editSubGoalDialog.contentItem.children[0].children[1].item.children[1];
+                if (nameField && itemData) {
+                    nameField.text = itemData.name || "";
+                    nameField.selectAll();
+                    nameField.forceActiveFocus();
                 }
-            }
-
-            buttons: [
-                {
-                    text: "Save Changes",
-                    color: "#F3C44A",
-                    textColor: "#1E1E1E",
-                    onClicked: function() {
-                        let inputField = editSubGoalDialog.contentItem.children[0].children[1].item.children[1].children[1];
-                        if (inputField && inputField.text.trim() !== "" && editSubGoalDialog.subGoalToEdit) {
-                            AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, inputField.text.trim());
-                        }
-                    }
-                },
-                {
-                    text: "Cancel"
-                }
-            ]
+            });
         }
 
+        content: Component {
+            ColumnLayout {
+                spacing: 20
+
+                Text {
+                    text: "Edit SubGoal"
+                    color: "#FFFFFF"
+                    font.pointSize: 14
+                    font.weight: Font.Normal
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+                    color: "#323232"
+                    radius: 6
+                    border.color: "#555555"
+                    border.width: 1
+
+                    TextInput {
+                        id: editSubGoalNameInput
+                        anchors.fill: parent
+                        anchors.margins: 12
+                        color: "#FFFFFF"
+                        font.pointSize: 11
+                        verticalAlignment: TextInput.AlignVCenter
+                        selectByMouse: true
+                        clip: true
+                        text: editSubGoalDialog.subGoalToEdit ? (editSubGoalDialog.subGoalToEdit.name || "") : ""
+
+                        onAccepted: {
+                            if (text.trim() !== "" && editSubGoalDialog.subGoalToEdit) {
+                                AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, text.trim());
+                                editSubGoalDialog.close();
+                            }
+                        }
+                    }
+
+                    Text {
+                        text: "Enter sub-goal name..."
+                        color: "#888888"
+                        font.pointSize: 11
+                        anchors.left: parent.left
+                        anchors.leftMargin: 12
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: editSubGoalNameInput.text.length === 0
+                    }
+                }
+            }
+        }
+
+        buttons: [
+            {
+                text: "Save",
+                color: "#444444",
+                textColor: "#FFFFFF",
+                onClicked: function() {
+                    let inputField = editSubGoalDialog.contentItem.children[0].children[1].item.children[1].children[1];
+                    if (inputField && inputField.text.trim() !== "" && editSubGoalDialog.subGoalToEdit) {
+                        AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, inputField.text.trim());
+                    }
+                }
+            },
+            {
+                text: "Cancel",
+                color: "#2D2D2D",
+                textColor: "#AAAAAA"
+            }
+        ]
+    }
     // Dialog for confirming Task deletion
     CustomDialog {
         id: taskConfirmationDialog
@@ -1354,20 +1371,33 @@ ApplicationWindow {
         property var taskToRemove: null
 
         content: Component {
-            Text {
-                text: "Are you sure you want to delete this task?"
-                font.pointSize: 14
-                color: "#FFFFFF"
-                horizontalAlignment: Text.AlignHCenter
-                Layout.fillWidth: true
-                wrapMode: Text.WordWrap
+            ColumnLayout {
+                spacing: 15
+
+                Text {
+                    text: "Delete Task"
+                    color: "#FFFFFF"
+                    font.pointSize: 14
+                    font.weight: Font.Normal
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Text {
+                    text: "This action cannot be undone."
+                    font.pointSize: 11
+                    color: "#AAAAAA"
+                    horizontalAlignment: Text.AlignHCenter
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                }
             }
         }
 
         buttons: [
             {
-                text: "Yes, Delete",
-                color: "#E95B5B",
+                text: "Delete",
+                color: "#2D2D2D",
+                textColor: "#CCCCCC",
                 onClicked: function() {
                     if (taskConfirmationDialog.taskToRemove) {
                         AppViewModel.removeTask(taskConfirmationDialog.taskToRemove);
@@ -1375,284 +1405,292 @@ ApplicationWindow {
                 }
             },
             {
-                text: "Cancel"
+                text: "Cancel",
+                color: "#444444",
+                textColor: "#FFFFFF"
             }
         ]
     }
 
     // Dialog for adding a new Task
     CustomDialog {
-            id: addTaskDialog
-            dialogWidth: 400
+        id: addTaskDialog
+        dialogWidth: 400
 
-            content: Component {
-                ColumnLayout {
-                    spacing: 15
+        content: Component {
+            ColumnLayout {
+                spacing: 20
 
-                    Text {
-                        text: "Add New Task"
-                        color: "#F3C44A"
-                        font.pointSize: 16
-                        font.bold: true
-                        Layout.alignment: Qt.AlignHCenter
-                    }
+                Text {
+                    text: "Add Task"
+                    color: "#FFFFFF"
+                    font.pointSize: 14
+                    font.weight: Font.Normal
+                    Layout.alignment: Qt.AlignHCenter
+                }
 
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 45
-                        color: "#3A3A3A"
-                        radius: 8
-                        border.color: "#F3C44A"
-                        border.width: 1
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+                    color: "#323232"
+                    radius: 6
+                    border.color: "#555555"
+                    border.width: 1
 
-                        TextInput {
-                            id: taskNameInput
-                            anchors.fill: parent
-                            anchors.margins: 10
-                            color: "#FFFFFF"
-                            font.pointSize: 12
-                            verticalAlignment: TextInput.AlignVCenter
-                            selectByMouse: true
-                            clip: true
+                    TextInput {
+                        id: taskNameInput
+                        anchors.fill: parent
+                        anchors.margins: 12
+                        color: "#FFFFFF"
+                        font.pointSize: 11
+                        verticalAlignment: TextInput.AlignVCenter
+                        selectByMouse: true
+                        clip: true
 
-                            onAccepted: {
-                                if (text.trim() !== "") {
-                                    AppViewModel.addTask(text.trim());
-                                    text = "";
-                                    addTaskDialog.close();
-                                }
+                        onAccepted: {
+                            if (text.trim() !== "") {
+                                AppViewModel.addTask(text.trim());
+                                text = "";
+                                addTaskDialog.close();
                             }
                         }
+                    }
 
-                        Text {
-                            text: "Enter task name..."
-                            color: "#AAAAAA"
-                            font.pointSize: 12
-                            anchors.left: parent.left
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            visible: taskNameInput.text.length === 0
-                        }
+                    Text {
+                        text: "Enter task name..."
+                        color: "#888888"
+                        font.pointSize: 11
+                        anchors.left: parent.left
+                        anchors.leftMargin: 12
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: taskNameInput.text.length === 0
                     }
                 }
             }
-
-            buttons: [
-                {
-                    text: "Add Task",
-                    color: "#F3C44A",
-                    textColor: "#1E1E1E",
-                    onClicked: function() {
-                        let inputField = addTaskDialog.contentItem.children[0].children[1].item.children[1].children[1];
-                        if (inputField && inputField.text.trim() !== "") {
-                            AppViewModel.addTask(inputField.text.trim());
-                            inputField.text = "";
-                        }
-                    }
-                },
-                {
-                    text: "Cancel"
-                }
-            ]
         }
+
+        buttons: [
+            {
+                text: "Add",
+                color: "#444444",
+                textColor: "#FFFFFF",
+                onClicked: function() {
+                    let inputField = addTaskDialog.contentItem.children[0].children[1].item.children[1].children[1];
+                    if (inputField && inputField.text.trim() !== "") {
+                        AppViewModel.addTask(inputField.text.trim());
+                        inputField.text = "";
+                    }
+                }
+            },
+            {
+                text: "Cancel",
+                color: "#2D2D2D",
+                textColor: "#AAAAAA"
+            }
+        ]
+    }
 
     // Dialog for editing a Task
     CustomDialog {
-            id: editTaskDialog
-            dialogWidth: 400
-            property var taskToEdit: null
+        id: editTaskDialog
+        dialogWidth: 400
+        property var taskToEdit: null
 
-            function openForEditing(itemData) {
-                taskToEdit = itemData;
-                open();
-                // Set text after dialog is opened to ensure the component is loaded
-                Qt.callLater(function() {
-                    let nameField = editTaskDialog.contentItem.children[0].children[1].item.children[1];
-                    if (nameField && itemData) {
-                        nameField.text = itemData.name || "";
-                        nameField.selectAll();
-                        nameField.forceActiveFocus();
-                    }
-                });
-            }
+        function openForEditing(itemData) {
+            taskToEdit = itemData;
+            open();
+            Qt.callLater(function() {
+                let nameField = editTaskDialog.contentItem.children[0].children[1].item.children[1];
+                if (nameField && itemData) {
+                    nameField.text = itemData.name || "";
+                    nameField.selectAll();
+                    nameField.forceActiveFocus();
+                }
+            });
+        }
 
-            content: Component {
-                ColumnLayout {
-                    spacing: 15
+        content: Component {
+            ColumnLayout {
+                spacing: 20
 
-                    Text {
-                        text: "Edit Task"
-                        color: "#F3C44A"
-                        font.pointSize: 16
-                        font.bold: true
-                        Layout.alignment: Qt.AlignHCenter
-                    }
+                Text {
+                    text: "Edit Task"
+                    color: "#FFFFFF"
+                    font.pointSize: 14
+                    font.weight: Font.Normal
+                    Layout.alignment: Qt.AlignHCenter
+                }
 
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 45
-                        color: "#3A3A3A"
-                        radius: 8
-                        border.color: "#F3C44A"
-                        border.width: 1
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+                    color: "#323232"
+                    radius: 6
+                    border.color: "#555555"
+                    border.width: 1
 
-                        TextInput {
-                            id: editTaskNameInput
-                            anchors.fill: parent
-                            anchors.margins: 10
-                            color: "#FFFFFF"
-                            font.pointSize: 12
-                            verticalAlignment: TextInput.AlignVCenter
-                            selectByMouse: true
-                            clip: true
-                            text: editTaskDialog.taskToEdit ? (editTaskDialog.taskToEdit.name || "") : ""
+                    TextInput {
+                        id: editTaskNameInput
+                        anchors.fill: parent
+                        anchors.margins: 12
+                        color: "#FFFFFF"
+                        font.pointSize: 11
+                        verticalAlignment: TextInput.AlignVCenter
+                        selectByMouse: true
+                        clip: true
+                        text: editTaskDialog.taskToEdit ? (editTaskDialog.taskToEdit.name || "") : ""
 
-                            onAccepted: {
-                                if (text.trim() !== "" && editTaskDialog.taskToEdit) {
-                                    AppViewModel.editTask(editTaskDialog.taskToEdit.id, text.trim());
-                                    editTaskDialog.close();
-                                }
+                        onAccepted: {
+                            if (text.trim() !== "" && editTaskDialog.taskToEdit) {
+                                AppViewModel.editTask(editTaskDialog.taskToEdit.id, text.trim());
+                                editTaskDialog.close();
                             }
                         }
+                    }
 
-                        Text {
-                            text: "Edit task name..."
-                            color: "#AAAAAA"
-                            font.pointSize: 12
-                            anchors.left: parent.left
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            visible: editTaskNameInput.text.length === 0
-                        }
+                    Text {
+                        text: "Enter task name..."
+                        color: "#888888"
+                        font.pointSize: 11
+                        anchors.left: parent.left
+                        anchors.leftMargin: 12
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: editTaskNameInput.text.length === 0
                     }
                 }
             }
-
-            buttons: [
-                {
-                    text: "Save Changes",
-                    color: "#F3C44A",
-                    textColor: "#1E1E1E",
-                    onClicked: function() {
-                        let inputField = editTaskDialog.contentItem.children[0].children[1].item.children[1].children[1];
-                        if (inputField && inputField.text.trim() !== "" && editTaskDialog.taskToEdit) {
-                            AppViewModel.editTask(editTaskDialog.taskToEdit.id, inputField.text.trim());
-                        }
-                    }
-                },
-                {
-                    text: "Cancel"
-                }
-            ]
         }
+
+        buttons: [
+            {
+                text: "Save",
+                color: "#444444",
+                textColor: "#FFFFFF",
+                onClicked: function() {
+                    let inputField = editTaskDialog.contentItem.children[0].children[1].item.children[1].children[1];
+                    if (inputField && inputField.text.trim() !== "" && editTaskDialog.taskToEdit) {
+                        AppViewModel.editTask(editTaskDialog.taskToEdit.id, inputField.text.trim());
+                    }
+                }
+            },
+            {
+                text: "Cancel",
+                color: "#2D2D2D",
+                textColor: "#AAAAAA"
+            }
+        ]
+    }
 
     // Dialog for editing the main Goal
     CustomDialog {
-            id: editGoalDialog
-            dialogWidth: 450
+        id: editGoalDialog
+        dialogWidth: 450
 
-            content: Component {
-                ColumnLayout {
-                    spacing: 15
+        content: Component {
+            ColumnLayout {
+                spacing: 20
+
+                Text {
+                    text: "Edit Main Goal"
+                    color: "#FFFFFF"
+                    font.pointSize: 14
+                    font.weight: Font.Normal
+                    Layout.alignment: Qt.AlignHCenter
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+                    color: "#323232"
+                    radius: 6
+                    border.color: "#555555"
+                    border.width: 1
+
+                    TextInput {
+                        id: editGoalNameInput
+                        anchors.fill: parent
+                        anchors.margins: 12
+                        color: "#FFFFFF"
+                        font.pointSize: 11
+                        verticalAlignment: TextInput.AlignVCenter
+                        selectByMouse: true
+                        clip: true
+                        text: AppViewModel.currentGoalText
+                    }
 
                     Text {
-                        text: "Edit Main Goal"
-                        color: "#E95B5B"
-                        font.pointSize: 16
-                        font.bold: true
-                        Layout.alignment: Qt.AlignHCenter
+                        text: "Enter main goal name..."
+                        color: "#888888"
+                        font.pointSize: 11
+                        anchors.left: parent.left
+                        anchors.leftMargin: 12
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: editGoalNameInput.text.length === 0
                     }
+                }
 
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 45
-                        color: "#3A3A3A"
-                        radius: 8
-                        border.color: "#E95B5B"
-                        border.width: 1
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+                    color: "#323232"
+                    radius: 6
+                    border.color: "#555555"
+                    border.width: 1
 
-                        TextInput {
-                            id: editGoalNameInput
-                            anchors.fill: parent
-                            anchors.margins: 10
-                            color: "#FFFFFF"
-                            font.pointSize: 12
-                            verticalAlignment: TextInput.AlignVCenter
-                            selectByMouse: true
-                            clip: true
-                            text: AppViewModel.currentGoalText
-                        }
+                    TextInput {
+                        id: editGoalDescriptionInput
+                        anchors.fill: parent
+                        anchors.margins: 12
+                        color: "#FFFFFF"
+                        font.pointSize: 11
+                        verticalAlignment: TextInput.AlignVCenter
+                        selectByMouse: true
+                        clip: true
+                        text: AppViewModel.currentGoalDescription
 
-                        Text {
-                            text: "Enter main goal name..."
-                            color: "#AAAAAA"
-                            font.pointSize: 12
-                            anchors.left: parent.left
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            visible: editGoalNameInput.text.length === 0
-                        }
-                    }
-
-                    Rectangle {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 45
-                        color: "#3A3A3A"
-                        radius: 8
-                        border.color: "#E95B5B"
-                        border.width: 1
-
-                        TextInput {
-                            id: editGoalDescriptionInput
-                            anchors.fill: parent
-                            anchors.margins: 10
-                            color: "#FFFFFF"
-                            font.pointSize: 12
-                            verticalAlignment: TextInput.AlignVCenter
-                            selectByMouse: true
-                            clip: true
-                            text: AppViewModel.currentGoalDescription
-
-                            onAccepted: {
-                                let nameField = parent.parent.children[1].children[1];
-                                if (text.trim() !== "" && nameField && nameField.text.trim() !== "") {
-                                    AppViewModel.setMainGoal(nameField.text.trim(), text.trim());
-                                    editGoalDialog.close();
-                                }
+                        onAccepted: {
+                            let nameField = parent.parent.children[1].children[1];
+                            if (text.trim() !== "" && nameField && nameField.text.trim() !== "") {
+                                AppViewModel.setMainGoal(nameField.text.trim(), text.trim());
+                                editGoalDialog.close();
                             }
                         }
+                    }
 
-                        Text {
-                            text: "Enter goal description or target date..."
-                            color: "#AAAAAA"
-                            font.pointSize: 12
-                            anchors.left: parent.left
-                            anchors.leftMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
-                            visible: editGoalDescriptionInput.text.length === 0
-                        }
+                    Text {
+                        text: "Enter description or target date..."
+                        color: "#888888"
+                        font.pointSize: 11
+                        anchors.left: parent.left
+                        anchors.leftMargin: 12
+                        anchors.verticalCenter: parent.verticalCenter
+                        visible: editGoalDescriptionInput.text.length === 0
                     }
                 }
             }
-
-            buttons: [
-                {
-                    text: "Save Goal",
-                    color: "#E95B5B",
-                    onClicked: function() {
-                        let nameField = editGoalDialog.contentItem.children[0].children[1].item.children[1].children[1];
-                        let descField = editGoalDialog.contentItem.children[0].children[1].item.children[2].children[1];
-
-                        if (nameField && descField && nameField.text.trim() !== "") {
-                            AppViewModel.setMainGoal(nameField.text.trim(), descField.text.trim());
-                        }
-                    }
-                },
-                {
-                    text: "Cancel"
-                }
-            ]
         }
+
+        buttons: [
+            {
+                text: "Save",
+                color: "#444444",
+                textColor: "#FFFFFF",
+                onClicked: function() {
+                    let nameField = editGoalDialog.contentItem.children[0].children[1].item.children[1].children[1];
+                    let descField = editGoalDialog.contentItem.children[0].children[1].item.children[2].children[1];
+
+                    if (nameField && descField && nameField.text.trim() !== "") {
+                        AppViewModel.setMainGoal(nameField.text.trim(), descField.text.trim());
+                    }
+                }
+            },
+            {
+                text: "Cancel",
+                color: "#2D2D2D",
+                textColor: "#AAAAAA"
+            }
+        ]
+    }
 
     FileManager {
         id: fileManager
@@ -1740,72 +1778,69 @@ ApplicationWindow {
     // Data Management Dialog
     CustomDialog {
         id: dataManagementDialog
-        dialogWidth: 450
+        dialogWidth: 420
 
         content: Component {
             ColumnLayout {
                 spacing: 20
 
                 Text {
-                    text: "Data Management"
-                    color: "#F3C44A"
-                    font.pointSize: 16
-                    font.bold: true
+                    text: "Data"
+                    color: "#FFFFFF"
+                    font.pointSize: 14
+                    font.weight: Font.Normal
                     Layout.alignment: Qt.AlignHCenter
                 }
 
-                // Export Section
+                // Save Section
                 Rectangle {
                     Layout.fillWidth: true
-                    height: 60
-                    color: "#2D2D2D"
-                    radius: 10
+                    height: 55
+                    color: "#323232"
+                    radius: 8
                     border.color: "#444444"
                     border.width: 1
 
                     RowLayout {
                         anchors.fill: parent
                         anchors.margins: 15
-                        spacing: 15
+                        spacing: 0
 
-                        Text {
-                            text: "📤"
-                            font.pointSize: 20
-                            color: "#66BB6A"
+                        Rectangle {
+                            width: 6
+                            height: 6
+                            color: "#BBBBBB"
+                            radius: 3
+                            Layout.alignment: Qt.AlignVCenter
                         }
 
                         ColumnLayout {
-                            Layout.preferredWidth: 280
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
+                            Layout.leftMargin: 15
                             spacing: 2
 
-                            Text {
-                                text: "Export Data"
-                                color: "#FFFFFF"
-                                font.pointSize: 12
-                                font.bold: true
-                            }
 
                             Text {
-                                text: "Save your data to a backup file"
+                                text: "Create backup file"
                                 color: "#AAAAAA"
                                 font.pointSize: 10
-                                wrapMode: Text.WordWrap
-                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignHCenter
                             }
                         }
 
                         Rectangle {
-                            Layout.preferredWidth: 80
-                            Layout.preferredHeight: 30
-                            color: "#66BB6A"
-                            radius: 15
+                            Layout.preferredWidth: 60
+                            Layout.preferredHeight: 28
+                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                            color: "#444444"
+                            radius: 4
 
                             Text {
-                                text: "Export"
+                                text: "Save"
                                 anchors.centerIn: parent
-                                color: "#1E1E1E"
+                                color: "#FFFFFF"
                                 font.pointSize: 10
-                                font.bold: true
                             }
 
                             MouseArea {
@@ -1815,65 +1850,62 @@ ApplicationWindow {
                                     exportData()
                                 }
                                 hoverEnabled: true
-                                onEntered: parent.color = "#76CC7A"
-                                onExited: parent.color = "#66BB6A"
+                                onEntered: parent.color = "#555555"
+                                onExited: parent.color = "#444444"
                             }
                         }
                     }
                 }
 
-                // Import Section
+                // Load Section
                 Rectangle {
                     Layout.fillWidth: true
-                    height: 60
-                    color: "#2D2D2D"
-                    radius: 10
+                    height: 55
+                    color: "#323232"
+                    radius: 8
                     border.color: "#444444"
                     border.width: 1
 
                     RowLayout {
                         anchors.fill: parent
                         anchors.margins: 15
-                        spacing: 15
+                        spacing: 0
 
-                        Text {
-                            text: "📥"
-                            font.pointSize: 20
-                            color: "#42A5F5"
+                        Rectangle {
+                            width: 6
+                            height: 6
+                            color: "#BBBBBB"
+                            radius: 3
+                            Layout.alignment: Qt.AlignVCenter
                         }
 
                         ColumnLayout {
-                            Layout.preferredWidth: 280
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
+                            Layout.leftMargin: 15
                             spacing: 2
 
-                            Text {
-                                text: "Import Data"
-                                color: "#FFFFFF"
-                                font.pointSize: 12
-                                font.bold: true
-                            }
 
                             Text {
-                                text: "Load data from a backup file"
+                                text: "Restore from backup file"
                                 color: "#AAAAAA"
                                 font.pointSize: 10
-                                wrapMode: Text.WordWrap
-                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignHCenter
                             }
                         }
 
                         Rectangle {
-                            Layout.preferredWidth: 80
-                            Layout.preferredHeight: 30
-                            color: "#42A5F5"
-                            radius: 15
+                            Layout.preferredWidth: 60
+                            Layout.preferredHeight: 28
+                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                            color: "#444444"
+                            radius: 4
 
                             Text {
-                                text: "Import"
+                                text: "Load"
                                 anchors.centerIn: parent
-                                color: "#1E1E1E"
+                                color: "#FFFFFF"
                                 font.pointSize: 10
-                                font.bold: true
                             }
 
                             MouseArea {
@@ -1883,65 +1915,64 @@ ApplicationWindow {
                                     importData()
                                 }
                                 hoverEnabled: true
-                                onEntered: parent.color = "#52B5FF"
-                                onExited: parent.color = "#42A5F5"
+                                onEntered: parent.color = "#555555"
+                                onExited: parent.color = "#444444"
                             }
                         }
                     }
                 }
 
-                // Clear Data Section - ОСТАЕТСЯ БЕЗ ИЗМЕНЕНИЙ
+                // Clear Data Section
                 Rectangle {
                     Layout.fillWidth: true
-                    height: 60
-                    color: "#2D2D2D"
-                    radius: 10
+                    height: 55
+                    color: "#323232"
+                    radius: 8
                     border.color: "#444444"
                     border.width: 1
 
                     RowLayout {
                         anchors.fill: parent
                         anchors.margins: 15
-                        spacing: 15
+                        spacing: 0
 
-                        Text {
-                            text: "🗑"
-                            font.pointSize: 20
-                            color: "#E95B5B"
+                        Rectangle {
+                            width: 6
+                            height: 6
+                            color: "#BBBBBB"
+                            radius: 3
+                            Layout.alignment: Qt.AlignVCenter
                         }
 
                         ColumnLayout {
-                            Layout.preferredWidth: 280
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
+                            Layout.leftMargin: 15
                             spacing: 2
 
-                            Text {
-                                text: "Clear All Data"
-                                color: "#FFFFFF"
-                                font.pointSize: 12
-                                font.bold: true
-                            }
 
                             Text {
-                                text: "Reset to default state (irreversible)"
+                                text: "Clear all data (irreversible)"
                                 color: "#AAAAAA"
                                 font.pointSize: 10
-                                wrapMode: Text.WordWrap
-                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignHCenter
                             }
                         }
 
                         Rectangle {
-                            Layout.preferredWidth: 80
-                            Layout.preferredHeight: 30
-                            color: "#E95B5B"
-                            radius: 15
+                            Layout.preferredWidth: 60
+                            Layout.preferredHeight: 28
+                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                            color: "#2D2D2D"
+                            radius: 4
+                            border.color: "#555555"
+                            border.width: 1
 
                             Text {
-                                text: "Clear"
+                                text: "Reset"
                                 anchors.centerIn: parent
-                                color: "#FFFFFF"
+                                color: "#CCCCCC"
                                 font.pointSize: 10
-                                font.bold: true
                             }
 
                             MouseArea {
@@ -1950,8 +1981,14 @@ ApplicationWindow {
                                     clearDataConfirmDialog.open()
                                 }
                                 hoverEnabled: true
-                                onEntered: parent.color = "#F76B6B"
-                                onExited: parent.color = "#E95B5B"
+                                onEntered: {
+                                    parent.color = "#3A3A3A"
+                                    parent.border.color = "#666666"
+                                }
+                                onExited: {
+                                    parent.color = "#2D2D2D"
+                                    parent.border.color = "#555555"
+                                }
                             }
                         }
                     }
@@ -1961,7 +1998,9 @@ ApplicationWindow {
 
         buttons: [
             {
-                text: "Close"
+                text: "Close",
+                color: "#444444",
+                textColor: "#FFFFFF"
             }
         ]
     }
@@ -1969,34 +2008,33 @@ ApplicationWindow {
     // Clear Data Confirmation Dialog
     CustomDialog {
         id: clearDataConfirmDialog
-        dialogWidth: 400
+        dialogWidth: 380
 
         content: Component {
             ColumnLayout {
-                spacing: 15
+                spacing: 20
 
                 Text {
-                    text: "⚠️ Clear All Data"
-                    color: "#E95B5B"
-                    font.pointSize: 16
-                    font.bold: true
+                    text: "Reset All Data"
+                    color: "#FFFFFF"
+                    font.pointSize: 14
+                    font.weight: Font.Normal
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 Text {
-                    text: "This action will permanently delete all your goals, sub-goals, and tasks. This cannot be undone."
+                    text: "This will permanently delete all your goals, sub-goals, and tasks."
                     color: "#FFFFFF"
-                    font.pointSize: 12
+                    font.pointSize: 11
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
                     horizontalAlignment: Text.AlignHCenter
                 }
 
                 Text {
-                    text: "Are you absolutely sure you want to continue?"
-                    color: "#F3C44A"
-                    font.pointSize: 12
-                    font.bold: true
+                    text: "This action cannot be undone."
+                    color: "#AAAAAA"
+                    font.pointSize: 10
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
                 }
@@ -2005,8 +2043,9 @@ ApplicationWindow {
 
         buttons: [
             {
-                text: "Yes, Clear All Data",
-                color: "#E95B5B",
+                text: "Reset",
+                color: "#2D2D2D",
+                textColor: "#CCCCCC",
                 onClicked: function() {
                     AppViewModel.clearAllData();
                     dataManagementDialog.close();
@@ -2014,7 +2053,8 @@ ApplicationWindow {
             },
             {
                 text: "Cancel",
-                color: "#3A3A3A"
+                color: "#444444",
+                textColor: "#FFFFFF"
             }
         ]
     }
@@ -2022,28 +2062,28 @@ ApplicationWindow {
     // Info Dialog
     CustomDialog {
         id: infoDialog
-        dialogWidth: 500
+        dialogWidth: 480
 
         content: Component {
             ColumnLayout {
-                spacing: 20
+                spacing: 25
 
                 Text {
-                    text: "Vision Compass - Quick Guide"
-                    color: "#F3C44A"
-                    font.pointSize: 18
-                    font.bold: true
+                    text: "Vision Compass"
+                    color: "#FFFFFF"
+                    font.pointSize: 16
+                    font.weight: Font.Normal
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 // Main Goal Section
                 Rectangle {
                     Layout.fillWidth: true
-                    height: 70
-                    color: "#2D2D2D"
-                    radius: 10
-                    border.color: "#E95B5B"
-                    border.width: 2
+                    height: 65
+                    color: "#323232"
+                    radius: 8
+                    border.color: "#444444"
+                    border.width: 1
 
                     RowLayout {
                         anchors.fill: parent
@@ -2051,34 +2091,27 @@ ApplicationWindow {
                         spacing: 15
 
                         Rectangle {
-                            width: 30
-                            height: 30
-                            color: "#E95B5B"
-                            radius: 15
+                            width: 8
+                            height: 8
+                            color: "#CCCCCC"
+                            radius: 4
                             Layout.alignment: Qt.AlignVCenter
-
-                            Text {
-                                text: "🎯"
-                                anchors.centerIn: parent
-                                font.pointSize: 14
-                            }
                         }
 
                         ColumnLayout {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignVCenter
-                            Layout.topMargin: -5
-                            spacing: 2
+                            spacing: 3
 
                             Text {
-                                text: "Main Goal (1 year to 10+ years)"
+                                text: "Main Goal"
                                 color: "#FFFFFF"
-                                font.pointSize: 12
-                                font.bold: true
+                                font.pointSize: 11
+                                font.weight: Font.Medium
                             }
 
                             Text {
-                                text: "Your main goal, as a guide for life"
+                                text: "Your primary objective (1-10+ years)"
                                 color: "#AAAAAA"
                                 font.pointSize: 10
                                 wrapMode: Text.WordWrap
@@ -2091,11 +2124,11 @@ ApplicationWindow {
                 // SubGoals Section
                 Rectangle {
                     Layout.fillWidth: true
-                    height: 70
-                    color: "#2D2D2D"
-                    radius: 10
-                    border.color: "#F3C44A"
-                    border.width: 2
+                    height: 65
+                    color: "#323232"
+                    radius: 8
+                    border.color: "#444444"
+                    border.width: 1
 
                     RowLayout {
                         anchors.fill: parent
@@ -2103,34 +2136,27 @@ ApplicationWindow {
                         spacing: 15
 
                         Rectangle {
-                            width: 30
-                            height: 30
-                            color: "#F3C44A"
-                            radius: 15
+                            width: 8
+                            height: 8
+                            color: "#CCCCCC"
+                            radius: 4
                             Layout.alignment: Qt.AlignVCenter
-
-                            Text {
-                                text: "📋"
-                                anchors.centerIn: parent
-                                font.pointSize: 14
-                            }
                         }
 
                         ColumnLayout {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignVCenter
-                            Layout.topMargin: -5
-                            spacing: 2
+                            spacing: 3
 
                             Text {
-                                text: "Subgoals (3 months to 1 year)"
+                                text: "SubGoals"
                                 color: "#FFFFFF"
-                                font.pointSize: 12
-                                font.bold: true
+                                font.pointSize: 11
+                                font.weight: Font.Medium
                             }
 
                             Text {
-                                text: "Major directions/blocks leading to the main goal"
+                                text: "Major milestones (3 months - 1 year)"
                                 color: "#AAAAAA"
                                 font.pointSize: 10
                                 wrapMode: Text.WordWrap
@@ -2143,11 +2169,11 @@ ApplicationWindow {
                 // Tasks Section
                 Rectangle {
                     Layout.fillWidth: true
-                    height: 70
-                    color: "#2D2D2D"
-                    radius: 10
-                    border.color: "#66BB6A"
-                    border.width: 2
+                    height: 65
+                    color: "#323232"
+                    radius: 8
+                    border.color: "#444444"
+                    border.width: 1
 
                     RowLayout {
                         anchors.fill: parent
@@ -2155,36 +2181,27 @@ ApplicationWindow {
                         spacing: 15
 
                         Rectangle {
-                            width: 30
-                            height: 30
-                            color: "#66BB6A"
-                            radius: 15
+                            width: 8
+                            height: 8
+                            color: "#CCCCCC"
+                            radius: 4
                             Layout.alignment: Qt.AlignVCenter
-
-                            Text {
-                                text: "✓"
-                                anchors.centerIn: parent
-                                font.pointSize: 14
-                                color: "#1E1E1E"
-                                font.bold: true
-                            }
                         }
 
                         ColumnLayout {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignVCenter
-                            Layout.topMargin: -5
-                            spacing: 2
+                            spacing: 3
 
                             Text {
-                                text: "Tasks (1 day to 3 months)"
+                                text: "Tasks"
                                 color: "#FFFFFF"
-                                font.pointSize: 12
-                                font.bold: true
+                                font.pointSize: 11
+                                font.weight: Font.Medium
                             }
 
                             Text {
-                                text: "Components of subgoals that we must accomplish"
+                                text: "Actionable steps (1 day - 3 months)"
                                 color: "#AAAAAA"
                                 font.pointSize: 10
                                 wrapMode: Text.WordWrap
@@ -2194,22 +2211,29 @@ ApplicationWindow {
                     }
                 }
 
-                Text {
-                    text: "💡 Use keyboard shortcuts 1-9 to quickly select subgoals!"
-                    color: "#F3C44A"
-                    font.pointSize: 11
-                    font.bold: true
-                    Layout.alignment: Qt.AlignHCenter
-                    Layout.topMargin: 10
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 40
+                    color: "#2D2D2D"
+                    radius: 6
+                    border.color: "#444444"
+                    border.width: 1
+
+                    Text {
+                        text: "Use 1-9 keys to select subgoals"
+                        color: "#BBBBBB"
+                        font.pointSize: 10
+                        anchors.centerIn: parent
+                    }
                 }
             }
         }
 
         buttons: [
             {
-                text: "Got it!",
-                color: "#F3C44A",
-                textColor: "#1E1E1E"
+                text: "Close",
+                color: "#444444",
+                textColor: "#FFFFFF"
             }
         ]
     }
