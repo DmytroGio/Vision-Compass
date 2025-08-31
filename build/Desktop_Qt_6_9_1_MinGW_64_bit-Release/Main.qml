@@ -709,11 +709,25 @@ ApplicationWindow {
                     color: "#383838"
                     radius: 25
 
-                    Text {
-                        text: "⇓"
+                    Column {
                         anchors.centerIn: parent
-                        font.pointSize: 14
-                        color: "#FFFFFF"
+                        spacing: 4
+
+                        Rectangle {
+                            width: 14
+                            height: 14
+                            radius: 7
+                            color: "#585847"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                        }
+
+                        Rectangle {
+                            width: 14
+                            height: 14
+                            radius: 7
+                            color: "#585847"
+                            anchors.horizontalCenter: parent.horizontalCenter
+                        }
                     }
                 }
 
@@ -753,13 +767,12 @@ ApplicationWindow {
                     color: "#383838"
                     radius: 25
 
-                    Text {
-                        text: "i"
+                    Rectangle {
+                        width: 20
+                        height: 20
+                        radius: 10
+                        color: "#585847"
                         anchors.centerIn: parent
-                        font.pointSize: 15
-                        font.bold: true
-                        color: "#F2F2F2"
-                        font.italic: true
                     }
                 }
 
@@ -801,68 +814,55 @@ ApplicationWindow {
                 anchors.margins: 20
                 spacing: 15
 
-                // Заголовок секции с кнопкой добавления
+                // Кнопка Add Task в правом верхнем углу секции задач
                 Item {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 50
+                    Layout.preferredHeight: 60
 
-                    // Контейнер с шириной слотов задач (600px)
-                    Item {
-                        width: 600
-                        height: parent.height
+                    Rectangle {
+                        id: addTaskButton
+                        width: 50
+                        height: 50
                         anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.horizontalCenterOffset: -7
+                        anchors.horizontalCenterOffset: 235  // Смещение вправо от центра
+                        anchors.top: parent.top
+                        anchors.topMargin: 5
+                        color: "#383838"
+                        radius: 25
 
-                        RowLayout {
+                        Text {
+                            text: "+"
+                            anchors.centerIn: parent
+                            anchors.verticalCenterOffset: -2
+                            font.pointSize: 18
+                            font.bold: true
+                            color: "#FFFFFF"
+                        }
+
+                        MouseArea {
                             anchors.fill: parent
-                            spacing: 20
-
-                            // Заголовок слева
-                            Text {
-                                text: AppViewModel.subGoalsListModel.length > 0 ? AppViewModel.selectedSubGoalName : "No SubGoals Available"
-                                color: "#FFFFFF"
-                                font.pointSize: 18
-                                font.bold: true
-                                Layout.fillWidth: true
-                                Layout.alignment: Qt.AlignVCenter
+                            onClicked: {
+                                addTaskDialog.open()
                             }
-
-                            // Кнопка справа
-                            Rectangle {
-                                Layout.preferredWidth: 150
-                                Layout.preferredHeight: 40
-                                color: "#3A3A3A"
-                                radius: 10
-                                border.color: "#666666"
-                                border.width: 1
-
-                                RowLayout {
-                                    anchors.centerIn: parent
-                                    spacing: 8
-
-                                    Text {
-                                        text: "Add Task"
-                                        color: "#FFFFFF"
-                                        font.pointSize: 12
-                                        font.bold: true
-                                    }
-                                }
-
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: {
-                                        addTaskDialog.open()
-                                    }
-                                    hoverEnabled: true
-                                    onEntered: parent.color = "#4A4A4A"
-                                    onExited: parent.color = "#3A3A3A"
-                                }
-                            }
+                            hoverEnabled: true
+                            onEntered: parent.color = "#525252"
+                            onExited: parent.color = "#383838"
                         }
                     }
-                }
-                // Список задач
 
+                    MultiEffect {
+                        source: addTaskButton
+                        anchors.fill: addTaskButton
+                        shadowEnabled: true
+                        shadowOpacity: 0.5
+                        shadowColor: "#000000"
+                        shadowVerticalOffset: 3
+                        shadowBlur: 0.8
+                        z: -1
+                    }
+                }
+
+                // Список задач
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
