@@ -95,7 +95,7 @@ To see the global goals of life and plan according to them.
 - Limit the scrollbar for Tasks to the bottom window - it goes down. Fix task list container height to prevent cutoff at bottom of window [done]
 - The edit and delete buttons only appear when hovering over a task [done]
 
-- Redesign confirmation and editing windows to make them simpler and more concise
+- Redesign confirmation and editing windows to make them simpler and more concise  [done]
 
 ## 2025-08-21
 - Does not highlight the necessary Subgoal on the LCM [done]
@@ -103,11 +103,19 @@ To see the global goals of life and plan according to them.
 - Shading of the program window during pop-ups - currently everything turns light white. [done]
 - Fix hints in lines [done]
 
-- Refine export correctly - file name, location. (Add a key so that we can import only our files)
-- Import with file specification
+- Refine export correctly - file name, location. (Add a key so that we can import only our files)  [done]
+- Import with file specification - Import and export have been simplified for user convenience.   [done]
 
 
-- Description window more minimalistic and taking into account the new design of pop-ups.
+- Description window more minimalistic and taking into account the new design of pop-ups.   [done]
 
 
-- Adjust font sizes (main goal, subgoals smaller, titles)
+- Adjust font sizes (main goal, subgoals smaller, titles)  [done]
+
+
+## 2025-09-01
+- Updated design in Figma and shortcuts written [done]
+- Create shortcuts
+- Add shortcuts to the Info pop-up or highlight them in another convenient way.
+
+- Prepare export and presentation for Github
