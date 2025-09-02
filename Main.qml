@@ -127,6 +127,46 @@ ApplicationWindow {
            onActivated: selectSubGoalByIndex(8)
        }
 
+       // Ctrl + T - создание новой Task
+       Shortcut {
+           sequence: "Ctrl+T"
+           onActivated: addTaskDialog.open()
+       }
+
+       // X - отметка выбранной Task как done/undone
+       Shortcut {
+           sequence: "X"
+           onActivated: {
+               if (AppViewModel.selectedTaskId > 0) {
+                   AppViewModel.completeTask(AppViewModel.selectedTaskId)
+               }
+           }
+       }
+
+       // I - info окно
+       Shortcut {
+           sequence: "I"
+           onActivated: infoDialog.open()
+       }
+
+       // D - data окно
+       Shortcut {
+           sequence: "D"
+           onActivated: dataManagementDialog.open()
+       }
+
+       // Ctrl + S - save
+       Shortcut {
+           sequence: "Ctrl+S"
+           onActivated: AppViewModel.saveData()
+       }
+
+       // Shift + S - new Subgoal окно
+       Shortcut {
+           sequence: "Shift+S"
+           onActivated: addSubGoalDialog.open()
+       }
+
     // Make AppViewModel available in this QML file
     // Create rectangle
 
@@ -911,13 +951,20 @@ ApplicationWindow {
                             width: 600
                             height: Math.max(50, taskContent.implicitHeight + 16)
                             anchors.horizontalCenter: parent.horizontalCenter
-                            color: "#2D2D2D"
                             radius: 12
                             border.color: "#444444"
                             border.width: 1
                             opacity: modelData.completed ? 0.7 : 1.0
 
                             property bool isTaskHovered: false
+                            property bool isSelected: modelData.id === AppViewModel.selectedTaskId
+
+                            // Цвет фона в зависимости от состояния
+                            color: {
+                                if (isSelected) return "#404040"
+                                if (isTaskHovered) return "#353535"
+                                return "#2D2D2D"
+                            }
 
                             // Основное содержимое задачи
                             RowLayout {
@@ -935,6 +982,8 @@ ApplicationWindow {
                                     border.color: modelData.completed ? "#F3C44A" : "#707070"
                                     border.width: modelData.completed ? 0 : 1
 
+                                    property bool isSelected: modelData.id === AppViewModel.selectedTaskId
+
                                     Rectangle {
                                         anchors.fill: parent
                                         radius: parent.radius
@@ -944,25 +993,23 @@ ApplicationWindow {
 
                                     MouseArea {
                                         anchors.fill: parent
-                                        onClicked: {
-                                            taskListView.savedContentY = taskListView.contentY;
-                                            AppViewModel.completeTask(modelData.id);
-                                        }
                                         hoverEnabled: true
+                                        z: 100
+
+                                        onClicked: {
+                                            AppViewModel.selectTask(modelData.id)
+                                        }
+
                                         onEntered: {
-                                            if (modelData.completed) {
-                                                parent.children[0].color = "#F5D665"
-                                            } else {
-                                                parent.border.color = "#AAAAAA"
-                                            }
+                                            taskItem.color = "#353535"
+                                            taskItem.isTaskHovered = true
                                         }
                                         onExited: {
-                                            if (modelData.completed) {
-                                                parent.children[0].color = "#F3C44A"
-                                            } else {
-                                                parent.border.color = "#707070"
-                                            }
+                                            taskItem.color = "#2D2D2D"
+                                            taskItem.isTaskHovered = false
                                         }
+
+                                        onPressed: mouse.accepted = false
                                     }
                                 }
 
@@ -1044,12 +1091,14 @@ ApplicationWindow {
                                 hoverEnabled: true
                                 z: 100  // Поверх всех элементов
 
+                                onClicked: {
+                                    AppViewModel.selectTask(modelData.id)
+                                }
+
                                 onEntered: {
-                                    taskItem.color = "#353535"
                                     taskItem.isTaskHovered = true
                                 }
                                 onExited: {
-                                    taskItem.color = "#2D2D2D"
                                     taskItem.isTaskHovered = false
                                 }
 

@@ -465,3 +465,16 @@ void AppViewModel::loadDataFromJson(const QString& jsonData) {
         }
     }
 }
+
+int AppViewModel::selectedTaskId() const
+{
+    return m_selectedTaskId;
+}
+
+void AppViewModel::selectTask(int id)
+{
+    if (m_selectedTaskId != id) {
+        m_selectedTaskId = id;
+        emit selectedTaskChanged();
+    }
+}

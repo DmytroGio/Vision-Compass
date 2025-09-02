@@ -17,6 +17,7 @@ class AppViewModel : public QObject
     Q_PROPERTY(int selectedSubGoalId READ selectedSubGoalId NOTIFY selectedSubGoalChanged)
     Q_PROPERTY(QString selectedSubGoalName READ selectedSubGoalName NOTIFY selectedSubGoalChanged)
     Q_PROPERTY(QVariantList subGoalCompletionStatus READ subGoalCompletionStatus NOTIFY subGoalCompletionChanged)
+    Q_PROPERTY(int selectedTaskId READ selectedTaskId NOTIFY selectedTaskChanged)
 
 public:
     explicit AppViewModel(QObject *parent = nullptr);
@@ -27,6 +28,7 @@ public:
     QVariantList subGoalsListModel() const;
     QVariantList currentTasksListModel() const;
     int selectedSubGoalId() const;
+    int selectedTaskId() const;
     QString selectedSubGoalName() const;
     QVariantList subGoalCompletionStatus() const;
 
@@ -48,6 +50,7 @@ public:
     Q_INVOKABLE void deleteSubGoal(int id);
     Q_INVOKABLE void removeSubGoal(const QVariantMap& subGoalData); // For QML compatibility
     Q_INVOKABLE void selectSubGoal(int id);
+    Q_INVOKABLE void selectTask(int id);
 
     // Task methods (matching QML calls)
     Q_INVOKABLE void addTask(const QString& description);
@@ -71,6 +74,7 @@ signals:
     void currentTasksChanged();
     void selectedSubGoalChanged();
     void subGoalCompletionChanged();
+    void selectedTaskChanged();
 
 private:
     void updateGoalProperties();
@@ -84,6 +88,7 @@ private:
     std::vector<SubGoal> m_subGoals;
     std::vector<Task> m_currentTasks;
     int m_selectedSubGoalId = 0;
+    int m_selectedTaskId = 0;
 };
 
 #endif // APPVIEWMODEL_H
