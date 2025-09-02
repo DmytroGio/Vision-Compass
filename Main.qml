@@ -28,6 +28,21 @@ ApplicationWindow {
         })
     }
 
+    Connections {
+        target: AppViewModel
+        function onSelectedSubGoalIdChanged() {
+            Qt.callLater(function() {
+                selectFirstTaskIfNeeded();
+            });
+        }
+
+        function onCurrentTasksListModelChanged() {
+            Qt.callLater(function() {
+                selectFirstTaskIfNeeded();
+            });
+        }
+    }
+
     // Функция для автоматического скролла к выбранному элементу
     function scrollToSelectedItem() {
         if (!AppViewModel.selectedSubGoalId || !AppViewModel.subGoalsListModel) return;
@@ -88,6 +103,84 @@ ApplicationWindow {
                 subGoalsList.contentX = targetContentX;
             });
         }
+    }
+
+    function selectFirstTaskIfNeeded() {
+        if (AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
+            // Если нет выбранной задачи или выбранная задача не существует в текущем списке
+            var selectedExists = false;
+            var selectedIndex = -1;
+            for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
+                if (AppViewModel.currentTasksListModel[i].id === AppViewModel.selectedTaskId) {
+                    selectedExists = true;
+                    selectedIndex = i;
+                    break;
+                }
+            }
+
+            if (!selectedExists) {
+                AppViewModel.selectTask(AppViewModel.currentTasksListModel[0].id);
+                selectedIndex = 0;
+            }
+
+            // Прокручиваем к выбранной задаче
+            if (selectedIndex >= 0) {
+                Qt.callLater(function() {
+                    scrollToSelectedTask(selectedIndex);
+                });
+            }
+        } else {
+            // Если задач нет, сбрасываем выбор
+            AppViewModel.selectTask(0);
+        }
+    }
+
+    function selectTaskByDirection(direction) {
+        if (!AppViewModel.currentTasksListModel || AppViewModel.currentTasksListModel.length === 0) {
+            return;
+        }
+
+        var currentIndex = -1;
+
+        // Находим индекс текущей выбранной задачи
+        for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
+            if (AppViewModel.currentTasksListModel[i].id === AppViewModel.selectedTaskId) {
+                currentIndex = i;
+                break;
+            }
+        }
+
+        var newIndex = currentIndex;
+
+        if (direction === "down") {
+            newIndex = (currentIndex + 1) % AppViewModel.currentTasksListModel.length;
+        } else if (direction === "up") {
+            newIndex = currentIndex <= 0 ? AppViewModel.currentTasksListModel.length - 1 : currentIndex - 1;
+        }
+
+        if (newIndex >= 0 && newIndex < AppViewModel.currentTasksListModel.length) {
+            AppViewModel.selectTask(AppViewModel.currentTasksListModel[newIndex].id);
+            scrollToSelectedTask(newIndex);
+        }
+    }
+
+    function scrollToSelectedTask(taskIndex) {
+        if (!taskListView || taskIndex < 0) return;
+
+        var taskHeight = 60; // Примерная высота одной задачи с отступами
+        var taskPosition = taskIndex * taskHeight;
+        var viewportHeight = taskListView.height;
+
+        // Вычисляем оптимальную позицию для центрирования элемента
+        var targetContentY = taskPosition - (viewportHeight - taskHeight) / 2;
+
+        // Ограничиваем позицию границами контента
+        var maxContentY = Math.max(0, taskListView.contentHeight - viewportHeight);
+        targetContentY = Math.max(0, Math.min(maxContentY, targetContentY));
+
+        // Плавная анимация скролла
+        taskScrollAnimation.to = targetContentY;
+        taskScrollAnimation.start();
     }
 
        Shortcut {
@@ -167,8 +260,33 @@ ApplicationWindow {
            onActivated: addSubGoalDialog.open()
        }
 
+       // Up/Down для навигации по задачам
+       Shortcut {
+           sequence: "Down"
+           onActivated: selectTaskByDirection("down")
+       }
+
+       Shortcut {
+           sequence: "Up"
+           onActivated: selectTaskByDirection("up")
+       }
+
+       // Tab для циклической навигации по задачам
+       Shortcut {
+           sequence: "Tab"
+           onActivated: selectTaskByDirection("down")
+       }
+
     // Make AppViewModel available in this QML file
     // Create rectangle
+
+    NumberAnimation {
+      id: taskScrollAnimation
+      target: taskListView
+      property: "contentY"
+      duration: 300
+      easing.type: Easing.OutCubic
+    }
 
     ColumnLayout {
         anchors.fill: parent
