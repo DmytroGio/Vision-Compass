@@ -32,13 +32,8 @@ ApplicationWindow {
         target: AppViewModel
         function onSelectedSubGoalIdChanged() {
             Qt.callLater(function() {
-                selectFirstTaskIfNeeded();
-            });
-        }
-
-        function onCurrentTasksListModelChanged() {
-            Qt.callLater(function() {
-                selectFirstTaskIfNeeded();
+                // При смене SubGoal нужен скроллинг, так как это навигационное действие
+                selectFirstTaskIfNeeded(true);
             });
         }
     }
@@ -105,7 +100,12 @@ ApplicationWindow {
         }
     }
 
-    function selectFirstTaskIfNeeded() {
+    function selectFirstTaskIfNeeded(shouldScroll = true) {
+        // Сохраняем текущую позицию скролла
+        if (taskListView) {
+            taskListView.savedContentY = taskListView.contentY
+        }
+
         if (AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
             // Если нет выбранной задачи или выбранная задача не существует в текущем списке
             var selectedExists = false;
@@ -123,10 +123,19 @@ ApplicationWindow {
                 selectedIndex = 0;
             }
 
-            // Прокручиваем к выбранной задаче
-            if (selectedIndex >= 0) {
+            // Прокручиваем к выбранной задаче ТОЛЬКО если это запрошено и задача не видна
+            if (selectedIndex >= 0 && shouldScroll) {
                 Qt.callLater(function() {
-                    scrollToSelectedTask(selectedIndex);
+                    // Проверяем, видна ли выбранная задача
+                    var taskHeight = 60;
+                    var taskPosition = selectedIndex * taskHeight;
+                    var viewportTop = taskListView.contentY;
+                    var viewportBottom = viewportTop + taskListView.height;
+
+                    // Если задача не видна, тогда скроллим
+                    if (taskPosition < viewportTop || taskPosition > viewportBottom - taskHeight) {
+                        scrollToSelectedTask(selectedIndex);
+                    }
                 });
             }
         } else {
@@ -183,6 +192,14 @@ ApplicationWindow {
         taskScrollAnimation.start();
     }
 
+    function preserveScrollPosition(action) {
+        var currentY = taskListView.contentY
+        taskListView.blockModelUpdate = true
+        action()
+        taskListView.blockModelUpdate = false
+        taskListView.contentY = currentY
+    }
+
        Shortcut {
            sequence: "1"
            onActivated: selectSubGoalByIndex(0)
@@ -231,7 +248,9 @@ ApplicationWindow {
            sequence: "X"
            onActivated: {
                if (AppViewModel.selectedTaskId > 0) {
-                   AppViewModel.completeTask(AppViewModel.selectedTaskId)
+                   preserveScrollPosition(function() {
+                       AppViewModel.completeTask(AppViewModel.selectedTaskId)
+                   })
                }
            }
        }
@@ -499,6 +518,8 @@ ApplicationWindow {
                                     // Сохранение позиции скролла
                                     property real savedContentX: 0
 
+                                    property bool blockModelUpdate: false
+
                                     Component.onCompleted: {
                                         // Принудительно устанавливаем начальную позицию
                                         contentX = 0
@@ -510,11 +531,10 @@ ApplicationWindow {
                                         })
                                     }
 
+
                                     onModelChanged: {
+                                        if (blockModelUpdate) return
                                         // Восстанавливаем позицию после обновления модели
-                                        if (savedContentX > 0 && contentWidth > width) {
-                                            contentX = Math.min(savedContentX, contentWidth - width);
-                                        }
                                     }
 
                                     delegate: Item {
@@ -1057,11 +1077,9 @@ ApplicationWindow {
                         // Сохранение позиции скролла
                         property real savedContentY: 0
 
-                        onModelChanged: {
-                            // Восстанавливаем позицию после обновления модели
-                            if (savedContentY > 0 && contentHeight > height) {
-                                contentY = Math.min(savedContentY, contentHeight - height);
-                            }
+                        // Сохраняем позицию перед изменением модели
+                        onContentYChanged: {
+                            savedContentY = contentY
                         }
 
                         delegate: Rectangle {
@@ -1115,7 +1133,9 @@ ApplicationWindow {
                                         z: 100
 
                                         onClicked: {
-                                            AppViewModel.selectTask(modelData.id)
+                                            preserveScrollPosition(function() {
+                                                AppViewModel.selectTask(modelData.id)
+                                            })
                                         }
 
                                         onEntered: {
@@ -1126,8 +1146,6 @@ ApplicationWindow {
                                             taskItem.color = "#2D2D2D"
                                             taskItem.isTaskHovered = false
                                         }
-
-                                        onPressed: mouse.accepted = false
                                     }
                                 }
 
@@ -1144,6 +1162,24 @@ ApplicationWindow {
                                         wrapMode: Text.WordWrap
                                         textFormat: Text.RichText
                                         text: modelData.completed ? "<s>" + modelData.name + "</s>" : modelData.name
+                                    }
+
+                                    // Добавьте MouseArea для области текста
+                                    MouseArea {
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                        hoverEnabled: true
+
+                                        onClicked: {
+                                            AppViewModel.selectTask(modelData.id)
+                                        }
+
+                                        onEntered: {
+                                            taskItem.isTaskHovered = true
+                                        }
+                                        onExited: {
+                                            taskItem.isTaskHovered = false
+                                        }
                                     }
                                 }
 
@@ -1201,27 +1237,6 @@ ApplicationWindow {
                                         onExited: parent.children[0].color = "#CCCCCC"
                                     }
                                 }
-                            }
-
-                            // ГЛАВНАЯ MouseArea для всей ячейки - размещаем поверх всего
-                            MouseArea {
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                z: 100  // Поверх всех элементов
-
-                                onClicked: {
-                                    AppViewModel.selectTask(modelData.id)
-                                }
-
-                                onEntered: {
-                                    taskItem.isTaskHovered = true
-                                }
-                                onExited: {
-                                    taskItem.isTaskHovered = false
-                                }
-
-                                // Пропускаем клики к дочерним элементам
-                                onPressed: mouse.accepted = false
                             }
                         }
                     }
