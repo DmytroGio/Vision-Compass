@@ -25,6 +25,10 @@ ApplicationWindow {
         AppViewModel.loadData()
         Qt.callLater(function() {
             scrollToSelectedItem()
+            // Дополнительная задержка для выбора первой задачи после полной инициализации
+                    Qt.callLater(function() {
+                        selectFirstTaskIfNeeded(false)
+                    })
         })
     }
 
@@ -107,35 +111,13 @@ ApplicationWindow {
         }
 
         if (AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
-            // Если нет выбранной задачи или выбранная задача не существует в текущем списке
-            var selectedExists = false;
-            var selectedIndex = -1;
-            for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
-                if (AppViewModel.currentTasksListModel[i].id === AppViewModel.selectedTaskId) {
-                    selectedExists = true;
-                    selectedIndex = i;
-                    break;
-                }
-            }
-
-            if (!selectedExists) {
-                AppViewModel.selectTask(AppViewModel.currentTasksListModel[0].id);
-                selectedIndex = 0;
-            }
+            // Всегда выбираем первую задачу при запуске
+            AppViewModel.selectTask(AppViewModel.currentTasksListModel[0].id);
 
             // Прокручиваем к выбранной задаче ТОЛЬКО если это запрошено и задача не видна
-            if (selectedIndex >= 0 && shouldScroll) {
+            if (shouldScroll) {
                 Qt.callLater(function() {
-                    // Проверяем, видна ли выбранная задача
-                    var taskHeight = 60;
-                    var taskPosition = selectedIndex * taskHeight;
-                    var viewportTop = taskListView.contentY;
-                    var viewportBottom = viewportTop + taskListView.height;
-
-                    // Если задача не видна, тогда скроллим
-                    if (taskPosition < viewportTop || taskPosition > viewportBottom - taskHeight) {
-                        scrollToSelectedTask(selectedIndex);
-                    }
+                    scrollToSelectedTask(0);
                 });
             }
         } else {
@@ -1091,7 +1073,7 @@ ApplicationWindow {
                             radius: 12
                             border.color: "#444444"
                             border.width: 1
-                            opacity: modelData.completed ? 0.7 : 1.0
+                            opacity: 1.0
 
                             property bool isTaskHovered: false
                             property bool isSelected: modelData.id === AppViewModel.selectedTaskId
