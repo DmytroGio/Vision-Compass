@@ -1076,6 +1076,7 @@ ApplicationWindow {
 
                         // Сохранение позиции скролла
                         property real savedContentY: 0
+                        property bool blockModelUpdate: false
 
                         // Сохраняем позицию перед изменением модели
                         onContentYChanged: {
@@ -1133,8 +1134,10 @@ ApplicationWindow {
                                         z: 100
 
                                         onClicked: {
+                                            // Сначала выбираем задачу, потом меняем статус
+                                            AppViewModel.selectTask(modelData.id)
                                             preserveScrollPosition(function() {
-                                                AppViewModel.selectTask(modelData.id)
+                                                AppViewModel.completeTask(modelData.id)
                                             })
                                         }
 
@@ -1143,7 +1146,7 @@ ApplicationWindow {
                                             taskItem.isTaskHovered = true
                                         }
                                         onExited: {
-                                            taskItem.color = "#2D2D2D"
+                                            taskItem.color = taskItem.isSelected ? "#404040" : "#2D2D2D"
                                             taskItem.isTaskHovered = false
                                         }
                                     }
