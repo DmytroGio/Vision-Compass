@@ -278,6 +278,12 @@ ApplicationWindow {
            onActivated: selectTaskByDirection("down")
        }
 
+       // Shift + Tab для циклической навигации по задачам вверх
+       Shortcut {
+           sequence: "Shift+Tab"
+           onActivated: selectTaskByDirection("up")
+       }
+
     // Make AppViewModel available in this QML file
     // Create rectangle
 
@@ -1075,14 +1081,35 @@ ApplicationWindow {
                             border.width: 1
                             opacity: 1.0
 
-                            property bool isTaskHovered: false
                             property bool isSelected: modelData.id === AppViewModel.selectedTaskId
+
+                            // Объединяем зоны наведения как в subgoals
+                            property bool isHovered: mainTaskMouseArea.containsMouse || editTaskButton.isButtonHovered || deleteTaskButton.isButtonHovered
 
                             // Цвет фона в зависимости от состояния
                             color: {
                                 if (isSelected) return "#404040"
-                                if (isTaskHovered) return "#353535"
+                                if (isHovered) return "#353535"
                                 return "#2D2D2D"
+                            }
+
+                            // Главная зона наведения для всей ячейки
+                            MouseArea {
+                                id: mainTaskMouseArea
+                                anchors.fill: parent
+                                onClicked: {
+                                    AppViewModel.selectTask(modelData.id)
+                                }
+                            }
+
+                            HoverHandler {
+                                id: taskHoverHandler
+                                onHoveredChanged: {
+                                    // Это обновит свойство isHovered
+                                    taskItem.isHovered = Qt.binding(function() {
+                                        return taskHoverHandler.hovered || editTaskButton.isButtonHovered || deleteTaskButton.isButtonHovered
+                                    })
+                                }
                             }
 
                             // Основное содержимое задачи
@@ -1114,23 +1141,19 @@ ApplicationWindow {
                                         anchors.fill: parent
                                         hoverEnabled: true
                                         z: 100
+                                        // Пропускаем события hover к родительскому MouseArea
+                                        propagateComposedEvents: true
 
                                         onClicked: {
-                                            // Сначала выбираем задачу, потом меняем статус
                                             AppViewModel.selectTask(modelData.id)
                                             preserveScrollPosition(function() {
                                                 AppViewModel.completeTask(modelData.id)
                                             })
                                         }
 
-                                        onEntered: {
-                                            taskItem.color = "#353535"
-                                            taskItem.isTaskHovered = true
-                                        }
-                                        onExited: {
-                                            taskItem.color = taskItem.isSelected ? "#404040" : "#2D2D2D"
-                                            taskItem.isTaskHovered = false
-                                        }
+                                        // Не блокируем hover события
+                                        onEntered: { /* ничего не делаем */ }
+                                        onExited: { /* ничего не делаем */ }
                                     }
                                 }
 
@@ -1142,37 +1165,26 @@ ApplicationWindow {
                                     Text {
                                         color: "#FFFFFF"
                                         font.pointSize: 10
-                                        //font.bold: true
                                         Layout.fillWidth: true
                                         wrapMode: Text.WordWrap
                                         textFormat: Text.RichText
                                         text: modelData.completed ? "<s>" + modelData.name + "</s>" : modelData.name
-                                    }
-
-                                    // Добавьте MouseArea для области текста
-                                    MouseArea {
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
-                                        hoverEnabled: true
-
-                                        onClicked: {
-                                            AppViewModel.selectTask(modelData.id)
-                                        }
-
-                                        onEntered: {
-                                            taskItem.isTaskHovered = true
-                                        }
-                                        onExited: {
-                                            taskItem.isTaskHovered = false
+                                        // Делаем текст прозрачным для мыши
+                                        MouseArea {
+                                            anchors.fill: parent
+                                            enabled: false
                                         }
                                     }
                                 }
 
                                 // Кнопка редактирования задачи
                                 Item {
+                                    id: editTaskButton
                                     width: 25
                                     height: 25
-                                    visible: taskItem.isTaskHovered
+                                    visible: isHovered
+
+                                    property bool isButtonHovered: editTaskMouseArea.containsMouse
 
                                     Text {
                                         text: "✎"
@@ -1183,13 +1195,14 @@ ApplicationWindow {
                                     }
 
                                     MouseArea {
+                                        id: editTaskMouseArea
                                         anchors.centerIn: parent
                                         width: 20
                                         height: 20
+                                        hoverEnabled: true
                                         onClicked: {
                                             editTaskDialog.openForEditing(modelData)
                                         }
-                                        hoverEnabled: true
                                         onEntered: parent.children[0].color = "#FFFFFF"
                                         onExited: parent.children[0].color = "#CCCCCC"
                                     }
@@ -1197,9 +1210,12 @@ ApplicationWindow {
 
                                 // Кнопка удаления
                                 Item {
+                                    id: deleteTaskButton
                                     width: 25
                                     height: 25
-                                    visible: taskItem.isTaskHovered
+                                    visible: isHovered
+
+                                    property bool isButtonHovered: deleteTaskMouseArea.containsMouse
 
                                     Text {
                                         text: "✕"
@@ -1210,14 +1226,15 @@ ApplicationWindow {
                                     }
 
                                     MouseArea {
+                                        id: deleteTaskMouseArea
                                         anchors.centerIn: parent
                                         width: 20
                                         height: 20
+                                        hoverEnabled: true
                                         onClicked: {
                                             taskConfirmationDialog.open()
                                             taskConfirmationDialog.taskToRemove = modelData
                                         }
-                                        hoverEnabled: true
                                         onEntered: parent.children[0].color = "#FFFFFF"
                                         onExited: parent.children[0].color = "#CCCCCC"
                                     }
