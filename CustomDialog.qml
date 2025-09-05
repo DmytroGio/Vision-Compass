@@ -18,7 +18,7 @@ Dialog {
     width: dialogWidth
     height: contentColumn.implicitHeight + 40 // Фиксированная высота
     padding: 0
-    focus: false
+    focus: true
 
     onOpened: {
         Qt.callLater(function() {

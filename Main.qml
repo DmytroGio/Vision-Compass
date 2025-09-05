@@ -219,9 +219,9 @@ ApplicationWindow {
            onActivated: selectSubGoalByIndex(8)
        }
 
-       // Ctrl + T - создание новой Task
+       // Shift + T - создание новой Task
        Shortcut {
-           sequence: "Ctrl+T"
+           sequence: "Shift+T"
            onActivated: addTaskDialog.open()
        }
 
@@ -247,6 +247,12 @@ ApplicationWindow {
        Shortcut {
            sequence: "D"
            onActivated: dataManagementDialog.open()
+       }
+
+       // G - edit Goal окно
+       Shortcut {
+           sequence: "G"
+           onActivated: editGoalDialog.open()
        }
 
        // Ctrl + S - save
