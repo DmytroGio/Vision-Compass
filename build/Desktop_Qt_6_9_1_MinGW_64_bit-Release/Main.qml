@@ -2404,16 +2404,26 @@ ApplicationWindow {
                 Rectangle {
                     Layout.fillWidth: true
                     height: 40
-                    color: "#2D2D2D"
+                    color: "#F3C44A"
                     radius: 6
-                    border.color: "#444444"
-                    border.width: 1
 
                     Text {
-                        text: "Use 1-9 keys to select subgoals"
-                        color: "#BBBBBB"
-                        font.pointSize: 10
+                        text: "Shortcuts"
                         anchors.centerIn: parent
+                        color: "#2D2D2D"
+                        font.pointSize: 11
+                        font.bold: true
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            infoDialog.close()
+                            shortcutsOverlay.showShortcuts()
+                        }
+                        hoverEnabled: true
+                        onEntered: parent.color = "#F5D96B"
+                        onExited: parent.color = "#F3C44A"
                     }
                 }
             }
@@ -2427,5 +2437,232 @@ ApplicationWindow {
             }
         ]
     }
+
+    // Shortcuts Overlay
+    Rectangle {
+        id: shortcutsOverlay
+        anchors.fill: parent
+        color: "transparent"
+        visible: false
+        opacity: 0.0
+        z: 2000
+
+        function showShortcuts() {
+            visible = true
+            opacity = 1.0
+            fadeOutTimer.start()
+        }
+
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 1500
+                easing.type: Easing.OutCubic
+            }
+        }
+
+        Timer {
+            id: fadeOutTimer
+            interval: 7000
+            onTriggered: {
+                shortcutsOverlay.opacity = 0.0
+            }
+        }
+
+        onOpacityChanged: {
+            if (opacity <= 0.0 && visible) {
+                Qt.callLater(function() {
+                    shortcutsOverlay.visible = false
+                })
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                shortcutsOverlay.opacity = 0.0
+            }
+        }
+
+        // Goal shortcut hint
+        Rectangle {
+            x: goalCircle.x + goalCircle.width / 2 - width / 2
+            y: goalCircle.y + goalCircle.height - 100
+            width: 45
+            height: 30
+            color: "#2D2D2D"
+            border.color: "#F3C44A"
+            border.width: 1
+            radius: 4
+            opacity: shortcutsOverlay.opacity
+
+            Text {
+                text: "G"
+                anchors.centerIn: parent
+                color: "#F3C44A"
+                font.pointSize: 12
+            }
+        }
+
+        // SubGoal numbers hint (single text)
+        Rectangle {
+            x: subGoalsContainer.x + subGoalsContainer.width / 2 - width / 2
+            y: subGoalsContainer.y + 10
+            width: 50
+            height: 30
+            color: "#2D2D2D"
+            border.color: "#F3C44A"
+            border.width: 1
+            radius: 4
+            opacity: shortcutsOverlay.opacity
+
+            Text {
+                text: "1-9"
+                anchors.centerIn: parent
+                color: "#F3C44A"
+                font.pointSize: 12
+            }
+        }
+
+        // Add SubGoal button hint
+        Rectangle {
+            x: addSubGoalButtonTop.x + addSubGoalButtonTop.width / 2 - width / 2
+            y: addSubGoalButtonTop.y - height
+            width: 70
+            height: 30
+            color: "#2D2D2D"
+            border.color: "#F3C44A"
+            border.width: 1
+            radius: 4
+            opacity: shortcutsOverlay.opacity
+
+            Text {
+                text: "Shift+S"
+                anchors.centerIn: parent
+                color: "#F3C44A"
+                font.pointSize: 11
+            }
+        }
+
+        // Add Task button hint
+        Rectangle {
+            x: addTaskButton.x + addTaskButton.width / 2 - width / 4
+            y: addTaskButton.y + 460
+            width: 70
+            height: 30
+            color: "#2D2D2D"
+            border.color: "#F3C44A"
+            border.width: 1
+            radius: 4
+            opacity: shortcutsOverlay.opacity
+
+            Text {
+                text: "Shift+T"
+                anchors.centerIn: parent
+                color: "#F3C44A"
+                font.pointSize: 11
+            }
+        }
+
+        // Data button hint
+        Rectangle {
+            x: dataMenuButton.x + dataMenuButton.width / 2 - width / 2
+            y: dataMenuButton.y - height
+            width: 30
+            height: 30
+            color: "#2D2D2D"
+            border.color: "#F3C44A"
+            border.width: 1
+            radius: 4
+            opacity: shortcutsOverlay.opacity
+
+            Text {
+                text: "D"
+                anchors.centerIn: parent
+                color: "#F3C44A"
+                font.pointSize: 12
+            }
+        }
+
+        // Info button hint
+        Rectangle {
+            x: infoButton.x + infoButton.width / 2 - width / 2
+            y: infoButton.y - height
+            width: 30
+            height: 30
+            color: "#2D2D2D"
+            border.color: "#F3C44A"
+            border.width: 0.5
+            radius: 4
+            opacity: shortcutsOverlay.opacity
+
+            Text {
+                text: "I"
+                anchors.centerIn: parent
+                color: "#F3C44A"
+                font.pointSize: 12
+            }
+        }
+
+        // X shortcut hint (centered with offset)
+        Rectangle {
+            x: parent.width / 2 - 300
+            y: bottomSection.y + 30
+            width: 150
+            height: 30
+            color: "#2D2D2D"
+            border.color: "#F3C44A"
+            border.width: 1
+            radius: 4
+            opacity: shortcutsOverlay.opacity
+
+            Text {
+                text: "X - done/undone"
+                anchors.centerIn: parent
+                color: "#F3C44A"
+                font.pointSize: 11
+            }
+        }
+
+        // Task navigation hint (above task list)
+        Rectangle {
+            x: parent.width / 2 - width / 2
+            y: bottomSection.y + 30
+            width: 220
+            height: 30
+            color: "#2D2D2D"
+            border.color: "#F3C44A"
+            border.width: 1
+            radius: 4
+            opacity: shortcutsOverlay.opacity
+
+            Text {
+                text: "Tab Shift+Tab / ↑ ↓ - Navigate"
+                anchors.centerIn: parent
+                color: "#F3C44A"
+                font.pointSize: 11
+            }
+        }
+
+        // Ctrl+S save hint (upper left, above Data button)
+        Rectangle {
+            x: parent.width / 2 - 450
+            y: 50
+            width: 150
+            height: 30
+            color: "#2D2D2D"
+            border.color: "#F3C44A"
+            border.width: 1
+            radius: 4
+            opacity: shortcutsOverlay.opacity
+
+            Text {
+                text: "Ctrl+S - Save"
+                anchors.centerIn: parent
+                color: "#F3C44A"
+                font.pointSize: 11
+            }
+        }
+    }
+
 }
 
