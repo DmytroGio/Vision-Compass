@@ -216,7 +216,7 @@ ApplicationWindow {
         // Проверяем состояние всех задач после действия
         Qt.callLater(function() {
             if (allCurrentTasksCompleted && AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
-                goalCirclePulseAnimation.start();
+                //goalCirclePulseAnimation.start();
             }
         });
 
@@ -380,16 +380,11 @@ ApplicationWindow {
         }
 
         // Объединенная анимация для синхронной пульсации bigCircle и goalCircle
-        SequentialAnimation {
+        ParallelAnimation {
             id: unifiedPulseAnimation
 
-            // Задержка перед началом (только для goalCircle анимации)
-            PauseAnimation {
-                duration: 500
-            }
-
-            ParallelAnimation {
-                // Анимация для bigCircle
+            // Анимация для bigCircle (запускается сразу)
+            SequentialAnimation {
                 ParallelAnimation {
                     ScaleAnimator {
                         target: bigCircle
@@ -427,47 +422,6 @@ ApplicationWindow {
                     }
                 }
 
-                // Анимация для goalCircle (синхронно с bigCircle)
-                ParallelAnimation {
-                    ScaleAnimator {
-                        target: goalCircle
-                        from: 1.0
-                        to: 1.03
-                        duration: 200
-                        easing.type: Easing.OutCubic
-                    }
-
-                    NumberAnimation {
-                        target: goalCircleEffect
-                        property: "shadowBlur"
-                        from: 1.5
-                        to: 1.0
-                        duration: 200
-                        easing.type: Easing.OutCubic
-                    }
-
-                    NumberAnimation {
-                        target: goalCircleEffect
-                        property: "shadowOpacity"
-                        from: 0.5
-                        to: 0.9
-                        duration: 200
-                        easing.type: Easing.OutCubic
-                    }
-
-                    NumberAnimation {
-                        target: goalCircleEffect
-                        property: "shadowVerticalOffset"
-                        from: 5
-                        to: 10
-                        duration: 200
-                        easing.type: Easing.OutCubic
-                    }
-                }
-            }
-
-            ParallelAnimation {
-                // Возврат bigCircle
                 ParallelAnimation {
                     ScaleAnimator {
                         target: bigCircle
@@ -504,14 +458,57 @@ ApplicationWindow {
                         easing.type: Easing.OutBack
                     }
                 }
+            }
 
-                // Возврат goalCircle
+            // Анимация для goalCircle (с задержкой)
+            SequentialAnimation {
+                PauseAnimation {
+                    duration: 200  // Задержка перед началом анимации goalCircle
+                }
+
                 ParallelAnimation {
                     ScaleAnimator {
                         target: goalCircle
-                        from: 1.03
+                        from: 1.0
+                        to: 1.01
+                        duration: 700
+                        easing.type: Easing.OutCubic
+                    }
+
+                    NumberAnimation {
+                        target: goalCircleEffect
+                        property: "shadowBlur"
+                        from: 1.5
                         to: 1.0
-                        duration: 300
+                        duration: 700
+                        easing.type: Easing.OutCubic
+                    }
+
+                    NumberAnimation {
+                        target: goalCircleEffect
+                        property: "shadowOpacity"
+                        from: 0.5
+                        to: 0.9
+                        duration: 700
+                        easing.type: Easing.OutCubic
+                    }
+
+                    NumberAnimation {
+                        target: goalCircleEffect
+                        property: "shadowVerticalOffset"
+                        from: 5
+                        to: 10
+                        duration: 700
+                        easing.type: Easing.OutCubic
+                    }
+                }
+
+                ParallelAnimation {
+                    ScaleAnimator {
+                        target: goalCircle
+                        from: 1.01
+                        to: 1.0
+                        duration: 1000
                         easing.type: Easing.OutBack
                     }
 
@@ -520,7 +517,7 @@ ApplicationWindow {
                         property: "shadowBlur"
                         from: 1.0
                         to: 1.5
-                        duration: 300
+                        duration: 1000
                         easing.type: Easing.OutBack
                     }
 
@@ -529,7 +526,7 @@ ApplicationWindow {
                         property: "shadowOpacity"
                         from: 0.9
                         to: 0.5
-                        duration: 300
+                        duration: 1000
                         easing.type: Easing.OutBack
                     }
 
@@ -538,9 +535,88 @@ ApplicationWindow {
                         property: "shadowVerticalOffset"
                         from: 10
                         to: 5
-                        duration: 300
+                        duration: 1000
                         easing.type: Easing.OutBack
                     }
+                }
+            }
+        }
+
+        // Анимация только для bigCircle (когда не все задачи выполнены)
+        SequentialAnimation {
+            id: bigCircleOnlyAnimation
+
+            ParallelAnimation {
+                ScaleAnimator {
+                    target: bigCircle
+                    from: 1.0
+                    to: 1.02
+                    duration: 200
+                    easing.type: Easing.OutCubic
+                }
+
+                NumberAnimation {
+                    target: bigCircleEffect
+                    property: "shadowBlur"
+                    from: 2.0
+                    to: 1.0
+                    duration: 200
+                    easing.type: Easing.OutCubic
+                }
+
+                NumberAnimation {
+                    target: bigCircleEffect
+                    property: "shadowOpacity"
+                    from: 0.4
+                    to: 0.8
+                    duration: 200
+                    easing.type: Easing.OutCubic
+                }
+
+                NumberAnimation {
+                    target: bigCircleEffect
+                    property: "shadowVerticalOffset"
+                    from: 5
+                    to: 8
+                    duration: 200
+                    easing.type: Easing.OutCubic
+                }
+            }
+
+            ParallelAnimation {
+                ScaleAnimator {
+                    target: bigCircle
+                    from: 1.02
+                    to: 1.0
+                    duration: 300
+                    easing.type: Easing.OutBack
+                }
+
+                NumberAnimation {
+                    target: bigCircleEffect
+                    property: "shadowBlur"
+                    from: 1.0
+                    to: 2.0
+                    duration: 300
+                    easing.type: Easing.OutBack
+                }
+
+                NumberAnimation {
+                    target: bigCircleEffect
+                    property: "shadowOpacity"
+                    from: 0.8
+                    to: 0.4
+                    duration: 300
+                    easing.type: Easing.OutBack
+                }
+
+                NumberAnimation {
+                    target: bigCircleEffect
+                    property: "shadowVerticalOffset"
+                    from: 8
+                    to: 5
+                    duration: 300
+                    easing.type: Easing.OutBack
                 }
             }
         }
