@@ -174,10 +174,16 @@ ApplicationWindow {
         taskScrollAnimation.start();
     }
 
-    function preserveScrollPosition(action) {
+    function preserveScrollPosition(action, shouldAnimate = false) {
         var currentY = taskListView.contentY
         taskListView.blockModelUpdate = true
         action()
+
+        // Запускаем анимацию только если это явно указано
+        if (shouldAnimate) {
+            bigCirclePulseAnimation.start()
+        }
+
         taskListView.blockModelUpdate = false
         taskListView.contentY = currentY
     }
@@ -230,9 +236,18 @@ ApplicationWindow {
            sequence: "X"
            onActivated: {
                if (AppViewModel.selectedTaskId > 0) {
+                   // Проверяем текущий статус перед изменением
+                   var wasCompleted = false
+                   for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
+                       if (AppViewModel.currentTasksListModel[i].id === AppViewModel.selectedTaskId) {
+                           wasCompleted = AppViewModel.currentTasksListModel[i].completed
+                           break
+                       }
+                   }
+
                    preserveScrollPosition(function() {
                        AppViewModel.completeTask(AppViewModel.selectedTaskId)
-                   })
+                   }, !wasCompleted) // анимация только если задача была НЕ выполнена
                }
            }
        }
@@ -328,8 +343,88 @@ ApplicationWindow {
             }
         }
 
+        // Анимация пульсации для Big Circle
+        SequentialAnimation {
+            id: bigCirclePulseAnimation
+
+            ParallelAnimation {
+                ScaleAnimator {
+                    target: bigCircle
+                    from: 1.0
+                    to: 1.02
+                    duration: 200
+                    easing.type: Easing.OutCubic
+                }
+
+                NumberAnimation {
+                    target: bigCircleEffect
+                    property: "shadowBlur"
+                    from: 2.0
+                    to: 1.0
+                    duration: 200
+                    easing.type: Easing.OutCubic
+                }
+
+                NumberAnimation {
+                    target: bigCircleEffect
+                    property: "shadowOpacity"
+                    from: 0.4
+                    to: 0.8
+                    duration: 200
+                    easing.type: Easing.OutCubic
+                }
+
+                NumberAnimation {
+                    target: bigCircleEffect
+                    property: "shadowVerticalOffset"
+                    from: 5
+                    to: 8
+                    duration: 200
+                    easing.type: Easing.OutCubic
+                }
+            }
+
+            ParallelAnimation {
+                ScaleAnimator {
+                    target: bigCircle
+                    from: 1.02
+                    to: 1.0
+                    duration: 300
+                    easing.type: Easing.OutBack
+                }
+
+                NumberAnimation {
+                    target: bigCircleEffect
+                    property: "shadowBlur"
+                    from: 1.0
+                    to: 2.0
+                    duration: 300
+                    easing.type: Easing.OutBack
+                }
+
+                NumberAnimation {
+                    target: bigCircleEffect
+                    property: "shadowOpacity"
+                    from: 0.8
+                    to: 0.4
+                    duration: 300
+                    easing.type: Easing.OutBack
+                }
+
+                NumberAnimation {
+                    target: bigCircleEffect
+                    property: "shadowVerticalOffset"
+                    from: 8
+                    to: 5
+                    duration: 300
+                    easing.type: Easing.OutBack
+                }
+            }
+        }
+
         // Тень для большого круга
         MultiEffect {
+            id: bigCircleEffect
             source: bigCircle
             anchors.fill: bigCircle
             shadowEnabled: true
@@ -388,7 +483,9 @@ ApplicationWindow {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        editGoalDialog.open()
+                        if (isInsideCircle) {
+                            editGoalDialog.open()
+                        }
                     }
                     hoverEnabled: true
 
@@ -403,8 +500,8 @@ ApplicationWindow {
                     }
 
                     onPositionChanged: {
-                        if (isInsideCircle && !parent.color.toString().includes("#3A3A3A")) {
-                            parent.color = "#3A3A3A"
+                        if (isInsideCircle && !parent.color.toString().includes("#3F2F2F")) {
+                            parent.color = "#3F2F2F"
                         } else if (!isInsideCircle && !parent.color.toString().includes("#282828")) {
                             parent.color = "#282828"
                         }
@@ -648,7 +745,7 @@ ApplicationWindow {
                                                 if (isSelected) {
                                                     return "transparent"; // Будет использоваться градиент
                                                 } else if (isHovered) {
-                                                    return "#3D3D39";
+                                                    return "#4A4A43";
                                                 } else {
                                                     return "#323232";
                                                 }
@@ -863,10 +960,11 @@ ApplicationWindow {
                         addSubGoalDialog.open()
                     }
                     hoverEnabled: true
-                    onEntered: mainButton.color = "#525252"
+                    onEntered: mainButton.color = "#4A4A43"
                     onExited: mainButton.color = "#383838"
                 }
             }
+
             // Data Management Menu Button
             Item {
                 id: dataMenuButton
@@ -878,8 +976,12 @@ ApplicationWindow {
                 Rectangle {
                     id: dataButton
                     anchors.fill: parent
-                    color: "#383838"
+                    color: dataMouseArea.containsMouse ? "#4A4A43" : "#383838"
                     radius: 25
+
+                    Behavior on color {
+                        ColorAnimation { duration: 150 }
+                    }
 
                     Column {
                         anchors.centerIn: parent
@@ -889,16 +991,24 @@ ApplicationWindow {
                             width: 14
                             height: 14
                             radius: 7
-                            color: "#585847"
+                            color: dataMouseArea.containsMouse ? "#74745D" : "#585847"
                             anchors.horizontalCenter: parent.horizontalCenter
+
+                            Behavior on color {
+                                ColorAnimation { duration: 150 }
+                            }
                         }
 
                         Rectangle {
                             width: 14
                             height: 14
                             radius: 7
-                            color: "#585847"
+                            color: dataMouseArea.containsMouse ? "#74745D" : "#585847"
                             anchors.horizontalCenter: parent.horizontalCenter
+
+                            Behavior on color {
+                                ColorAnimation { duration: 150 }
+                            }
                         }
                     }
                 }
@@ -909,22 +1019,21 @@ ApplicationWindow {
                     shadowEnabled: true
                     shadowOpacity: 0.5
                     shadowColor: "#000000"
-                    //shadowHorizontalOffset: 3
                     shadowVerticalOffset: 3
                     shadowBlur: 0.8
                     z: -1
                 }
 
                 MouseArea {
+                    id: dataMouseArea
                     anchors.fill: parent
+                    hoverEnabled: true
                     onClicked: {
                         dataManagementDialog.open()
                     }
-                    hoverEnabled: true
-                    onEntered: dataButton.color = "#525252"
-                    onExited: dataButton.color = "#383838"
                 }
             }
+
             // Info Button
             Item {
                 id: infoButton
@@ -940,11 +1049,16 @@ ApplicationWindow {
                     radius: 25
 
                     Rectangle {
+                        id: infoCircle
                         width: 20
                         height: 20
                         radius: 10
                         color: "#585847"
                         anchors.centerIn: parent
+
+                        Behavior on color {
+                            ColorAnimation { duration: 150 }
+                        }
                     }
                 }
 
@@ -954,7 +1068,6 @@ ApplicationWindow {
                     shadowEnabled: true
                     shadowOpacity: 0.5
                     shadowColor: "#000000"
-                    //shadowHorizontalOffset: 3
                     shadowVerticalOffset: 3
                     shadowBlur: 0.8
                     z: -1
@@ -962,12 +1075,18 @@ ApplicationWindow {
 
                 MouseArea {
                     anchors.fill: parent
+                    hoverEnabled: true
                     onClicked: {
                         infoDialog.open()
                     }
-                    hoverEnabled: true
-                    onEntered: infoButtonRect.color = "#525252"
-                    onExited: infoButtonRect.color = "#383838"
+                    onEntered: {
+                        infoButtonRect.color = "#4A4A43"
+                        infoCircle.color = "#74745D"
+                    }
+                    onExited: {
+                        infoButtonRect.color = "#383838"
+                        infoCircle.color = "#585847"
+                    }
                 }
             }
         }
@@ -1017,7 +1136,7 @@ ApplicationWindow {
                                 addTaskDialog.open()
                             }
                             hoverEnabled: true
-                            onEntered: parent.color = "#525252"
+                            onEntered: parent.color = "#4A4A43"
                             onExited: parent.color = "#383838"
                         }
                     }
@@ -1147,17 +1266,19 @@ ApplicationWindow {
                                         anchors.fill: parent
                                         hoverEnabled: true
                                         z: 100
-                                        // Пропускаем события hover к родительскому MouseArea
                                         propagateComposedEvents: true
 
                                         onClicked: {
                                             AppViewModel.selectTask(modelData.id)
+
+                                            // Проверяем текущий статус перед изменением
+                                            var wasCompleted = modelData.completed
+
                                             preserveScrollPosition(function() {
                                                 AppViewModel.completeTask(modelData.id)
-                                            })
+                                            }, !wasCompleted) // анимация только если задача была НЕ выполнена
                                         }
 
-                                        // Не блокируем hover события
                                         onEntered: { /* ничего не делаем */ }
                                         onExited: { /* ничего не делаем */ }
                                     }
