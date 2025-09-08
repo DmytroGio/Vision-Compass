@@ -378,7 +378,30 @@ QString AppViewModel::getDefaultExportFileName() const {
 }
 
 QString AppViewModel::getDefaultImportPath() const {
-    return QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    QString backupDir = getDefaultDataPath(); // Documents/VisionCompass_Backups
+    QDir dir(backupDir);
+
+    if (!dir.exists()) {
+        qDebug() << "Backup directory does not exist:" << backupDir;
+        return backupDir; // Возвращаем путь к папке, даже если её нет
+    }
+
+    // Ищем все файлы с нужным паттерном
+    QStringList nameFilters;
+    nameFilters << "VisionCompass_backup_*.json";
+    QFileInfoList backupFiles = dir.entryInfoList(nameFilters, QDir::Files, QDir::Time);
+
+    if (backupFiles.isEmpty()) {
+        qDebug() << "No backup files found in:" << backupDir;
+        return backupDir; // Возвращаем путь к папке
+    }
+
+    // Возвращаем путь к самому новому файлу
+    QFileInfo latestFile = backupFiles.first();
+    QString latestFilePath = latestFile.absoluteFilePath();
+
+    qDebug() << "Latest backup file found:" << latestFilePath;
+    return latestFilePath;
 }
 
 QString AppViewModel::getCurrentDataAsJson() const {

@@ -390,7 +390,7 @@ ApplicationWindow {
                         target: bigCircle
                         from: 1.0
                         to: 1.02
-                        duration: 200
+                        duration: 600
                         easing.type: Easing.OutCubic
                     }
 
@@ -399,7 +399,7 @@ ApplicationWindow {
                         property: "shadowBlur"
                         from: 2.0
                         to: 1.0
-                        duration: 200
+                        duration: 600
                         easing.type: Easing.OutCubic
                     }
 
@@ -408,7 +408,7 @@ ApplicationWindow {
                         property: "shadowOpacity"
                         from: 0.4
                         to: 0.8
-                        duration: 200
+                        duration: 600
                         easing.type: Easing.OutCubic
                     }
 
@@ -417,18 +417,19 @@ ApplicationWindow {
                         property: "shadowVerticalOffset"
                         from: 5
                         to: 8
-                        duration: 200
+                        duration: 600
                         easing.type: Easing.OutCubic
                     }
                 }
 
                 ParallelAnimation {
+
                     ScaleAnimator {
                         target: bigCircle
                         from: 1.02
                         to: 1.0
-                        duration: 300
-                        easing.type: Easing.OutBack
+                        duration: 1600
+                        easing.type: Easing.OutCubic
                     }
 
                     NumberAnimation {
@@ -436,7 +437,7 @@ ApplicationWindow {
                         property: "shadowBlur"
                         from: 1.0
                         to: 2.0
-                        duration: 300
+                        duration: 1600
                         easing.type: Easing.OutBack
                     }
 
@@ -445,7 +446,7 @@ ApplicationWindow {
                         property: "shadowOpacity"
                         from: 0.8
                         to: 0.4
-                        duration: 300
+                        duration: 1600
                         easing.type: Easing.OutBack
                     }
 
@@ -454,7 +455,7 @@ ApplicationWindow {
                         property: "shadowVerticalOffset"
                         from: 8
                         to: 5
-                        duration: 300
+                        duration: 1600
                         easing.type: Easing.OutBack
                     }
                 }
@@ -547,11 +548,12 @@ ApplicationWindow {
             id: bigCircleOnlyAnimation
 
             ParallelAnimation {
+
                 ScaleAnimator {
                     target: bigCircle
                     from: 1.0
                     to: 1.02
-                    duration: 200
+                    duration: 600
                     easing.type: Easing.OutCubic
                 }
 
@@ -560,7 +562,7 @@ ApplicationWindow {
                     property: "shadowBlur"
                     from: 2.0
                     to: 1.0
-                    duration: 200
+                    duration: 600
                     easing.type: Easing.OutCubic
                 }
 
@@ -569,7 +571,7 @@ ApplicationWindow {
                     property: "shadowOpacity"
                     from: 0.4
                     to: 0.8
-                    duration: 200
+                    duration: 600
                     easing.type: Easing.OutCubic
                 }
 
@@ -578,18 +580,19 @@ ApplicationWindow {
                     property: "shadowVerticalOffset"
                     from: 5
                     to: 8
-                    duration: 200
+                    duration: 600
                     easing.type: Easing.OutCubic
                 }
             }
 
             ParallelAnimation {
+
                 ScaleAnimator {
                     target: bigCircle
                     from: 1.02
                     to: 1.0
-                    duration: 300
-                    easing.type: Easing.OutBack
+                    duration: 1600
+                    easing.type: Easing.OutCubic
                 }
 
                 NumberAnimation {
@@ -597,7 +600,7 @@ ApplicationWindow {
                     property: "shadowBlur"
                     from: 1.0
                     to: 2.0
-                    duration: 300
+                    duration: 1600
                     easing.type: Easing.OutBack
                 }
 
@@ -606,7 +609,7 @@ ApplicationWindow {
                     property: "shadowOpacity"
                     from: 0.8
                     to: 0.4
-                    duration: 300
+                    duration: 1600
                     easing.type: Easing.OutBack
                 }
 
@@ -615,7 +618,7 @@ ApplicationWindow {
                     property: "shadowVerticalOffset"
                     from: 8
                     to: 5
-                    duration: 300
+                    duration: 1600
                     easing.type: Easing.OutBack
                 }
             }
@@ -2233,9 +2236,9 @@ ApplicationWindow {
     }
 
     function importData() {
-        // Для импорта используем простой путь - пользователь может указать файл
-        var defaultPath = AppViewModel.getDefaultImportPath() + "/VisionCompass_backup.json"
-        fileManager.importFromFile(defaultPath)
+        // getDefaultImportPath() теперь возвращает полный путь к последнему файлу
+        var filePath = AppViewModel.getDefaultImportPath()
+        fileManager.importFromFile(filePath)
     }
 
     // Компонент для показа статус сообщений
