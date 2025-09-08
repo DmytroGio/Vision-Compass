@@ -4,7 +4,8 @@
         <file>Screen01.qml</file>
         <file>CustomDialog.qml</file>
         <file>icons/compass-icon.png</file>
-		<file>icons/export_import-icon.png</file>
+        <file>icons/export_import-icon.png</file>
+        <file>Animations.qml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

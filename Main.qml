@@ -6,7 +6,6 @@ import QtQuick.Effects
 //import Qt.labs.platform 1.1 as Platform
 import com.visioncompass 1.0
 
-
 ApplicationWindow {
     id: mainWindow
     visible: true
@@ -19,6 +18,17 @@ ApplicationWindow {
     title: "Vision Compass"
 
     //flags: Qt.FramelessWindowHint
+
+    Animations {
+        id: appAnimations
+        bigCircle: bigCircle
+        bigCircleEffect: bigCircleEffect
+        goalCircle: goalCircle
+        goalCircleEffect: goalCircleEffect
+        taskListView: taskListView
+        subGoalsList: subGoalsList
+    }
+
 
     // Load data when the application starts
     Component.onCompleted: {
@@ -48,7 +58,7 @@ ApplicationWindow {
             // Проверяем состояние задач с небольшой задержкой для корректного обновления
             Qt.callLater(function() {
                 if (allCurrentTasksCompleted && AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
-                    unifiedPulseAnimation.start();
+                    appAnimations.unifiedPulseAnimation.start();
                 }
             });
         }
@@ -99,8 +109,8 @@ ApplicationWindow {
         subGoalsList.contentX = targetContentX;
 
         // Затем запускаем анимацию для плавности
-        scrollAnimation.to = targetContentX;
-        scrollAnimation.start();
+        appAnimations.scrollAnimation.to = targetContentX;
+        appAnimations.scrollAnimation.start();
     }
 
     function selectSubGoalByIndex(index) {
@@ -195,8 +205,8 @@ ApplicationWindow {
         targetContentY = Math.max(0, Math.min(maxContentY, targetContentY));
 
         // Плавная анимация скролла
-        taskScrollAnimation.to = targetContentY;
-        taskScrollAnimation.start();
+        appAnimations.taskScrollAnimation.to = targetContentY;
+        appAnimations.taskScrollAnimation.start();
     }
 
     function preserveScrollPosition(action, shouldAnimate = false) {
@@ -205,12 +215,10 @@ ApplicationWindow {
         action()
 
         // Запускаем анимацию только если это явно указано
-        if (shouldAnimate) {
-            if (allCurrentTasksCompleted && AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
-                unifiedPulseAnimation.start()
-            } else {
-                bigCircleOnlyAnimation.start()
-            }
+        if (allCurrentTasksCompleted && AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
+            appAnimations.unifiedPulseAnimation.start()
+        } else {
+            appAnimations.bigCircleOnlyAnimation.start()
         }
 
         // Проверяем состояние всех задач после действия
@@ -344,14 +352,6 @@ ApplicationWindow {
     // Make AppViewModel available in this QML file
     // Create rectangle
 
-    NumberAnimation {
-      id: taskScrollAnimation
-      target: taskListView
-      property: "contentY"
-      duration: 300
-      easing.type: Easing.OutCubic
-    }
-
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
@@ -376,251 +376,6 @@ ApplicationWindow {
                 ctx.closePath();
                 ctx.fillStyle = "#282828";
                 ctx.fill();
-            }
-        }
-
-        // Объединенная анимация для синхронной пульсации bigCircle и goalCircle
-        ParallelAnimation {
-            id: unifiedPulseAnimation
-
-            // Анимация для bigCircle (запускается сразу)
-            SequentialAnimation {
-                ParallelAnimation {
-                    ScaleAnimator {
-                        target: bigCircle
-                        from: 1.0
-                        to: 1.02
-                        duration: 600
-                        easing.type: Easing.OutCubic
-                    }
-
-                    NumberAnimation {
-                        target: bigCircleEffect
-                        property: "shadowBlur"
-                        from: 2.0
-                        to: 1.0
-                        duration: 600
-                        easing.type: Easing.OutCubic
-                    }
-
-                    NumberAnimation {
-                        target: bigCircleEffect
-                        property: "shadowOpacity"
-                        from: 0.4
-                        to: 0.8
-                        duration: 600
-                        easing.type: Easing.OutCubic
-                    }
-
-                    NumberAnimation {
-                        target: bigCircleEffect
-                        property: "shadowVerticalOffset"
-                        from: 5
-                        to: 8
-                        duration: 600
-                        easing.type: Easing.OutCubic
-                    }
-                }
-
-                ParallelAnimation {
-
-                    ScaleAnimator {
-                        target: bigCircle
-                        from: 1.02
-                        to: 1.0
-                        duration: 1600
-                        easing.type: Easing.OutCubic
-                    }
-
-                    NumberAnimation {
-                        target: bigCircleEffect
-                        property: "shadowBlur"
-                        from: 1.0
-                        to: 2.0
-                        duration: 1600
-                        easing.type: Easing.OutBack
-                    }
-
-                    NumberAnimation {
-                        target: bigCircleEffect
-                        property: "shadowOpacity"
-                        from: 0.8
-                        to: 0.4
-                        duration: 1600
-                        easing.type: Easing.OutBack
-                    }
-
-                    NumberAnimation {
-                        target: bigCircleEffect
-                        property: "shadowVerticalOffset"
-                        from: 8
-                        to: 5
-                        duration: 1600
-                        easing.type: Easing.OutBack
-                    }
-                }
-            }
-
-            // Анимация для goalCircle (с задержкой)
-            SequentialAnimation {
-                PauseAnimation {
-                    duration: 200  // Задержка перед началом анимации goalCircle
-                }
-
-                ParallelAnimation {
-                    ScaleAnimator {
-                        target: goalCircle
-                        from: 1.0
-                        to: 1.01
-                        duration: 700
-                        easing.type: Easing.OutCubic
-                    }
-
-                    NumberAnimation {
-                        target: goalCircleEffect
-                        property: "shadowBlur"
-                        from: 1.5
-                        to: 1.0
-                        duration: 700
-                        easing.type: Easing.OutCubic
-                    }
-
-                    NumberAnimation {
-                        target: goalCircleEffect
-                        property: "shadowOpacity"
-                        from: 0.5
-                        to: 0.9
-                        duration: 700
-                        easing.type: Easing.OutCubic
-                    }
-
-                    NumberAnimation {
-                        target: goalCircleEffect
-                        property: "shadowVerticalOffset"
-                        from: 5
-                        to: 10
-                        duration: 700
-                        easing.type: Easing.OutCubic
-                    }
-                }
-
-                ParallelAnimation {
-                    ScaleAnimator {
-                        target: goalCircle
-                        from: 1.01
-                        to: 1.0
-                        duration: 2000
-                        easing.type: Easing.OutBack
-                    }
-
-                    NumberAnimation {
-                        target: goalCircleEffect
-                        property: "shadowBlur"
-                        from: 1.0
-                        to: 1.5
-                        duration: 2000
-                        easing.type: Easing.OutBack
-                    }
-
-                    NumberAnimation {
-                        target: goalCircleEffect
-                        property: "shadowOpacity"
-                        from: 0.9
-                        to: 0.5
-                        duration: 2000
-                        easing.type: Easing.OutBack
-                    }
-
-                    NumberAnimation {
-                        target: goalCircleEffect
-                        property: "shadowVerticalOffset"
-                        from: 10
-                        to: 5
-                        duration: 2000
-                        easing.type: Easing.OutBack
-                    }
-                }
-            }
-        }
-
-        // Анимация только для bigCircle (когда не все задачи выполнены)
-        SequentialAnimation {
-            id: bigCircleOnlyAnimation
-
-            ParallelAnimation {
-
-                ScaleAnimator {
-                    target: bigCircle
-                    from: 1.0
-                    to: 1.02
-                    duration: 600
-                    easing.type: Easing.OutCubic
-                }
-
-                NumberAnimation {
-                    target: bigCircleEffect
-                    property: "shadowBlur"
-                    from: 2.0
-                    to: 1.0
-                    duration: 600
-                    easing.type: Easing.OutCubic
-                }
-
-                NumberAnimation {
-                    target: bigCircleEffect
-                    property: "shadowOpacity"
-                    from: 0.4
-                    to: 0.8
-                    duration: 600
-                    easing.type: Easing.OutCubic
-                }
-
-                NumberAnimation {
-                    target: bigCircleEffect
-                    property: "shadowVerticalOffset"
-                    from: 5
-                    to: 8
-                    duration: 600
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-            ParallelAnimation {
-
-                ScaleAnimator {
-                    target: bigCircle
-                    from: 1.02
-                    to: 1.0
-                    duration: 1600
-                    easing.type: Easing.OutCubic
-                }
-
-                NumberAnimation {
-                    target: bigCircleEffect
-                    property: "shadowBlur"
-                    from: 1.0
-                    to: 2.0
-                    duration: 1600
-                    easing.type: Easing.OutBack
-                }
-
-                NumberAnimation {
-                    target: bigCircleEffect
-                    property: "shadowOpacity"
-                    from: 0.8
-                    to: 0.4
-                    duration: 1600
-                    easing.type: Easing.OutBack
-                }
-
-                NumberAnimation {
-                    target: bigCircleEffect
-                    property: "shadowVerticalOffset"
-                    from: 8
-                    to: 5
-                    duration: 1600
-                    easing.type: Easing.OutBack
-                }
             }
         }
 
