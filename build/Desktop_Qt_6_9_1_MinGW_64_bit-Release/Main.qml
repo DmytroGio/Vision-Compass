@@ -509,7 +509,7 @@ ApplicationWindow {
                         target: goalCircle
                         from: 1.01
                         to: 1.0
-                        duration: 1000
+                        duration: 2000
                         easing.type: Easing.OutBack
                     }
 
@@ -518,7 +518,7 @@ ApplicationWindow {
                         property: "shadowBlur"
                         from: 1.0
                         to: 1.5
-                        duration: 1000
+                        duration: 2000
                         easing.type: Easing.OutBack
                     }
 
@@ -527,7 +527,7 @@ ApplicationWindow {
                         property: "shadowOpacity"
                         from: 0.9
                         to: 0.5
-                        duration: 1000
+                        duration: 2000
                         easing.type: Easing.OutBack
                     }
 
@@ -536,7 +536,7 @@ ApplicationWindow {
                         property: "shadowVerticalOffset"
                         from: 10
                         to: 5
-                        duration: 1000
+                        duration: 2000
                         easing.type: Easing.OutBack
                     }
                 }
@@ -1017,11 +1017,11 @@ ApplicationWindow {
                                             source: subGoalRect
                                             anchors.fill: subGoalRect
                                             shadowEnabled: true
-                                            shadowOpacity: 0.6
+                                            shadowOpacity: 0.5
                                             shadowColor: allTasksCompleted ? "#E95B5B" : "#000000"
                                             //shadowHorizontalOffset: 3
-                                            shadowVerticalOffset: 3
-                                            shadowBlur: allTasksCompleted ? 1.2 : 0.8
+                                            shadowVerticalOffset: 2
+                                            shadowBlur: allTasksCompleted ? 0.5 : 0.5
                                             z: -1
                                         }
                                     }
@@ -1403,7 +1403,7 @@ ApplicationWindow {
                             id: taskItem
                             width: 600
                             height: Math.max(50, taskContent.implicitHeight + 16)
-                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.horizontalCenter: parent ? parent.horizontalCenter : undefined
                             radius: 12
                             border.color: "#444444"
                             border.width: 1
