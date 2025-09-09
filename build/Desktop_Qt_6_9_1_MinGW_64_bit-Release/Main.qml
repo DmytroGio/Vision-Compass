@@ -8,6 +8,7 @@ import com.visioncompass 1.0
 
 ApplicationWindow {
     id: mainWindow
+    objectName: "mainWindow"
     visible: true
     width: 1000
     height: 900
@@ -371,8 +372,6 @@ ApplicationWindow {
            onActivated: selectTaskByDirection("up")
        }
 
-    // Make AppViewModel available in this QML file
-    // Create rectangle
 
     ColumnLayout {
         anchors.fill: parent
@@ -1466,6 +1465,10 @@ ApplicationWindow {
         fileManager.importFromFile(filePath)
     }
 
+    function showShortcuts() {
+        shortcutsOverlay.showShortcuts()
+    }
+
     // Компонент для показа статус сообщений
     Rectangle {
         id: statusMessage
@@ -1550,13 +1553,6 @@ ApplicationWindow {
                 Qt.callLater(function() {
                     shortcutsOverlay.visible = false
                 })
-            }
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                shortcutsOverlay.opacity = 0.0
             }
         }
 

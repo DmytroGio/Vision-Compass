@@ -1019,7 +1019,7 @@ Item {
                         anchors.fill: parent
                         onClicked: {
                             infoDialog.close()
-                            mainWindow.shortcutsOverlay.showShortcuts()
+                            mainWindow.showShortcuts()
                         }
                         hoverEnabled: true
                         onEntered: parent.color = "#F5D96B"

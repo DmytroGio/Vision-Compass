@@ -16,7 +16,7 @@ Dialog {
     parent: Overlay.overlay
     anchors.centerIn: Overlay.overlay
     width: dialogWidth
-    height: contentColumn.implicitHeight + 40 // Фиксированная высота
+    height: contentColumn.implicitHeight + 50 // Фиксированная высота
     padding: 0
     focus: true
 
