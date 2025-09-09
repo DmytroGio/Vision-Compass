@@ -6,6 +6,7 @@
         <file>icons/compass-icon.png</file>
         <file>icons/export_import-icon.png</file>
         <file>Animations.qml</file>
+        <file>Dialogs.qml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
