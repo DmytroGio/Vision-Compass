@@ -213,16 +213,18 @@ ApplicationWindow {
         appAnimations.taskScrollAnimation.start();
     }
 
-    function preserveScrollPosition(action, shouldAnimate = false) {
+    function preserveScrollPosition(action, wasTaskCompleted = false) {
         var currentY = taskListView.contentY
         taskListView.blockModelUpdate = true
         action()
 
-        // Запускаем анимацию только если это явно указано
-        if (allCurrentTasksCompleted && AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
-            appAnimations.unifiedPulseAnimation.start()
-        } else {
-            appAnimations.bigCircleOnlyAnimation.start()
+        // Запускаем анимацию только если задача была отмечена как выполненная (не снималась отметка)
+        if (!wasTaskCompleted) {
+            if (allCurrentTasksCompleted && AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
+                appAnimations.startUnifiedPulseAnimation()
+            } else {
+                appAnimations.startBigCircleOnlyAnimation()
+            }
         }
 
         // Проверяем состояние всех задач после действия
@@ -280,25 +282,25 @@ ApplicationWindow {
        }
 
        // X - отметка выбранной Task как done/undone
-       Shortcut {
-           sequence: "X"
-           onActivated: {
-               if (AppViewModel.selectedTaskId > 0) {
-                   // Проверяем текущий статус перед изменением
-                   var wasCompleted = false
-                   for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
-                       if (AppViewModel.currentTasksListModel[i].id === AppViewModel.selectedTaskId) {
-                           wasCompleted = AppViewModel.currentTasksListModel[i].completed
-                           break
-                       }
-                   }
+        Shortcut {
+          sequence: "X"
+          onActivated: {
+              if (AppViewModel.selectedTaskId > 0) {
+                  // Проверяем текущий статус перед изменением
+                  var wasCompleted = false
+                  for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
+                      if (AppViewModel.currentTasksListModel[i].id === AppViewModel.selectedTaskId) {
+                          wasCompleted = AppViewModel.currentTasksListModel[i].completed
+                          break
+                      }
+                  }
 
-                   preserveScrollPosition(function() {
-                       AppViewModel.completeTask(AppViewModel.selectedTaskId)
-                   }, !wasCompleted) // анимация только если задача была НЕ выполнена
-               }
-           }
-       }
+                  preserveScrollPosition(function() {
+                      AppViewModel.completeTask(AppViewModel.selectedTaskId)
+                  }, wasCompleted) // передаем WAS completed (до изменения)
+              }
+          }
+        }
 
        // I - info окно
        Shortcut {
@@ -1238,7 +1240,7 @@ ApplicationWindow {
 
                                             preserveScrollPosition(function() {
                                                 AppViewModel.completeTask(modelData.id)
-                                            }, !wasCompleted) // анимация только если задача была НЕ выполнена
+                                            }, wasCompleted) // передаем WAS completed (до изменения)
                                         }
 
                                         onEntered: { /* ничего не делаем */ }
@@ -1722,6 +1724,4 @@ ApplicationWindow {
             }
         }
     }
-
 }
-

@@ -237,4 +237,20 @@ Item {
             }
         }
     }
+
+    // Методы для остановки анимаций
+    function stopAllAnimations() {
+        unifiedPulseAnimation.stop()
+        bigCircleOnlyAnimation.stop()
+    }
+
+    function startUnifiedPulseAnimation() {
+        stopAllAnimations()
+        unifiedPulseAnimation.start()
+    }
+
+    function startBigCircleOnlyAnimation() {
+        stopAllAnimations()
+        bigCircleOnlyAnimation.start()
+    }
 }
