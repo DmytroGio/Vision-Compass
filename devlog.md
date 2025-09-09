@@ -115,7 +115,11 @@ To see the global goals of life and plan according to them.
 
 ## 2025-09-01
 - Updated design in Figma and shortcuts written [done]
-- Create shortcuts
-- Add shortcuts to the Info pop-up or highlight them in another convenient way.
+- Create shortcuts [done]
+- Add shortcuts to the Info pop-up or highlight them in another convenient way. [done]
 
 - Prepare export and presentation for Github
+
+## 2025-09-09
+- correct the layout of auxiliary dialogs (add, delete, edit, data, info)
+- to formalize the presentation and ideology of the project

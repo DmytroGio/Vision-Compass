@@ -52,6 +52,22 @@ ApplicationWindow {
             Qt.callLater(function() {
                 // При смене SubGoal нужен скроллинг, так как это навигационное действие
                 selectFirstTaskIfNeeded(true);
+
+                // Проверяем, есть ли задачи и все ли они выполнены
+                if (AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
+                    var allCompleted = true;
+                    for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
+                        if (!AppViewModel.currentTasksListModel[i].completed) {
+                            allCompleted = false;
+                            break;
+                        }
+                    }
+
+                    // Запускаем анимацию если все задачи выполнены
+                    if (allCompleted) {
+                        appAnimations.startUnifiedPulseAnimation();
+                    }
+                }
             });
         }
     }
