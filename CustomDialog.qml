@@ -16,7 +16,7 @@ Dialog {
     parent: Overlay.overlay
     anchors.centerIn: Overlay.overlay
     width: dialogWidth
-    height: contentColumn.implicitHeight + 50 // Фиксированная высота
+    height: contentColumn.implicitHeight + 80 // Фиксированная высота
     padding: 0
     focus: true
 
@@ -67,7 +67,7 @@ Dialog {
         ColumnLayout {
             id: contentColumn
             anchors.fill: parent
-            anchors.margins: 20
+            anchors.margins: 30 // Равные отступы со всех сторон
             spacing: 20
 
             // Dynamic Content
@@ -75,18 +75,19 @@ Dialog {
                 id: contentLoader
                 sourceComponent: root.content
                 Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter // Центрируем контент по горизонтали
             }
 
             // Buttons
             RowLayout {
                 Layout.fillWidth: true
-                spacing: 10
+                spacing: 15
                 visible: root.buttons.length > 0
 
                 Repeater {
                     model: root.buttons
                     delegate: Rectangle {
-                        Layout.fillWidth: true
+                        Layout.fillWidth: true // Кнопки займут всё доступное пространство
                         Layout.preferredHeight: 40
                         color: modelData.color || "#3A3A3A"
                         radius: 8
