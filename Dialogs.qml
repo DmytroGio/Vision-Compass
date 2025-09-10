@@ -484,6 +484,7 @@ Item {
 
                     TextInput {
                         id: editGoalNameInput
+                        objectName: "goalNameInput"
                         anchors.fill: parent
                         anchors.margins: 12
                         color: "#FFFFFF"
@@ -492,6 +493,18 @@ Item {
                         selectByMouse: true
                         clip: true
                         text: AppViewModel.currentGoalText
+
+                        onAccepted: {
+                            if (text.trim() !== "" && editGoalDescriptionInput.text.trim() !== "") {
+                                AppViewModel.setMainGoal(text.trim(), editGoalDescriptionInput.text.trim());
+                                editGoalDialog.close();
+                            }
+                        }
+
+                        Keys.onTabPressed: {
+                            editGoalDescriptionInput.forceActiveFocus();
+                            editGoalDescriptionInput.selectAll();
+                        }
                     }
 
                     Text {
@@ -515,6 +528,7 @@ Item {
 
                     TextInput {
                         id: editGoalDescriptionInput
+                        objectName: "goalDescInput"
                         anchors.fill: parent
                         anchors.margins: 12
                         color: "#FFFFFF"
@@ -525,11 +539,15 @@ Item {
                         text: AppViewModel.currentGoalDescription
 
                         onAccepted: {
-                            let nameField = parent.parent.children[1].children[1];
-                            if (text.trim() !== "" && nameField && nameField.text.trim() !== "") {
-                                AppViewModel.setMainGoal(nameField.text.trim(), text.trim());
+                            if (text.trim() !== "" && editGoalNameInput.text.trim() !== "") {
+                                AppViewModel.setMainGoal(editGoalNameInput.text.trim(), text.trim());
                                 editGoalDialog.close();
                             }
+                        }
+
+                        Keys.onTabPressed: {
+                            editGoalNameInput.forceActiveFocus();
+                            editGoalNameInput.selectAll();
                         }
                     }
 
@@ -552,11 +570,20 @@ Item {
                 color: "#444444",
                 textColor: "#FFFFFF",
                 onClicked: function() {
-                    let nameField = editGoalDialog.contentItem.children[0].children[1].item.children[1].children[1];
-                    let descField = editGoalDialog.contentItem.children[0].children[1].item.children[2].children[1];
+                    let contentItem = editGoalDialog.contentItem;
+                    let layout = contentItem.children[0];
+                    let loader = layout.children[0];
+                    let contentLayout = loader.item;
 
-                    if (nameField && descField && nameField.text.trim() !== "") {
-                        AppViewModel.setMainGoal(nameField.text.trim(), descField.text.trim());
+                    let nameRect = contentLayout.children[1];
+                    let descRect = contentLayout.children[2];
+
+                    let nameField = nameRect.children[0]; // TextInput для имени
+                    let descField = descRect.children[0]; // TextInput для описания
+
+                    if (nameField && descField) {
+                        AppViewModel.setMainGoal(nameField.text, descField.text);
+                        editGoalDialog.close();
                     }
                 }
             },
