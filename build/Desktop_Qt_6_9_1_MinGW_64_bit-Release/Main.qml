@@ -371,6 +371,30 @@ ApplicationWindow {
            onActivated: selectTaskByDirection("up")
        }
 
+       // F - fullscreen toggle
+       Shortcut {
+           sequence: "F"
+           onActivated: {
+               var wasFullscreen = mainWindow.visibility === Window.FullScreen
+               mainWindow.visible = false
+
+               Qt.callLater(function() {
+                   if (wasFullscreen) {
+                       mainWindow.visibility = Window.Windowed
+                   } else {
+                       mainWindow.visibility = Window.FullScreen
+                   }
+                   mainWindow.visible = true
+               })
+           }
+       }
+
+       // Ctrl + Q - quit application
+       Shortcut {
+           sequence: "Ctrl+Q"
+           onActivated: Qt.quit()
+       }
+
 
     ColumnLayout {
         anchors.fill: parent
@@ -1729,6 +1753,46 @@ ApplicationWindow {
 
             Text {
                 text: "Ctrl+S - Save"
+                anchors.centerIn: parent
+                color: "#F3C44A"
+                font.pointSize: 11
+            }
+        }
+
+        // F fullscreen hint
+        Rectangle {
+            x: parent.width / 2 - 450
+            y: 90
+            width: 150
+            height: 30
+            color: "#2D2D2D"
+            border.color: "#F3C44A"
+            border.width: 1
+            radius: 4
+            opacity: shortcutsOverlay.opacity
+
+            Text {
+                text: "F - Fullscreen"
+                anchors.centerIn: parent
+                color: "#F3C44A"
+                font.pointSize: 11
+            }
+        }
+
+        // Ctrl+Q quit hint (upper right, symmetric to Ctrl+S)
+        Rectangle {
+            x: parent.width / 2 + 300
+            y: 50
+            width: 150
+            height: 30
+            color: "#2D2D2D"
+            border.color: "#F3C44A"
+            border.width: 1
+            radius: 4
+            opacity: shortcutsOverlay.opacity
+
+            Text {
+                text: "Ctrl+Q - Quit"
                 anchors.centerIn: parent
                 color: "#F3C44A"
                 font.pointSize: 11
