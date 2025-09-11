@@ -40,10 +40,9 @@ ApplicationWindow {
         AppViewModel.loadData()
         Qt.callLater(function() {
             scrollToSelectedItem()
-            // Дополнительная задержка для выбора первой задачи после полной инициализации
-                    Qt.callLater(function() {
-                        selectFirstTaskIfNeeded(false)
-                    })
+            Qt.callLater(function() {
+                selectFirstTaskIfNeeded(false)
+            })
         })
     }
 
@@ -1733,6 +1732,180 @@ ApplicationWindow {
                 anchors.centerIn: parent
                 color: "#F3C44A"
                 font.pointSize: 11
+            }
+        }
+    }
+
+    // Загрузочный экран
+    Rectangle {
+        id: splashScreen
+        anchors.fill: parent
+        color: "#282828"
+        visible: showSplashScreen
+        opacity: showSplashScreen ? 1.0 : 0.0
+        z: 10000
+
+        // Общий контейнер для кругов с анимацией скейла
+        Item {
+            id: splashContainer
+            anchors.centerIn: parent
+            width: 300
+            height: 300
+
+            property real globalScale: 1.0
+            scale: globalScale
+
+            // Анимация общего скейла
+            SequentialAnimation on globalScale {
+                running: splashScreen.visible && splashScreen.opacity > 0
+                loops: 1
+                PauseAnimation { duration: 1500 }
+                NumberAnimation {
+                    from: 1.0
+                    to: 1.8
+                    duration: 800
+                    easing.type: Easing.OutCubic
+                }
+            }
+
+            // Желтый внешний круг
+            Rectangle {
+                id: outerCircle
+                width: 300
+                height: 300
+                radius: width / 2
+                color: "transparent"
+                border.color: "#F3C44A"
+                border.width: 4
+                anchors.centerIn: parent
+                opacity: 0.6
+
+                SequentialAnimation on scale {
+                    running: splashScreen.visible && splashScreen.opacity > 0
+                    loops: Animation.Infinite
+                    NumberAnimation { from: 1.0; to: 1.15; duration: 800; easing.type: Easing.OutCubic }
+                    NumberAnimation { from: 1.15; to: 1.0; duration: 800; easing.type: Easing.InCubic }
+                }
+
+                SequentialAnimation on opacity {
+                    running: splashScreen.visible && splashScreen.opacity > 0
+                    loops: Animation.Infinite
+                    NumberAnimation { from: 0.6; to: 0.9; duration: 800; easing.type: Easing.OutCubic }
+                    NumberAnimation { from: 0.9; to: 0.6; duration: 800; easing.type: Easing.InCubic }
+                }
+            }
+
+            MultiEffect {
+                id: outerCircleEffect
+                source: outerCircle
+                anchors.fill: outerCircle
+                shadowEnabled: true
+                shadowOpacity: 0.8
+                shadowColor: "#F3C44A"
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 0
+                shadowBlur: 15.0
+
+                // Анимация блюра для внешнего круга
+                property real blurAmount: 0.0
+                blurEnabled: true
+                blur: blurAmount
+
+                SequentialAnimation on blurAmount {
+                    running: splashScreen.visible && splashScreen.opacity > 0
+                    loops: 1
+                    PauseAnimation { duration: 1200 }
+                    NumberAnimation {
+                        from: 0.0
+                        to: 1.0
+                        duration: 1100
+                        easing.type: Easing.OutCubic
+                    }
+                }
+
+                z: -1
+            }
+
+            // Красный внутренний круг
+            Rectangle {
+                id: innerCircle
+                width: 200
+                height: 200
+                radius: width / 2
+                color: "transparent"
+                border.color: "#E95B5B"
+                border.width: 3
+                anchors.centerIn: parent
+                opacity: 0.5
+
+                SequentialAnimation on scale {
+                    running: splashScreen.visible && splashScreen.opacity > 0
+                    loops: Animation.Infinite
+                    PauseAnimation { duration: 400 }
+                    NumberAnimation { from: 1.0; to: 1.2; duration: 800; easing.type: Easing.OutCubic }
+                    NumberAnimation { from: 1.2; to: 1.0; duration: 800; easing.type: Easing.InCubic }
+                }
+
+                SequentialAnimation on opacity {
+                    running: splashScreen.visible && splashScreen.opacity > 0
+                    loops: Animation.Infinite
+                    PauseAnimation { duration: 400 }
+                    NumberAnimation { from: 0.5; to: 0.8; duration: 800; easing.type: Easing.OutCubic }
+                    NumberAnimation { from: 0.8; to: 0.5; duration: 800; easing.type: Easing.InCubic }
+                }
+            }
+
+            MultiEffect {
+                id: innerCircleEffect
+                source: innerCircle
+                anchors.fill: innerCircle
+                shadowEnabled: true
+                shadowOpacity: 0.7
+                shadowColor: "#E95B5B"
+                shadowHorizontalOffset: 0
+                shadowVerticalOffset: 0
+                shadowBlur: 12.0
+
+                // Анимация блюра для внутреннего круга
+                property real blurAmount: 0.0
+                blurEnabled: true
+                blur: blurAmount
+
+                SequentialAnimation on blurAmount {
+                    running: splashScreen.visible && splashScreen.opacity > 0
+                    loops: 1
+                    PauseAnimation { duration: 1400 }
+                    NumberAnimation {
+                        from: 0.0
+                        to: 1.0
+                        duration: 900
+                        easing.type: Easing.OutCubic
+                    }
+                }
+
+                z: -1
+            }
+        }
+
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 500
+                easing.type: Easing.OutCubic
+                onFinished: {
+                    if (splashScreen.opacity === 0) {
+                        showSplashScreen = false
+                    }
+                }
+            }
+        }
+
+        Timer {
+            id: splashTimer
+            interval: 2000
+            running: true
+            repeat: false
+            onTriggered: {
+                splashScreen.opacity = 0.0
             }
         }
     }
