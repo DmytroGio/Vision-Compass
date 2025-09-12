@@ -339,7 +339,7 @@ ApplicationWindow {
        // Ctrl + S - save
        Shortcut {
            sequence: "Ctrl+S"
-           onActivated: AppViewModel.saveData()
+           onActivated: exportData()
        }
 
        // Shift + S - new Subgoal окно

@@ -810,6 +810,47 @@ Item {
                         }
                     }
                 }
+
+                // Open Folder Section
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 40
+                    color: "transparent"
+                    Layout.topMargin: 10
+
+                    Rectangle {
+                        width: 40
+                        height: 30
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        color: "#383838"
+                        radius: 4
+                        border.color: "#555555"
+                        border.width: 1
+
+                        Text {
+                            text: "📁"
+                            anchors.centerIn: parent
+                            font.pointSize: 10
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                Qt.openUrlExternally("file:///" + AppViewModel.getDefaultDataPath())
+                            }
+                            hoverEnabled: true
+                            onEntered: {
+                                parent.color = "#484848"
+                                parent.border.color = "#666666"
+                            }
+                            onExited: {
+                                parent.color = "#383838"
+                                parent.border.color = "#555555"
+                            }
+                        }
+                    }
+                }
+
             }
         }
 
@@ -899,7 +940,7 @@ Item {
                     height: 65
                     color: "#323232"
                     radius: 8
-                    border.color: "#444444"
+                    border.color: "#E95B5B"
                     border.width: 1
 
                     RowLayout {
@@ -944,7 +985,7 @@ Item {
                     height: 65
                     color: "#323232"
                     radius: 8
-                    border.color: "#444444"
+                    border.color: "#F3C44A"
                     border.width: 1
 
                     RowLayout {
@@ -989,7 +1030,7 @@ Item {
                     height: 65
                     color: "#323232"
                     radius: 8
-                    border.color: "#444444"
+                    border.color: "#707070"
                     border.width: 1
 
                     RowLayout {
