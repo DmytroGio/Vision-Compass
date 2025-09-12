@@ -599,6 +599,7 @@ Item {
     CustomDialog {
         id: dataManagementDialog
         dialogWidth: 420
+        isLargeDialog: true
 
         content: Component {
             ColumnLayout {
@@ -607,7 +608,7 @@ Item {
                 Text {
                     text: "Data"
                     color: "#FFFFFF"
-                    font.pointSize: 14
+                    font.pointSize: 16
                     font.weight: Font.Normal
                     Layout.alignment: Qt.AlignHCenter
                 }
@@ -862,7 +863,6 @@ Item {
     CustomDialog {
         id: clearDataConfirmDialog
         dialogWidth: 380
-        isLargeDialog: true
 
         content: Component {
             ColumnLayout {

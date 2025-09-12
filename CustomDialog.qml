@@ -68,8 +68,11 @@ Dialog {
         ColumnLayout {
             id: contentColumn
             anchors.fill: parent
-            anchors.margins: 40 // Равные отступы со всех сторон
-            spacing: 10
+            anchors.leftMargin: 40
+            anchors.rightMargin: 40
+            anchors.bottomMargin: 40
+            anchors.topMargin: root.isLargeDialog ? 40 : 30
+            spacing: isLargeDialog ? 10 : 20
 
             // Dynamic Content
             Loader {
