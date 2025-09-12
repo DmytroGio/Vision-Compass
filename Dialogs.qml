@@ -862,6 +862,7 @@ Item {
     CustomDialog {
         id: clearDataConfirmDialog
         dialogWidth: 380
+        isLargeDialog: true
 
         content: Component {
             ColumnLayout {
@@ -916,6 +917,7 @@ Item {
     CustomDialog {
         id: infoDialog
         dialogWidth: 480
+        isLargeDialog: true
 
         content: Component {
             ColumnLayout {

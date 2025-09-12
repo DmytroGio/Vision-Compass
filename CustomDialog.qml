@@ -10,6 +10,7 @@ Dialog {
     property Component content: null
     property list<variant> buttons: []
     property int dialogWidth: 400
+    property bool isLargeDialog: false
 
     // --- Configuration ---
     modal: true
@@ -68,14 +69,15 @@ Dialog {
             id: contentColumn
             anchors.fill: parent
             anchors.margins: 40 // Равные отступы со всех сторон
-            spacing: 25
+            spacing: 10
 
             // Dynamic Content
             Loader {
                 id: contentLoader
                 sourceComponent: root.content
                 Layout.fillWidth: true
-                Layout.alignment: Qt.AlignHCenter // Центрируем контент по горизонтали
+                Layout.alignment: Qt.AlignHCenter
+
             }
 
             // Buttons
