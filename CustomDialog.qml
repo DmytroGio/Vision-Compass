@@ -16,7 +16,7 @@ Dialog {
     parent: Overlay.overlay
     anchors.centerIn: Overlay.overlay
     width: dialogWidth
-    height: contentColumn.implicitHeight + 80 // Фиксированная высота
+    height: contentColumn.implicitHeight + 100 // Фиксированная высота
     padding: 0
     focus: true
 
@@ -67,8 +67,8 @@ Dialog {
         ColumnLayout {
             id: contentColumn
             anchors.fill: parent
-            anchors.margins: 30 // Равные отступы со всех сторон
-            spacing: 20
+            anchors.margins: 40 // Равные отступы со всех сторон
+            spacing: 25
 
             // Dynamic Content
             Loader {

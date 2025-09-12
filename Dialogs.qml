@@ -602,7 +602,7 @@ Item {
 
         content: Component {
             ColumnLayout {
-                spacing: 20
+                spacing: 25
 
                 Text {
                     text: "Data"
@@ -612,241 +612,236 @@ Item {
                     Layout.alignment: Qt.AlignHCenter
                 }
 
-                // Save Section
-                Rectangle {
+                ColumnLayout {
                     Layout.fillWidth: true
-                    height: 55
-                    color: "#323232"
-                    radius: 8
-                    border.color: "#444444"
-                    border.width: 1
+                    spacing: 15
+                    Layout.bottomMargin: 15
 
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.margins: 15
-                        spacing: 0
-
-                        Rectangle {
-                            width: 6
-                            height: 6
-                            color: "#BBBBBB"
-                            radius: 3
-                            Layout.alignment: Qt.AlignVCenter
-                        }
-
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            Layout.alignment: Qt.AlignVCenter
-                            Layout.leftMargin: 15
-                            spacing: 2
-
-                            Text {
-                                text: "Create backup file"
-                                color: "#AAAAAA"
-                                font.pointSize: 10
-                                Layout.alignment: Qt.AlignHCenter
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.preferredWidth: 60
-                            Layout.preferredHeight: 28
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            color: "#444444"
-                            radius: 4
-
-                            Text {
-                                text: "Save"
-                                anchors.centerIn: parent
-                                color: "#FFFFFF"
-                                font.pointSize: 10
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                onClicked: {
-                                    dataManagementDialog.close()
-                                    mainWindow.exportData()
-                                }
-                                hoverEnabled: true
-                                onEntered: parent.color = "#555555"
-                                onExited: parent.color = "#444444"
-                            }
-                        }
-                    }
-                }
-
-                // Load Section
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 55
-                    color: "#323232"
-                    radius: 8
-                    border.color: "#444444"
-                    border.width: 1
-
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.margins: 15
-                        spacing: 0
-
-                        Rectangle {
-                            width: 6
-                            height: 6
-                            color: "#BBBBBB"
-                            radius: 3
-                            Layout.alignment: Qt.AlignVCenter
-                        }
-
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            Layout.alignment: Qt.AlignVCenter
-                            Layout.leftMargin: 15
-                            spacing: 2
-
-                            Text {
-                                text: "Restore from backup file"
-                                color: "#AAAAAA"
-                                font.pointSize: 10
-                                Layout.alignment: Qt.AlignHCenter
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.preferredWidth: 60
-                            Layout.preferredHeight: 28
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            color: "#444444"
-                            radius: 4
-
-                            Text {
-                                text: "Load"
-                                anchors.centerIn: parent
-                                color: "#FFFFFF"
-                                font.pointSize: 10
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                onClicked: {
-                                    dataManagementDialog.close()
-                                    mainWindow.importData()
-                                }
-                                hoverEnabled: true
-                                onEntered: parent.color = "#555555"
-                                onExited: parent.color = "#444444"
-                            }
-                        }
-                    }
-                }
-
-                // Clear Data Section
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 55
-                    color: "#323232"
-                    radius: 8
-                    border.color: "#444444"
-                    border.width: 1
-
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.margins: 15
-                        spacing: 0
-
-                        Rectangle {
-                            width: 6
-                            height: 6
-                            color: "#BBBBBB"
-                            radius: 3
-                            Layout.alignment: Qt.AlignVCenter
-                        }
-
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            Layout.alignment: Qt.AlignVCenter
-                            Layout.leftMargin: 15
-                            spacing: 2
-
-                            Text {
-                                text: "Clear all data (irreversible)"
-                                color: "#AAAAAA"
-                                font.pointSize: 10
-                                Layout.alignment: Qt.AlignHCenter
-                            }
-                        }
-
-                        Rectangle {
-                            Layout.preferredWidth: 60
-                            Layout.preferredHeight: 28
-                            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                            color: "#2D2D2D"
-                            radius: 4
-                            border.color: "#555555"
-                            border.width: 1
-
-                            Text {
-                                text: "Reset"
-                                anchors.centerIn: parent
-                                color: "#CCCCCC"
-                                font.pointSize: 10
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent
-                                onClicked: {
-                                    clearDataConfirmDialog.open()
-                                }
-                                hoverEnabled: true
-                                onEntered: {
-                                    parent.color = "#3A3A3A"
-                                    parent.border.color = "#666666"
-                                }
-                                onExited: {
-                                    parent.color = "#2D2D2D"
-                                    parent.border.color = "#555555"
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Open Folder Section
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 40
-                    color: "transparent"
-                    Layout.topMargin: 10
-
+                    // Save Section
                     Rectangle {
-                        width: 40
-                        height: 30
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        color: "#383838"
-                        radius: 4
-                        border.color: "#555555"
+                        Layout.fillWidth: true
+                        height: 60
+                        color: "#323232"
+                        radius: 8
+                        border.color: "#444444"
                         border.width: 1
 
-                        Text {
-                            text: "📁"
-                            anchors.centerIn: parent
-                            font.pointSize: 10
-                        }
-
-                        MouseArea {
+                        RowLayout {
                             anchors.fill: parent
-                            onClicked: {
-                                Qt.openUrlExternally("file:///" + AppViewModel.getDefaultDataPath())
+                            anchors.margins: 18
+                            spacing: 0
+
+                            Rectangle {
+                                width: 6
+                                height: 6
+                                color: "#BBBBBB"
+                                radius: 3
+                                Layout.alignment: Qt.AlignVCenter
                             }
-                            hoverEnabled: true
-                            onEntered: {
-                                parent.color = "#484848"
-                                parent.border.color = "#666666"
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignVCenter
+                                Layout.leftMargin: 15
+                                spacing: 2
+
+                                Text {
+                                    text: "Create backup file"
+                                    color: "#AAAAAA"
+                                    font.pointSize: 10
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
                             }
-                            onExited: {
-                                parent.color = "#383838"
-                                parent.border.color = "#555555"
+
+                            Rectangle {
+                                Layout.preferredWidth: 60
+                                Layout.preferredHeight: 28
+                                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                color: "#444444"
+                                radius: 4
+
+                                Text {
+                                    text: "Save"
+                                    anchors.centerIn: parent
+                                    color: "#FFFFFF"
+                                    font.pointSize: 10
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        dataManagementDialog.close()
+                                        mainWindow.exportData()
+                                    }
+                                    hoverEnabled: true
+                                    onEntered: parent.color = "#555555"
+                                    onExited: parent.color = "#444444"
+                                }
                             }
+                        }
+                    }
+
+                    // Load Section
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 60
+                        color: "#323232"
+                        radius: 8
+                        border.color: "#444444"
+                        border.width: 1
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.margins: 18
+                            spacing: 0
+
+                            Rectangle {
+                                width: 6
+                                height: 6
+                                color: "#BBBBBB"
+                                radius: 3
+                                Layout.alignment: Qt.AlignVCenter
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignVCenter
+                                Layout.leftMargin: 15
+                                spacing: 2
+
+                                Text {
+                                    text: "Restore from backup file"
+                                    color: "#AAAAAA"
+                                    font.pointSize: 10
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
+                            }
+
+                            Rectangle {
+                                Layout.preferredWidth: 60
+                                Layout.preferredHeight: 28
+                                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                color: "#444444"
+                                radius: 4
+
+                                Text {
+                                    text: "Load"
+                                    anchors.centerIn: parent
+                                    color: "#FFFFFF"
+                                    font.pointSize: 10
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        dataManagementDialog.close()
+                                        mainWindow.importData()
+                                    }
+                                    hoverEnabled: true
+                                    onEntered: parent.color = "#555555"
+                                    onExited: parent.color = "#444444"
+                                }
+                            }
+                        }
+                    }
+
+                    // Clear Data Section
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 60
+                        color: "#323232"
+                        radius: 8
+                        border.color: "#444444"
+                        border.width: 1
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.margins: 18
+                            spacing: 0
+
+                            Rectangle {
+                                width: 6
+                                height: 6
+                                color: "#BBBBBB"
+                                radius: 3
+                                Layout.alignment: Qt.AlignVCenter
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignVCenter
+                                Layout.leftMargin: 15
+                                spacing: 2
+
+                                Text {
+                                    text: "Clear all data (irreversible)"
+                                    color: "#AAAAAA"
+                                    font.pointSize: 10
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
+                            }
+
+                            Rectangle {
+                                Layout.preferredWidth: 60
+                                Layout.preferredHeight: 28
+                                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                                color: "#2D2D2D"
+                                radius: 4
+                                border.color: "#555555"
+                                border.width: 1
+
+                                Text {
+                                    text: "Reset"
+                                    anchors.centerIn: parent
+                                    color: "#CCCCCC"
+                                    font.pointSize: 10
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        clearDataConfirmDialog.open()
+                                    }
+                                    hoverEnabled: true
+                                    onEntered: {
+                                        parent.color = "#3A3A3A"
+                                        parent.border.color = "#666666"
+                                    }
+                                    onExited: {
+                                        parent.color = "#2D2D2D"
+                                        parent.border.color = "#555555"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Open Folder Button
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40 // Такая же высота как кнопка Close
+                    color: "#383838"
+                    radius: 10
+
+                    Text {
+                        text: "📁"
+                        anchors.centerIn: parent
+                        color: "#FFFFFF"
+                        font.pointSize: 14
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            Qt.openUrlExternally("file:///" + AppViewModel.getDefaultDataPath())
+                        }
+                        hoverEnabled: true
+                        onEntered: {
+                            parent.color = "#484848"
+                        }
+                        onExited: {
+                            parent.color = "#383838"
                         }
                     }
                 }
@@ -924,7 +919,7 @@ Item {
 
         content: Component {
             ColumnLayout {
-                spacing: 25
+                spacing: 30
 
                 Text {
                     text: "Vision Compass"
@@ -934,136 +929,142 @@ Item {
                     Layout.alignment: Qt.AlignHCenter
                 }
 
-                // Main Goal Section
-                Rectangle {
+                ColumnLayout {
                     Layout.fillWidth: true
-                    height: 65
-                    color: "#323232"
-                    radius: 8
-                    border.color: "#E95B5B"
-                    border.width: 1
+                    spacing: 18
+                    Layout.bottomMargin: 30
 
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.margins: 15
-                        spacing: 15
+                    // Main Goal Section
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 70
+                        color: "#323232"
+                        radius: 8
+                        border.color: "#E95B5B"
+                        border.width: 1
 
-                        Rectangle {
-                            width: 8
-                            height: 8
-                            color: "#CCCCCC"
-                            radius: 4
-                            Layout.alignment: Qt.AlignVCenter
-                        }
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.margins: 18
+                            spacing: 18
 
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            Layout.alignment: Qt.AlignVCenter
-                            spacing: 3
-
-                            Text {
-                                text: "Main Goal"
-                                color: "#FFFFFF"
-                                font.pointSize: 11
-                                font.weight: Font.Medium
+                            Rectangle {
+                                width: 8
+                                height: 8
+                                color: "#CCCCCC"
+                                radius: 4
+                                Layout.alignment: Qt.AlignVCenter
                             }
 
-                            Text {
-                                text: "Your primary objective (1-10+ years)"
-                                color: "#AAAAAA"
-                                font.pointSize: 10
-                                wrapMode: Text.WordWrap
+                            ColumnLayout {
                                 Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 3
+
+                                Text {
+                                    text: "Main Goal"
+                                    color: "#FFFFFF"
+                                    font.pointSize: 11
+                                    font.weight: Font.Medium
+                                }
+
+                                Text {
+                                    text: "Your primary objective (1-10+ years)"
+                                    color: "#AAAAAA"
+                                    font.pointSize: 10
+                                    wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                }
                             }
                         }
                     }
-                }
 
-                // SubGoals Section
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 65
-                    color: "#323232"
-                    radius: 8
-                    border.color: "#F3C44A"
-                    border.width: 1
+                    // SubGoals Section
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 70
+                        color: "#323232"
+                        radius: 8
+                        border.color: "#F3C44A"
+                        border.width: 1
 
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.margins: 15
-                        spacing: 15
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.margins: 18
+                            spacing: 18
 
-                        Rectangle {
-                            width: 8
-                            height: 8
-                            color: "#CCCCCC"
-                            radius: 4
-                            Layout.alignment: Qt.AlignVCenter
-                        }
-
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            Layout.alignment: Qt.AlignVCenter
-                            spacing: 3
-
-                            Text {
-                                text: "SubGoals"
-                                color: "#FFFFFF"
-                                font.pointSize: 11
-                                font.weight: Font.Medium
+                            Rectangle {
+                                width: 8
+                                height: 8
+                                color: "#CCCCCC"
+                                radius: 4
+                                Layout.alignment: Qt.AlignVCenter
                             }
 
-                            Text {
-                                text: "Major milestones (3 months - 1 year)"
-                                color: "#AAAAAA"
-                                font.pointSize: 10
-                                wrapMode: Text.WordWrap
+                            ColumnLayout {
                                 Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 3
+
+                                Text {
+                                    text: "SubGoals"
+                                    color: "#FFFFFF"
+                                    font.pointSize: 11
+                                    font.weight: Font.Medium
+                                }
+
+                                Text {
+                                    text: "Major milestones (3 months - 1 year)"
+                                    color: "#AAAAAA"
+                                    font.pointSize: 10
+                                    wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                }
                             }
                         }
                     }
-                }
 
-                // Tasks Section
-                Rectangle {
-                    Layout.fillWidth: true
-                    height: 65
-                    color: "#323232"
-                    radius: 8
-                    border.color: "#707070"
-                    border.width: 1
+                    // Tasks Section
+                    Rectangle {
+                        Layout.fillWidth: true
+                        height: 70
+                        color: "#323232"
+                        radius: 8
+                        border.color: "#707070"
+                        border.width: 1
 
-                    RowLayout {
-                        anchors.fill: parent
-                        anchors.margins: 15
-                        spacing: 15
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.margins: 18
+                            spacing: 18
 
-                        Rectangle {
-                            width: 8
-                            height: 8
-                            color: "#CCCCCC"
-                            radius: 4
-                            Layout.alignment: Qt.AlignVCenter
-                        }
-
-                        ColumnLayout {
-                            Layout.fillWidth: true
-                            Layout.alignment: Qt.AlignVCenter
-                            spacing: 3
-
-                            Text {
-                                text: "Tasks"
-                                color: "#FFFFFF"
-                                font.pointSize: 11
-                                font.weight: Font.Medium
+                            Rectangle {
+                                width: 8
+                                height: 8
+                                color: "#CCCCCC"
+                                radius: 4
+                                Layout.alignment: Qt.AlignVCenter
                             }
 
-                            Text {
-                                text: "Actionable steps (1 day - 3 months)"
-                                color: "#AAAAAA"
-                                font.pointSize: 10
-                                wrapMode: Text.WordWrap
+                            ColumnLayout {
                                 Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 3
+
+                                Text {
+                                    text: "Tasks"
+                                    color: "#FFFFFF"
+                                    font.pointSize: 11
+                                    font.weight: Font.Medium
+                                }
+
+                                Text {
+                                    text: "Actionable steps (1 day - 3 months)"
+                                    color: "#AAAAAA"
+                                    font.pointSize: 10
+                                    wrapMode: Text.WordWrap
+                                    Layout.fillWidth: true
+                                }
                             }
                         }
                     }
