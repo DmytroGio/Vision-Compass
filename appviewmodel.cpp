@@ -353,6 +353,9 @@ void AppViewModel::clearAllData() {
     defaultSubGoal.description = "First Sub Goal";
     m_taskManager.addSubGoal(defaultSubGoal);
 
+    // ВАЖНО: принудительно сбрасываем выбор
+    m_selectedSubGoalId = 0;
+
     // Update UI
     updateGoalProperties();
     updateSubGoalListModel();
@@ -360,6 +363,10 @@ void AppViewModel::clearAllData() {
     // Select the default subgoal
     if (!m_subGoals.empty()) {
         selectSubGoal(m_subGoals[0].id);
+    } else {
+        m_selectedSubGoalId = 0;
+        updateTasksListModel();
+        emit selectedSubGoalChanged();
     }
 
     // Save the cleared state
@@ -456,6 +463,9 @@ void AppViewModel::loadDataFromJson(const QString& jsonData) {
         // Clean up temp file
         QFile::remove(tempPath);
 
+        // ДОБАВЛЯЕМ: Принудительный сброс выбора перед обновлением
+        m_selectedSubGoalId = 0;
+
         // Update UI
         updateGoalProperties();
         updateSubGoalListModel();
@@ -472,13 +482,16 @@ void AppViewModel::loadDataFromJson(const QString& jsonData) {
         // Save the imported data
         saveData();
         qDebug() << "Import completed successfully";
-
     } catch (const std::exception& e) {
         qDebug() << "Import error:" << e.what();
         // Restore from backup if import failed
         QString backupPath = getTasksFilePath() + ".backup";
         try {
             m_taskManager.loadFromFile(backupPath.toStdString());
+
+            // ДОБАВЛЯЕМ: Принудительный сброс и при восстановлении из backup
+            m_selectedSubGoalId = 0;
+
             updateGoalProperties();
             updateSubGoalListModel();
             updateTasksListModel();
