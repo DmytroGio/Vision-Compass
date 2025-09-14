@@ -123,3 +123,6 @@ To see the global goals of life and plan according to them.
 ## 2025-09-09
 - correct the layout of auxiliary dialogs (add, delete, edit, data, info)
 - to formalize the presentation and ideology of the project
+
+## 2025-09-14
+- Preparation of program ideology - in the context of design and presentation
