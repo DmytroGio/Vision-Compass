@@ -134,10 +134,17 @@ Item {
                 color: "#444444",
                 textColor: "#FFFFFF",
                 onClicked: function() {
-                    let inputField = addSubGoalDialog.contentItem.children[0].children[1].item.children[1].children[1];
-                    if (inputField && inputField.text.trim() !== "") {
-                        AppViewModel.addSubGoal(inputField.text.trim());
-                        inputField.text = "";
+                    // Получаем контент через загрузчик
+                    if (addSubGoalDialog.contentItem && addSubGoalDialog.contentItem.children.length > 0) {
+                        let contentLoader = addSubGoalDialog.contentItem.children[0].children[0];
+                        if (contentLoader && contentLoader.item) {
+                            let textInput = contentLoader.item.children[1].children[0]; // Rectangle -> TextInput
+                            if (textInput && textInput.text && textInput.text.trim() !== "") {
+                                AppViewModel.addSubGoal(textInput.text.trim());
+                                textInput.text = "";
+                                addSubGoalDialog.close();
+                            }
+                        }
                     }
                 }
             },
@@ -351,10 +358,17 @@ Item {
                 color: "#444444",
                 textColor: "#FFFFFF",
                 onClicked: function() {
-                    let inputField = addTaskDialog.contentItem.children[0].children[1].item.children[1].children[1];
-                    if (inputField && inputField.text.trim() !== "") {
-                        AppViewModel.addTask(inputField.text.trim());
-                        inputField.text = "";
+                    // Получаем контент через загрузчик
+                    if (addTaskDialog.contentItem && addTaskDialog.contentItem.children.length > 0) {
+                        let contentLoader = addTaskDialog.contentItem.children[0].children[0];
+                        if (contentLoader && contentLoader.item) {
+                            let textInput = contentLoader.item.children[1].children[0]; // Rectangle -> TextInput
+                            if (textInput && textInput.text && textInput.text.trim() !== "") {
+                                AppViewModel.addTask(textInput.text.trim());
+                                textInput.text = "";
+                                addTaskDialog.close();
+                            }
+                        }
                     }
                 }
             },
