@@ -5,6 +5,8 @@
         <file>CustomDialog.qml</file>
         <file>icons/compass-icon.png</file>
         <file>icons/export_import-icon.png</file>
+		<file>icons/Save_Icon.svg</file>
+		<file>icons/Info_Icon.svg</file>
         <file>Animations.qml</file>
         <file>Dialogs.qml</file>
     </qresource>

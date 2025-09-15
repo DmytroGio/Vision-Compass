@@ -6,6 +6,7 @@ import QtQuick.Effects
 //import Qt.labs.platform 1.1 as Platform
 import com.visioncompass 1.0
 
+
 ApplicationWindow {
     id: mainWindow
     objectName: "mainWindow"
@@ -985,32 +986,20 @@ ApplicationWindow {
                         ColorAnimation { duration: 150 }
                     }
 
-                    Column {
+                    Image {
+                        id: saveIcon
+                        source: "icons/Save_Icon.svg"
+                        width: 24
+                        height: 24
                         anchors.centerIn: parent
-                        spacing: 4
+                        fillMode: Image.PreserveAspectFit
+                        sourceSize: Qt.size(24, 24)
 
-                        Rectangle {
-                            width: 14
-                            height: 14
-                            radius: 7
-                            color: dataMouseArea.containsMouse ? "#74745D" : "#585847"
-                            anchors.horizontalCenter: parent.horizontalCenter
-
-                            Behavior on color {
-                                ColorAnimation { duration: 150 }
-                            }
-                        }
-
-                        Rectangle {
-                            width: 14
-                            height: 14
-                            radius: 7
-                            color: dataMouseArea.containsMouse ? "#74745D" : "#585847"
-                            anchors.horizontalCenter: parent.horizontalCenter
-
-                            Behavior on color {
-                                ColorAnimation { duration: 150 }
-                            }
+                        // Создаем эффект изменения яркости для имитации изменения цвета
+                        layer.enabled: true
+                        layer.effect: MultiEffect {
+                            brightness: dataMouseArea.containsMouse ? 0.3 : 0.0
+                            saturation: dataMouseArea.containsMouse ? 1.2 : 1.0
                         }
                     }
                 }
@@ -1050,16 +1039,20 @@ ApplicationWindow {
                     color: "#383838"
                     radius: 25
 
-                    Rectangle {
-                        id: infoCircle
-                        width: 20
-                        height: 20
-                        radius: 10
-                        color: "#585847"
+                    Image {
+                        id: infoIcon
+                        source: "icons/Info_Icon.svg"
+                        width: 24
+                        height: 24
                         anchors.centerIn: parent
+                        fillMode: Image.PreserveAspectFit
+                        sourceSize: Qt.size(24, 24)
 
-                        Behavior on color {
-                            ColorAnimation { duration: 150 }
+                        // Создаем эффект изменения яркости для имитации изменения цвета
+                        layer.enabled: true
+                        layer.effect: MultiEffect {
+                            brightness: infoMouseArea.containsMouse ? 0.3 : 0.0
+                            saturation: infoMouseArea.containsMouse ? 1.2 : 1.0
                         }
                     }
                 }
@@ -1076,6 +1069,7 @@ ApplicationWindow {
                 }
 
                 MouseArea {
+                    id: infoMouseArea
                     anchors.fill: parent
                     hoverEnabled: true
                     onClicked: {
@@ -1083,14 +1077,14 @@ ApplicationWindow {
                     }
                     onEntered: {
                         infoButtonRect.color = "#4A4A43"
-                        infoCircle.color = "#74745D"
                     }
                     onExited: {
                         infoButtonRect.color = "#383838"
-                        infoCircle.color = "#585847"
                     }
                 }
             }
+
+
         }
 
         // --- Нижняя секция (Задачи) ---
