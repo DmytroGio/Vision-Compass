@@ -126,3 +126,6 @@ To see the global goals of life and plan according to them.
 
 ## 2025-09-14
 - Preparation of program ideology - in the context of design and presentation
+
+## 2025-09-16
+- During the presentation design process - Figma design
