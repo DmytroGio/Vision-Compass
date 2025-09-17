@@ -146,3 +146,7 @@
 4482	4560	7796543509769470	task-manager-qmlplugin.dll	8465b4d381f19d35
 4518	4591	7796543510128027	CMakeFiles/task-manager.dir/task-manager_autogen/EWIEGA46WW/qrc_resources.cpp.obj	dd1f2c702140f02b
 4591	4736	7796543510852422	task-manager.exe	34ab7021bb0d50f8
+39	91	7798255965019307	task-manager_autogen/EWIEGA46WW/qrc_resources.cpp	223221ef3815eb5f
+39	91	7798255965019307	E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/task-manager_autogen/EWIEGA46WW/qrc_resources.cpp	223221ef3815eb5f
+91	259	7798255965079326	CMakeFiles/task-manager.dir/task-manager_autogen/EWIEGA46WW/qrc_resources.cpp.obj	dd1f2c702140f02b
+259	596	7798255966756624	task-manager.exe	34ab7021bb0d50f8

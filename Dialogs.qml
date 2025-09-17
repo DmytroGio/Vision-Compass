@@ -233,9 +233,15 @@ Item {
                 color: "#444444",
                 textColor: "#FFFFFF",
                 onClicked: function() {
-                    let inputField = editSubGoalDialog.contentItem.children[0].children[1].item.children[1].children[1];
-                    if (inputField && inputField.text.trim() !== "" && editSubGoalDialog.subGoalToEdit) {
-                        AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, inputField.text.trim());
+                    if (editSubGoalDialog.contentItem && editSubGoalDialog.contentItem.children.length > 0) {
+                        let contentLoader = editSubGoalDialog.contentItem.children[0].children[0];
+                        if (contentLoader && contentLoader.item) {
+                            let textInput = contentLoader.item.children[1].children[0]; // Rectangle -> TextInput
+                            if (textInput && textInput.text && textInput.text.trim() !== "" && editSubGoalDialog.subGoalToEdit) {
+                                AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, textInput.text.trim());
+                                editSubGoalDialog.close();
+                            }
+                        }
                     }
                 }
             },
@@ -457,9 +463,15 @@ Item {
                 color: "#444444",
                 textColor: "#FFFFFF",
                 onClicked: function() {
-                    let inputField = editTaskDialog.contentItem.children[0].children[1].item.children[1].children[1];
-                    if (inputField && inputField.text.trim() !== "" && editTaskDialog.taskToEdit) {
-                        AppViewModel.editTask(editTaskDialog.taskToEdit.id, inputField.text.trim());
+                    if (editTaskDialog.contentItem && editTaskDialog.contentItem.children.length > 0) {
+                        let contentLoader = editTaskDialog.contentItem.children[0].children[0];
+                        if (contentLoader && contentLoader.item) {
+                            let textInput = contentLoader.item.children[1].children[0]; // Rectangle -> TextInput
+                            if (textInput && textInput.text && textInput.text.trim() !== "" && editTaskDialog.taskToEdit) {
+                                AppViewModel.editTask(editTaskDialog.taskToEdit.id, textInput.text.trim());
+                                editTaskDialog.close();
+                            }
+                        }
                     }
                 }
             },
