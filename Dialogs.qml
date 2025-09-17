@@ -68,7 +68,7 @@ Item {
     // Dialog for adding a new SubGoal
     CustomDialog {
         id: addSubGoalDialog
-        dialogWidth: 400
+        dialogWidth: 550
 
         onOpened: {
             if (contentLoader.item) {
@@ -100,14 +100,16 @@ Item {
                         id: subGoalNameInput
                         anchors.fill: parent
                         anchors.margins: 12
+                        anchors.rightMargin: 60 // Место для счетчика
                         color: "#FFFFFF"
                         font.pointSize: 11
                         verticalAlignment: TextInput.AlignVCenter
                         selectByMouse: true
                         clip: true
+                        maximumLength: 45
 
                         onAccepted: {
-                            if (text.trim() !== "") {
+                            if (text.trim() !== "" && text.length <= 45) {
                                 AppViewModel.addSubGoal(text.trim());
                                 text = "";
                                 addSubGoalDialog.close();
@@ -124,6 +126,15 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: subGoalNameInput.text.length === 0
                     }
+
+                    Text {
+                        text: subGoalNameInput.length + "/45"
+                        color: subGoalNameInput.length >= 45 ? "#E95B5B" : "#AAAAAA"
+                        font.pointSize: 9
+                        anchors.right: parent.right
+                        anchors.rightMargin: 12
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
             }
         }
@@ -134,12 +145,11 @@ Item {
                 color: "#444444",
                 textColor: "#FFFFFF",
                 onClicked: function() {
-                    // Получаем контент через загрузчик
                     if (addSubGoalDialog.contentItem && addSubGoalDialog.contentItem.children.length > 0) {
                         let contentLoader = addSubGoalDialog.contentItem.children[0].children[0];
                         if (contentLoader && contentLoader.item) {
-                            let textInput = contentLoader.item.children[1].children[0]; // Rectangle -> TextInput
-                            if (textInput && textInput.text && textInput.text.trim() !== "") {
+                            let textInput = contentLoader.item.children[1].children[0];
+                            if (textInput && textInput.text && textInput.text.trim() !== "" && textInput.text.length <= 45) {
                                 AppViewModel.addSubGoal(textInput.text.trim());
                                 textInput.text = "";
                                 addSubGoalDialog.close();
@@ -159,7 +169,7 @@ Item {
     // Dialog for editing a SubGoal
     CustomDialog {
         id: editSubGoalDialog
-        dialogWidth: 400
+        dialogWidth: 550
         property var subGoalToEdit: null
 
         function openForEditing(itemData) {
@@ -199,15 +209,17 @@ Item {
                         id: editSubGoalNameInput
                         anchors.fill: parent
                         anchors.margins: 12
+                        anchors.rightMargin: 60
                         color: "#FFFFFF"
                         font.pointSize: 11
                         verticalAlignment: TextInput.AlignVCenter
                         selectByMouse: true
                         clip: true
                         text: editSubGoalDialog.subGoalToEdit ? (editSubGoalDialog.subGoalToEdit.name || "") : ""
+                        maximumLength: 45
 
                         onAccepted: {
-                            if (text.trim() !== "" && editSubGoalDialog.subGoalToEdit) {
+                            if (text.trim() !== "" && editSubGoalDialog.subGoalToEdit && text.length <= 45) {
                                 AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, text.trim());
                                 editSubGoalDialog.close();
                             }
@@ -223,6 +235,15 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: editSubGoalNameInput.text.length === 0
                     }
+
+                    Text {
+                        text: editSubGoalNameInput.length + "/45"
+                        color: editSubGoalNameInput.length >= 45 ? "#E95B5B" : "#AAAAAA"
+                        font.pointSize: 9
+                        anchors.right: parent.right
+                        anchors.rightMargin: 12
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
             }
         }
@@ -236,8 +257,8 @@ Item {
                     if (editSubGoalDialog.contentItem && editSubGoalDialog.contentItem.children.length > 0) {
                         let contentLoader = editSubGoalDialog.contentItem.children[0].children[0];
                         if (contentLoader && contentLoader.item) {
-                            let textInput = contentLoader.item.children[1].children[0]; // Rectangle -> TextInput
-                            if (textInput && textInput.text && textInput.text.trim() !== "" && editSubGoalDialog.subGoalToEdit) {
+                            let textInput = contentLoader.item.children[1].children[0];
+                            if (textInput && textInput.text && textInput.text.trim() !== "" && editSubGoalDialog.subGoalToEdit && textInput.text.length <= 45) {
                                 AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, textInput.text.trim());
                                 editSubGoalDialog.close();
                             }
@@ -304,7 +325,7 @@ Item {
     // Dialog for adding a new Task
     CustomDialog {
         id: addTaskDialog
-        dialogWidth: 400
+        dialogWidth: 550
 
         content: Component {
             ColumnLayout {
@@ -330,14 +351,16 @@ Item {
                         id: taskNameInput
                         anchors.fill: parent
                         anchors.margins: 12
+                        anchors.rightMargin: 60
                         color: "#FFFFFF"
                         font.pointSize: 11
                         verticalAlignment: TextInput.AlignVCenter
                         selectByMouse: true
                         clip: true
+                        maximumLength: 75
 
                         onAccepted: {
-                            if (text.trim() !== "") {
+                            if (text.trim() !== "" && text.length <= 75) {
                                 AppViewModel.addTask(text.trim());
                                 text = "";
                                 addTaskDialog.close();
@@ -354,6 +377,15 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: taskNameInput.text.length === 0
                     }
+
+                    Text {
+                        text: taskNameInput.length + "/75"
+                        color: taskNameInput.length >= 75 ? "#E95B5B" : "#AAAAAA"
+                        font.pointSize: 9
+                        anchors.right: parent.right
+                        anchors.rightMargin: 12
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
             }
         }
@@ -364,12 +396,11 @@ Item {
                 color: "#444444",
                 textColor: "#FFFFFF",
                 onClicked: function() {
-                    // Получаем контент через загрузчик
                     if (addTaskDialog.contentItem && addTaskDialog.contentItem.children.length > 0) {
                         let contentLoader = addTaskDialog.contentItem.children[0].children[0];
                         if (contentLoader && contentLoader.item) {
-                            let textInput = contentLoader.item.children[1].children[0]; // Rectangle -> TextInput
-                            if (textInput && textInput.text && textInput.text.trim() !== "") {
+                            let textInput = contentLoader.item.children[1].children[0];
+                            if (textInput && textInput.text && textInput.text.trim() !== "" && textInput.text.length <= 75) {
                                 AppViewModel.addTask(textInput.text.trim());
                                 textInput.text = "";
                                 addTaskDialog.close();
@@ -389,7 +420,7 @@ Item {
     // Dialog for editing a Task
     CustomDialog {
         id: editTaskDialog
-        dialogWidth: 400
+        dialogWidth: 550
         property var taskToEdit: null
 
         function openForEditing(itemData) {
@@ -429,15 +460,17 @@ Item {
                         id: editTaskNameInput
                         anchors.fill: parent
                         anchors.margins: 12
+                        anchors.rightMargin: 60
                         color: "#FFFFFF"
                         font.pointSize: 11
                         verticalAlignment: TextInput.AlignVCenter
                         selectByMouse: true
                         clip: true
                         text: editTaskDialog.taskToEdit ? (editTaskDialog.taskToEdit.name || "") : ""
+                        maximumLength: 75
 
                         onAccepted: {
-                            if (text.trim() !== "" && editTaskDialog.taskToEdit) {
+                            if (text.trim() !== "" && editTaskDialog.taskToEdit && text.length <= 75) {
                                 AppViewModel.editTask(editTaskDialog.taskToEdit.id, text.trim());
                                 editTaskDialog.close();
                             }
@@ -453,6 +486,15 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: editTaskNameInput.text.length === 0
                     }
+
+                    Text {
+                        text: editTaskNameInput.length + "/75"
+                        color: editTaskNameInput.length >= 75 ? "#E95B5B" : "#AAAAAA"
+                        font.pointSize: 9
+                        anchors.right: parent.right
+                        anchors.rightMargin: 12
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
             }
         }
@@ -466,8 +508,8 @@ Item {
                     if (editTaskDialog.contentItem && editTaskDialog.contentItem.children.length > 0) {
                         let contentLoader = editTaskDialog.contentItem.children[0].children[0];
                         if (contentLoader && contentLoader.item) {
-                            let textInput = contentLoader.item.children[1].children[0]; // Rectangle -> TextInput
-                            if (textInput && textInput.text && textInput.text.trim() !== "" && editTaskDialog.taskToEdit) {
+                            let textInput = contentLoader.item.children[1].children[0];
+                            if (textInput && textInput.text && textInput.text.trim() !== "" && editTaskDialog.taskToEdit && textInput.text.length <= 75) {
                                 AppViewModel.editTask(editTaskDialog.taskToEdit.id, textInput.text.trim());
                                 editTaskDialog.close();
                             }
@@ -486,7 +528,7 @@ Item {
     // Dialog for editing the main Goal
     CustomDialog {
         id: editGoalDialog
-        dialogWidth: 450
+        dialogWidth: 550
 
         content: Component {
             ColumnLayout {
@@ -513,15 +555,17 @@ Item {
                         objectName: "goalNameInput"
                         anchors.fill: parent
                         anchors.margins: 12
+                        anchors.rightMargin: 60
                         color: "#FFFFFF"
                         font.pointSize: 11
                         verticalAlignment: TextInput.AlignVCenter
                         selectByMouse: true
                         clip: true
                         text: AppViewModel.currentGoalText
+                        maximumLength: 45
 
                         onAccepted: {
-                            if (text.trim() !== "" && editGoalDescriptionInput.text.trim() !== "") {
+                            if (text.trim() !== "" && editGoalDescriptionInput.text.trim() !== "" && text.length <= 45 && editGoalDescriptionInput.text.length <= 135) {
                                 AppViewModel.setMainGoal(text.trim(), editGoalDescriptionInput.text.trim());
                                 editGoalDialog.close();
                             }
@@ -542,6 +586,15 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: editGoalNameInput.text.length === 0
                     }
+
+                    Text {
+                        text: editGoalNameInput.length + "/45"
+                        color: editGoalNameInput.length >= 45 ? "#E95B5B" : "#AAAAAA"
+                        font.pointSize: 9
+                        anchors.right: parent.right
+                        anchors.rightMargin: 12
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
 
                 Rectangle {
@@ -557,15 +610,17 @@ Item {
                         objectName: "goalDescInput"
                         anchors.fill: parent
                         anchors.margins: 12
+                        anchors.rightMargin: 70
                         color: "#FFFFFF"
                         font.pointSize: 11
                         verticalAlignment: TextInput.AlignVCenter
                         selectByMouse: true
                         clip: true
                         text: AppViewModel.currentGoalDescription
+                        maximumLength: 135
 
                         onAccepted: {
-                            if (text.trim() !== "" && editGoalNameInput.text.trim() !== "") {
+                            if (text.trim() !== "" && editGoalNameInput.text.trim() !== "" && text.length <= 135 && editGoalNameInput.text.length <= 45) {
                                 AppViewModel.setMainGoal(editGoalNameInput.text.trim(), text.trim());
                                 editGoalDialog.close();
                             }
@@ -586,6 +641,15 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: editGoalDescriptionInput.text.length === 0
                     }
+
+                    Text {
+                        text: editGoalDescriptionInput.length + "/135"
+                        color: editGoalDescriptionInput.length >= 135 ? "#E95B5B" : "#AAAAAA"
+                        font.pointSize: 9
+                        anchors.right: parent.right
+                        anchors.rightMargin: 12
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                 }
             }
         }
@@ -604,10 +668,10 @@ Item {
                     let nameRect = contentLayout.children[1];
                     let descRect = contentLayout.children[2];
 
-                    let nameField = nameRect.children[0]; // TextInput для имени
-                    let descField = descRect.children[0]; // TextInput для описания
+                    let nameField = nameRect.children[0];
+                    let descField = descRect.children[0];
 
-                    if (nameField && descField) {
+                    if (nameField && descField && nameField.text.trim() !== "" && descField.text.trim() !== "" && nameField.text.length <= 45 && descField.text.length <= 135) {
                         AppViewModel.setMainGoal(nameField.text, descField.text);
                         editGoalDialog.close();
                     }

@@ -1576,7 +1576,7 @@ ApplicationWindow {
         // Goal shortcut hint
         Rectangle {
             x: goalCircle.x + goalCircle.width / 2 - width / 2
-            y: goalCircle.y + goalCircle.height - 100
+            y: goalCircle.y + goalCircle.height - 70
             width: 45
             height: 30
             color: "#2D2D2D"
@@ -1596,7 +1596,7 @@ ApplicationWindow {
         // SubGoal numbers hint (single text)
         Rectangle {
             x: subGoalsContainer.x + subGoalsContainer.width / 2 - width / 2
-            y: subGoalsContainer.y + 10
+            y: subGoalsContainer.y + 25
             width: 50
             height: 30
             color: "#2D2D2D"
