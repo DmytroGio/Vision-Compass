@@ -129,3 +129,6 @@ To see the global goals of life and plan according to them.
 
 ## 2025-09-16
 - During the presentation design process - Figma design
+
+## 2025-09-18
+- During the presentation design process 02 - Figma design
