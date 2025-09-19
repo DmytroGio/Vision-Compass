@@ -23,6 +23,27 @@ Item {
         dialogWidth: 350
         property var subGoalToRemove: null
 
+        // Добавляем обработку клавиш на уровне диалога
+        onOpened: {
+            forceActiveFocus()
+        }
+
+        Keys.onReturnPressed: {
+            if (confirmationDialog.subGoalToRemove) {
+                mainWindow.saveSubGoalScrollPosition();
+                AppViewModel.removeSubGoal(confirmationDialog.subGoalToRemove);
+                confirmationDialog.close();
+            }
+        }
+
+        Keys.onEnterPressed: {
+            if (confirmationDialog.subGoalToRemove) {
+                mainWindow.saveSubGoalScrollPosition();
+                AppViewModel.removeSubGoal(confirmationDialog.subGoalToRemove);
+                confirmationDialog.close();
+            }
+        }
+
         content: Component {
             ColumnLayout {
                 spacing: 15
@@ -49,18 +70,19 @@ Item {
         buttons: [
             {
                 text: "Delete",
-                color: "#2D2D2D",
-                textColor: "#CCCCCC",
+                color: "#E95B5B",  // Красный цвет для кнопки удаления
+                textColor: "#FFFFFF",
                 onClicked: function() {
                     if (confirmationDialog.subGoalToRemove) {
+                        mainWindow.saveSubGoalScrollPosition();
                         AppViewModel.removeSubGoal(confirmationDialog.subGoalToRemove);
                     }
                 }
             },
             {
                 text: "Cancel",
-                color: "#444444",
-                textColor: "#FFFFFF"
+                color: "#2D2D2D",  // Более тусклый цвет для отмены
+                textColor: "#AAAAAA"
             }
         ]
     }
@@ -106,10 +128,11 @@ Item {
                         verticalAlignment: TextInput.AlignVCenter
                         selectByMouse: true
                         clip: true
-                        maximumLength: 45
+                        maximumLength: 40
 
                         onAccepted: {
-                            if (text.trim() !== "" && text.length <= 45) {
+                            if (text.trim() !== "" && text.length <= 40) {
+                                mainWindow.saveSubGoalScrollPosition();
                                 AppViewModel.addSubGoal(text.trim());
                                 text = "";
                                 addSubGoalDialog.close();
@@ -128,8 +151,8 @@ Item {
                     }
 
                     Text {
-                        text: subGoalNameInput.length + "/45"
-                        color: subGoalNameInput.length >= 45 ? "#E95B5B" : "#AAAAAA"
+                        text: subGoalNameInput.length + "/40"
+                        color: subGoalNameInput.length >= 40 ? "#E95B5B" : "#AAAAAA"
                         font.pointSize: 9
                         anchors.right: parent.right
                         anchors.rightMargin: 12
@@ -149,7 +172,8 @@ Item {
                         let contentLoader = addSubGoalDialog.contentItem.children[0].children[0];
                         if (contentLoader && contentLoader.item) {
                             let textInput = contentLoader.item.children[1].children[0];
-                            if (textInput && textInput.text && textInput.text.trim() !== "" && textInput.text.length <= 45) {
+                            if (textInput && textInput.text && textInput.text.trim() !== "" && textInput.text.length <= 40) {
+                                mainWindow.saveSubGoalScrollPosition();
                                 AppViewModel.addSubGoal(textInput.text.trim());
                                 textInput.text = "";
                                 addSubGoalDialog.close();
@@ -216,10 +240,11 @@ Item {
                         selectByMouse: true
                         clip: true
                         text: editSubGoalDialog.subGoalToEdit ? (editSubGoalDialog.subGoalToEdit.name || "") : ""
-                        maximumLength: 45
+                        maximumLength: 40
 
                         onAccepted: {
-                            if (text.trim() !== "" && editSubGoalDialog.subGoalToEdit && text.length <= 45) {
+                            if (text.trim() !== "" && editSubGoalDialog.subGoalToEdit && text.length <= 40) {
+                                mainWindow.saveSubGoalScrollPosition();
                                 AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, text.trim());
                                 editSubGoalDialog.close();
                             }
@@ -237,8 +262,8 @@ Item {
                     }
 
                     Text {
-                        text: editSubGoalNameInput.length + "/45"
-                        color: editSubGoalNameInput.length >= 45 ? "#E95B5B" : "#AAAAAA"
+                        text: editSubGoalNameInput.length + "/40"
+                        color: editSubGoalNameInput.length >= 40 ? "#E95B5B" : "#AAAAAA"
                         font.pointSize: 9
                         anchors.right: parent.right
                         anchors.rightMargin: 12
@@ -258,7 +283,8 @@ Item {
                         let contentLoader = editSubGoalDialog.contentItem.children[0].children[0];
                         if (contentLoader && contentLoader.item) {
                             let textInput = contentLoader.item.children[1].children[0];
-                            if (textInput && textInput.text && textInput.text.trim() !== "" && editSubGoalDialog.subGoalToEdit && textInput.text.length <= 45) {
+                            if (textInput && textInput.text && textInput.text.trim() !== "" && editSubGoalDialog.subGoalToEdit && textInput.text.length <= 40) {
+                                mainWindow.saveSubGoalScrollPosition();
                                 AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, textInput.text.trim());
                                 editSubGoalDialog.close();
                             }
@@ -279,6 +305,27 @@ Item {
         id: taskConfirmationDialog
         dialogWidth: 350
         property var taskToRemove: null
+
+        // Добавляем обработку клавиш на уровне диалога
+        onOpened: {
+            forceActiveFocus()
+        }
+
+        Keys.onReturnPressed: {
+            if (taskConfirmationDialog.taskToRemove) {
+                mainWindow.saveTaskScrollPosition();
+                AppViewModel.removeTask(taskConfirmationDialog.taskToRemove);
+                taskConfirmationDialog.close();
+            }
+        }
+
+        Keys.onEnterPressed: {
+            if (taskConfirmationDialog.taskToRemove) {
+                mainWindow.saveTaskScrollPosition();
+                AppViewModel.removeTask(taskConfirmationDialog.taskToRemove);
+                taskConfirmationDialog.close();
+            }
+        }
 
         content: Component {
             ColumnLayout {
@@ -306,18 +353,19 @@ Item {
         buttons: [
             {
                 text: "Delete",
-                color: "#2D2D2D",
-                textColor: "#CCCCCC",
+                color: "#E95B5B",  // Красный цвет для кнопки удаления
+                textColor: "#FFFFFF",
                 onClicked: function() {
                     if (taskConfirmationDialog.taskToRemove) {
+                        mainWindow.saveTaskScrollPosition();
                         AppViewModel.removeTask(taskConfirmationDialog.taskToRemove);
                     }
                 }
             },
             {
                 text: "Cancel",
-                color: "#444444",
-                textColor: "#FFFFFF"
+                color: "#2D2D2D",  // Более тусклый цвет для отмены
+                textColor: "#AAAAAA"
             }
         ]
     }
@@ -361,6 +409,7 @@ Item {
 
                         onAccepted: {
                             if (text.trim() !== "" && text.length <= 75) {
+                                mainWindow.saveTaskScrollPosition();
                                 AppViewModel.addTask(text.trim());
                                 text = "";
                                 addTaskDialog.close();
@@ -401,6 +450,7 @@ Item {
                         if (contentLoader && contentLoader.item) {
                             let textInput = contentLoader.item.children[1].children[0];
                             if (textInput && textInput.text && textInput.text.trim() !== "" && textInput.text.length <= 75) {
+                                mainWindow.saveTaskScrollPosition(); // Добавить эту строку
                                 AppViewModel.addTask(textInput.text.trim());
                                 textInput.text = "";
                                 addTaskDialog.close();
@@ -471,6 +521,7 @@ Item {
 
                         onAccepted: {
                             if (text.trim() !== "" && editTaskDialog.taskToEdit && text.length <= 75) {
+                                mainWindow.saveTaskScrollPosition();
                                 AppViewModel.editTask(editTaskDialog.taskToEdit.id, text.trim());
                                 editTaskDialog.close();
                             }
@@ -510,6 +561,7 @@ Item {
                         if (contentLoader && contentLoader.item) {
                             let textInput = contentLoader.item.children[1].children[0];
                             if (textInput && textInput.text && textInput.text.trim() !== "" && editTaskDialog.taskToEdit && textInput.text.length <= 75) {
+                                mainWindow.saveTaskScrollPosition(); // Добавить эту строку
                                 AppViewModel.editTask(editTaskDialog.taskToEdit.id, textInput.text.trim());
                                 editTaskDialog.close();
                             }

@@ -19,6 +19,11 @@ ApplicationWindow {
 
     title: "Vision Compass"
 
+    property bool preserveTaskScrollPosition: false
+    property real savedTaskScrollY: 0
+    property bool preserveSubGoalScrollPosition: false
+    property real savedSubGoalScrollX: 0
+
     //flags: Qt.FramelessWindowHint
 
     Animations {
@@ -75,7 +80,28 @@ ApplicationWindow {
 
     Connections {
         target: AppViewModel
+        function onSubGoalsListModelChanged() {
+            // Если мы сохранили позицию, восстанавливаем её
+            if (preserveSubGoalScrollPosition && subGoalsList) {
+                Qt.callLater(function() {
+                    subGoalsList.contentX = savedSubGoalScrollX
+                    preserveSubGoalScrollPosition = false
+                })
+            }
+        }
+    }
+
+    Connections {
+        target: AppViewModel
         function onCurrentTasksListModelChanged() {
+            // Если мы сохраняли позицию, восстанавливаем её
+            if (preserveTaskScrollPosition && taskListView) {
+                Qt.callLater(function() {
+                    taskListView.contentY = savedTaskScrollY
+                    preserveTaskScrollPosition = false
+                })
+            }
+
             // Проверяем состояние задач с небольшой задержкой для корректного обновления
             Qt.callLater(function() {
                 if (allCurrentTasksCompleted && AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
@@ -84,6 +110,21 @@ ApplicationWindow {
             });
         }
     }
+
+    function saveSubGoalScrollPosition() {
+        if (subGoalsList) {
+            savedSubGoalScrollX = subGoalsList.contentX
+            preserveSubGoalScrollPosition = true
+        }
+    }
+
+    function saveTaskScrollPosition() {
+        if (taskListView) {
+            savedTaskScrollY = taskListView.contentY
+            preserveTaskScrollPosition = true
+        }
+    }
+
 
     property bool allCurrentTasksCompleted: {
         if (!AppViewModel.currentTasksListModel || AppViewModel.currentTasksListModel.length === 0) {
@@ -249,10 +290,9 @@ ApplicationWindow {
             if (allCurrentTasksCompleted && AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
                 //goalCirclePulseAnimation.start();
             }
+            taskListView.blockModelUpdate = false
+            taskListView.contentY = currentY
         });
-
-        taskListView.blockModelUpdate = false
-        taskListView.contentY = currentY
     }
 
        Shortcut {
@@ -1129,7 +1169,9 @@ ApplicationWindow {
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                dialogs.addTaskDialog.open()
+                                preserveScrollPosition(function() {
+                                    dialogs.addTaskDialog.open()
+                                })
                             }
                             hoverEnabled: true
                             onEntered: parent.color = "#4A4A43"
@@ -1186,6 +1228,16 @@ ApplicationWindow {
                         // Сохранение позиции скролла
                         property real savedContentY: 0
                         property bool blockModelUpdate: false
+
+                        onModelChanged: {
+                            if (blockModelUpdate) return
+                            // Восстанавливаем позицию после обновления модели
+                            Qt.callLater(function() {
+                                if (savedContentY > 0) {
+                                    contentY = savedContentY
+                                }
+                            })
+                        }
 
                         // Сохраняем позицию перед изменением модели
                         onContentYChanged: {
@@ -1324,7 +1376,9 @@ ApplicationWindow {
                                         height: 20
                                         hoverEnabled: true
                                         onClicked: {
-                                            dialogs.editTaskDialog.openForEditing(modelData)
+                                            preserveScrollPosition(function() {
+                                                dialogs.editTaskDialog.openForEditing(modelData)
+                                            })
                                         }
                                         onEntered: parent.children[0].color = "#FFFFFF"
                                         onExited: parent.children[0].color = "#CCCCCC"
@@ -1355,8 +1409,10 @@ ApplicationWindow {
                                         height: 20
                                         hoverEnabled: true
                                         onClicked: {
-                                            dialogs.taskConfirmationDialog.open()
-                                            dialogs.taskConfirmationDialog.taskToRemove = modelData
+                                            preserveScrollPosition(function() {
+                                                dialogs.taskConfirmationDialog.open()
+                                                dialogs.taskConfirmationDialog.taskToRemove = modelData
+                                            })
                                         }
                                         onEntered: parent.children[0].color = "#FFFFFF"
                                         onExited: parent.children[0].color = "#CCCCCC"
