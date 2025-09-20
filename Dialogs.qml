@@ -132,8 +132,13 @@ Item {
 
                         onAccepted: {
                             if (text.trim() !== "" && text.length <= 40) {
-                                mainWindow.saveSubGoalScrollPosition();
-                                AppViewModel.addSubGoal(text.trim());
+                                var newSubGoalId = AppViewModel.addSubGoal(text.trim());
+                                if (newSubGoalId > 0) {
+                                    AppViewModel.selectSubGoal(newSubGoalId);
+                                    Qt.callLater(function() {
+                                        mainWindow.scrollToSelectedItem();
+                                    });
+                                }
                                 text = "";
                                 addSubGoalDialog.close();
                             }
@@ -173,8 +178,13 @@ Item {
                         if (contentLoader && contentLoader.item) {
                             let textInput = contentLoader.item.children[1].children[0];
                             if (textInput && textInput.text && textInput.text.trim() !== "" && textInput.text.length <= 40) {
-                                mainWindow.saveSubGoalScrollPosition();
-                                AppViewModel.addSubGoal(textInput.text.trim());
+                                var newSubGoalId = AppViewModel.addSubGoal(textInput.text.trim());
+                                if (newSubGoalId > 0) {
+                                    AppViewModel.selectSubGoal(newSubGoalId);
+                                    Qt.callLater(function() {
+                                        mainWindow.scrollToSelectedItem();
+                                    });
+                                }
                                 textInput.text = "";
                                 addSubGoalDialog.close();
                             }
@@ -244,8 +254,11 @@ Item {
 
                         onAccepted: {
                             if (text.trim() !== "" && editSubGoalDialog.subGoalToEdit && text.length <= 40) {
-                                mainWindow.saveSubGoalScrollPosition();
                                 AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, text.trim());
+                                AppViewModel.selectSubGoal(editSubGoalDialog.subGoalToEdit.id);
+                                Qt.callLater(function() {
+                                    mainWindow.scrollToSelectedItem();
+                                });
                                 editSubGoalDialog.close();
                             }
                         }
@@ -284,8 +297,11 @@ Item {
                         if (contentLoader && contentLoader.item) {
                             let textInput = contentLoader.item.children[1].children[0];
                             if (textInput && textInput.text && textInput.text.trim() !== "" && editSubGoalDialog.subGoalToEdit && textInput.text.length <= 40) {
-                                mainWindow.saveSubGoalScrollPosition();
                                 AppViewModel.editSubGoal(editSubGoalDialog.subGoalToEdit.id, textInput.text.trim());
+                                AppViewModel.selectSubGoal(editSubGoalDialog.subGoalToEdit.id);
+                                Qt.callLater(function() {
+                                    mainWindow.scrollToSelectedItem();
+                                });
                                 editSubGoalDialog.close();
                             }
                         }
@@ -409,8 +425,18 @@ Item {
 
                         onAccepted: {
                             if (text.trim() !== "" && text.length <= 75) {
-                                mainWindow.saveTaskScrollPosition();
-                                AppViewModel.addTask(text.trim());
+                                var newTaskId = AppViewModel.addTask(text.trim());
+                                if (newTaskId > 0) {
+                                    AppViewModel.selectTask(newTaskId);
+                                    Qt.callLater(function() {
+                                        for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
+                                            if (AppViewModel.currentTasksListModel[i].id === newTaskId) {
+                                                mainWindow.scrollToSelectedTask(i);
+                                                break;
+                                            }
+                                        }
+                                    });
+                                }
                                 text = "";
                                 addTaskDialog.close();
                             }
@@ -450,8 +476,18 @@ Item {
                         if (contentLoader && contentLoader.item) {
                             let textInput = contentLoader.item.children[1].children[0];
                             if (textInput && textInput.text && textInput.text.trim() !== "" && textInput.text.length <= 75) {
-                                mainWindow.saveTaskScrollPosition(); // Добавить эту строку
-                                AppViewModel.addTask(textInput.text.trim());
+                                var newTaskId = AppViewModel.addTask(textInput.text.trim());
+                                if (newTaskId > 0) {
+                                    AppViewModel.selectTask(newTaskId);
+                                    Qt.callLater(function() {
+                                        for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
+                                            if (AppViewModel.currentTasksListModel[i].id === newTaskId) {
+                                                mainWindow.scrollToSelectedTask(i);
+                                                break;
+                                            }
+                                        }
+                                    });
+                                }
                                 textInput.text = "";
                                 addTaskDialog.close();
                             }
@@ -521,8 +557,16 @@ Item {
 
                         onAccepted: {
                             if (text.trim() !== "" && editTaskDialog.taskToEdit && text.length <= 75) {
-                                mainWindow.saveTaskScrollPosition();
                                 AppViewModel.editTask(editTaskDialog.taskToEdit.id, text.trim());
+                                AppViewModel.selectTask(editTaskDialog.taskToEdit.id);
+                                Qt.callLater(function() {
+                                    for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
+                                        if (AppViewModel.currentTasksListModel[i].id === editTaskDialog.taskToEdit.id) {
+                                            mainWindow.scrollToSelectedTask(i);
+                                            break;
+                                        }
+                                    }
+                                });
                                 editTaskDialog.close();
                             }
                         }
@@ -561,8 +605,17 @@ Item {
                         if (contentLoader && contentLoader.item) {
                             let textInput = contentLoader.item.children[1].children[0];
                             if (textInput && textInput.text && textInput.text.trim() !== "" && editTaskDialog.taskToEdit && textInput.text.length <= 75) {
-                                mainWindow.saveTaskScrollPosition(); // Добавить эту строку
                                 AppViewModel.editTask(editTaskDialog.taskToEdit.id, textInput.text.trim());
+                                AppViewModel.selectTask(editTaskDialog.taskToEdit.id);
+                                Qt.callLater(function() {
+                                    // Найти индекс отредактированной задачи
+                                    for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
+                                        if (AppViewModel.currentTasksListModel[i].id === editTaskDialog.taskToEdit.id) {
+                                            mainWindow.scrollToSelectedTask(i);
+                                            break;
+                                        }
+                                    }
+                                });
                                 editTaskDialog.close();
                             }
                         }

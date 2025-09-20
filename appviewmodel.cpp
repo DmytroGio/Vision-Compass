@@ -139,20 +139,28 @@ void AppViewModel::setMainGoal(const QString& name, const QString& description) 
 }
 
 // --- SubGoal Methods ---
-void AppViewModel::addSubGoal(const QString& name) {
-    if (name.isEmpty()) return;
+int AppViewModel::addSubGoal(const QString& name) {
+    if (name.isEmpty()) return 0;
 
     SubGoal sg;
     sg.description = name.toStdString();
     m_taskManager.addSubGoal(sg);
     saveData();
-    updateSubGoalListModel(); // Обновляем список в модели
+    updateSubGoalListModel();
 
-    // --- НОВАЯ ЛОГИКА ---
+    // Находим ID последнего добавленного элемента
+    int newId = 0;
+    if (!m_subGoals.empty()) {
+        newId = m_subGoals.back().id;
+    }
+
     // Если это был первый добавленный элемент, выбираем его
     if (m_subGoals.size() == 1) {
-        selectSubGoal(m_subGoals.back().id);
+        selectSubGoal(newId);
     }
+
+    emit newSubGoalAdded(newId);
+    return newId;
 }
 
 void AppViewModel::editSubGoal(int id, const QString& newName) {
@@ -255,25 +263,34 @@ void AppViewModel::selectSubGoal(int id) {
 }
 
 // --- Task Methods ---
-void AppViewModel::addTask(const QString& description) {
-    addTaskToCurrentSubGoal(description);
+int AppViewModel::addTask(const QString& description) {
+    return addTaskToCurrentSubGoal(description);
 }
 
-void AppViewModel::addTaskToCurrentSubGoal(const QString& description) {
+int AppViewModel::addTaskToCurrentSubGoal(const QString& description) {
     if (description.isEmpty()) {
         qDebug() << "Cannot add task: description is empty";
-        return;
+        return 0;
     }
 
     if (m_selectedSubGoalId == 0) {
         qDebug() << "Cannot add task: no subgoal selected";
-        return;
+        return 0;
     }
 
     m_taskManager.addTask(description.toStdString(), "", m_selectedSubGoalId);
     saveData();
     updateTasksListModel();
+
+    // Находим ID последнего добавленного элемента
+    int newTaskId = 0;
+    if (!m_currentTasks.empty()) {
+        newTaskId = m_currentTasks.back().id;
+    }
+
     qDebug() << "Added task:" << description << "to SubGoal:" << m_selectedSubGoalId;
+    emit newTaskAdded(newTaskId);
+    return newTaskId;
 }
 
 void AppViewModel::editTask(int id, const QString& newDescription) {

@@ -45,7 +45,7 @@ public:
     Q_INVOKABLE void setMainGoal(const QString& name, const QString& description);
 
     // SubGoal methods (matching QML calls)
-    Q_INVOKABLE void addSubGoal(const QString& name);
+    Q_INVOKABLE int addSubGoal(const QString& name);
     Q_INVOKABLE void editSubGoal(int id, const QString& newName);
     Q_INVOKABLE void deleteSubGoal(int id);
     Q_INVOKABLE void removeSubGoal(const QVariantMap& subGoalData); // For QML compatibility
@@ -53,8 +53,8 @@ public:
     Q_INVOKABLE void selectTask(int id);
 
     // Task methods (matching QML calls)
-    Q_INVOKABLE void addTask(const QString& description);
-    Q_INVOKABLE void addTaskToCurrentSubGoal(const QString& description);
+    Q_INVOKABLE int addTask(const QString& description);
+    int addTaskToCurrentSubGoal(const QString& description);
     Q_INVOKABLE void editTask(int id, const QString& newDescription);
     Q_INVOKABLE void completeTask(int id);
     Q_INVOKABLE void deleteTask(int id);
@@ -75,6 +75,8 @@ signals:
     void selectedSubGoalChanged();
     void subGoalCompletionChanged();
     void selectedTaskChanged();
+    void newSubGoalAdded(int subGoalId);
+    void newTaskAdded(int taskId);
 
 private:
     void updateGoalProperties();
