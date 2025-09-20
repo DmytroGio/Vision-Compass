@@ -479,6 +479,7 @@ Item {
                                 var newTaskId = AppViewModel.addTask(textInput.text.trim());
                                 if (newTaskId > 0) {
                                     AppViewModel.selectTask(newTaskId);
+                                    // Плавно скроллим к новой задаче от текущей позиции
                                     Qt.callLater(function() {
                                         for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
                                             if (AppViewModel.currentTasksListModel[i].id === newTaskId) {
@@ -557,16 +558,12 @@ Item {
 
                         onAccepted: {
                             if (text.trim() !== "" && editTaskDialog.taskToEdit && text.length <= 75) {
+                                // Сохраняем позицию перед редактированием
+                                mainWindow.saveTaskScrollPosition();
+
                                 AppViewModel.editTask(editTaskDialog.taskToEdit.id, text.trim());
                                 AppViewModel.selectTask(editTaskDialog.taskToEdit.id);
-                                Qt.callLater(function() {
-                                    for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
-                                        if (AppViewModel.currentTasksListModel[i].id === editTaskDialog.taskToEdit.id) {
-                                            mainWindow.scrollToSelectedTask(i);
-                                            break;
-                                        }
-                                    }
-                                });
+                                // Не скроллим
                                 editTaskDialog.close();
                             }
                         }
@@ -605,17 +602,12 @@ Item {
                         if (contentLoader && contentLoader.item) {
                             let textInput = contentLoader.item.children[1].children[0];
                             if (textInput && textInput.text && textInput.text.trim() !== "" && editTaskDialog.taskToEdit && textInput.text.length <= 75) {
+                                // Сохраняем позицию перед редактированием
+                                mainWindow.saveTaskScrollPosition();
+
                                 AppViewModel.editTask(editTaskDialog.taskToEdit.id, textInput.text.trim());
                                 AppViewModel.selectTask(editTaskDialog.taskToEdit.id);
-                                Qt.callLater(function() {
-                                    // Найти индекс отредактированной задачи
-                                    for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
-                                        if (AppViewModel.currentTasksListModel[i].id === editTaskDialog.taskToEdit.id) {
-                                            mainWindow.scrollToSelectedTask(i);
-                                            break;
-                                        }
-                                    }
-                                });
+                                // Не скроллим, оставляем текущую позицию
                                 editTaskDialog.close();
                             }
                         }

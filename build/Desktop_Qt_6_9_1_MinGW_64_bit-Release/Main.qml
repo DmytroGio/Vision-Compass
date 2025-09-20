@@ -273,7 +273,11 @@ ApplicationWindow {
 
     function preserveScrollPosition(action, wasTaskCompleted = false) {
         var currentY = taskListView.contentY
+        var selectedTaskId = AppViewModel.selectedTaskId
+
+        // Блокируем автоматическое обновление позиции
         taskListView.blockModelUpdate = true
+
         action()
 
         // Запускаем анимацию только если задача была отмечена как выполненная (не снималась отметка)
@@ -285,13 +289,22 @@ ApplicationWindow {
             }
         }
 
-        // Проверяем состояние всех задач после действия
+        // Восстанавливаем позицию после небольшой задержки
         Qt.callLater(function() {
             if (allCurrentTasksCompleted && AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
                 //goalCirclePulseAnimation.start();
             }
-            taskListView.blockModelUpdate = false
+
+            // Восстанавливаем позицию скролла
             taskListView.contentY = currentY
+
+            // Если был выбран конкретный task, убеждаемся что он остается выбранным
+            if (selectedTaskId > 0) {
+                AppViewModel.selectTask(selectedTaskId)
+            }
+
+            // Разблокируем обновления
+            taskListView.blockModelUpdate = false
         });
     }
 
@@ -1169,9 +1182,7 @@ ApplicationWindow {
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                preserveScrollPosition(function() {
-                                    dialogs.addTaskDialog.open()
-                                })
+                                dialogs.addTaskDialog.open()  // Убираем preserveScrollPosition отсюда
                             }
                             hoverEnabled: true
                             onEntered: parent.color = "#4A4A43"
@@ -1231,12 +1242,9 @@ ApplicationWindow {
 
                         onModelChanged: {
                             if (blockModelUpdate) return
-                            // Восстанавливаем позицию после обновления модели
-                            Qt.callLater(function() {
-                                if (savedContentY > 0) {
-                                    contentY = savedContentY
-                                }
-                            })
+
+                            // Не восстанавливаем позицию автоматически при каждом изменении модели
+                            // Позиция будет восстановлена в preserveScrollPosition
                         }
 
                         // Сохраняем позицию перед изменением модели
