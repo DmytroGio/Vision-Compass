@@ -135,3 +135,6 @@ To see the global goals of life and plan according to them.
 
 ## 2025-09-21
 - During the presentation design process 03 - Figma design
+
+## 2025-09-22
+- Discussing the design and testing on other devices. Processing feedback.
