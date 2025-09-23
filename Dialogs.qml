@@ -730,7 +730,7 @@ Item {
                     }
 
                     Text {
-                        text: "Enter description or target date..."
+                        text: "Enter main goal description..."
                         color: "#888888"
                         font.pointSize: 11
                         anchors.left: parent.left
@@ -1158,7 +1158,7 @@ Item {
                                 }
 
                                 Text {
-                                    text: "Your primary objective (1-10+ years)"
+                                    text: "The why behind what you do."
                                     color: "#AAAAAA"
                                     font.pointSize: 10
                                     wrapMode: Text.WordWrap
@@ -1203,7 +1203,7 @@ Item {
                                 }
 
                                 Text {
-                                    text: "Major milestones (3 months - 1 year)"
+                                    text: "The what that moves you forward."
                                     color: "#AAAAAA"
                                     font.pointSize: 10
                                     wrapMode: Text.WordWrap
@@ -1248,7 +1248,7 @@ Item {
                                 }
 
                                 Text {
-                                    text: "Actionable steps (1 day - 3 months)"
+                                    text: "The how you get it done."
                                     color: "#AAAAAA"
                                     font.pointSize: 10
                                     wrapMode: Text.WordWrap
