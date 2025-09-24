@@ -1,4 +1,3 @@
-// CustomDialog.qml
 import QtQuick
 import QtQuick.Controls 2.15
 import QtQuick.Layouts
@@ -6,25 +5,27 @@ import QtQuick.Layouts
 Dialog {
     id: root
 
-    // --- Public API ---
+    // --- PUBLIC API ---
     property Component content: null
     property list<variant> buttons: []
     property int dialogWidth: 400
     property bool isLargeDialog: false
 
-    // --- Configuration ---
+    // --- DIALOG CONFIGURATION ---
     modal: true
     parent: Overlay.overlay
     anchors.centerIn: Overlay.overlay
     width: dialogWidth
-    height: contentColumn.implicitHeight + 100 // Фиксированная высота
+    height: contentColumn.implicitHeight + 100 // Add fixed height for padding and buttons
     padding: 0
     focus: true
 
+    // --- LOGIC ---
     onOpened: {
+        // Use callLater to ensure the content item is fully created and ready.
         Qt.callLater(function() {
             if (contentLoader.item) {
-                // Ищем TextInput в структуре
+                // Search for the first TextInput within the loaded content to set focus.
                 function findTextInput(item) {
                     if (item && typeof item.forceActiveFocus === "function" && item.toString().indexOf("TextInput") !== -1) {
                         return item;
@@ -49,11 +50,14 @@ Dialog {
         });
     }
 
-    // Semi-transparent background overlay
+    // --- UI STRUCTURE ---
+
+    // Semi-transparent background overlay when the dialog is modal.
     Overlay.modal: Rectangle {
         color: "#80000000"
     }
 
+    // Custom background for the dialog window.
     background: Rectangle {
         color: "#2D2D2D"
         radius: 10
@@ -74,16 +78,15 @@ Dialog {
             anchors.topMargin: root.isLargeDialog ? 40 : 30
             spacing: isLargeDialog ? 10 : 20
 
-            // Dynamic Content
+            // Dynamic Content Area
             Loader {
                 id: contentLoader
                 sourceComponent: root.content
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignHCenter
-
             }
 
-            // Buttons
+            // Buttons Area
             RowLayout {
                 Layout.fillWidth: true
                 spacing: 15
@@ -92,7 +95,7 @@ Dialog {
                 Repeater {
                     model: root.buttons
                     delegate: Rectangle {
-                        Layout.fillWidth: true // Кнопки займут всё доступное пространство
+                        Layout.fillWidth: true
                         Layout.preferredHeight: 40
                         color: modelData.color || "#3A3A3A"
                         radius: 8

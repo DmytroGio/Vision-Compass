@@ -1,7 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QQmlContext> // Required for setContextProperty
-#include "appviewmodel.h" // Include the AppViewModel header
+#include <QQmlContext>
+#include "appviewmodel.h"
 #include <QtQuickControls2/QtQuickControls2>
 #include <QQuickWindow>
 #include <QFileDialog>
@@ -31,7 +31,6 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    // ИСПРАВЛЕНИЕ: Раскомментируйте эту строку - она нужна для работы AppViewModel в QML
     engine.rootContext()->setContextProperty("AppViewModel", appViewModel);
 
     const QUrl url(QStringLiteral("qrc:/VisionCompass/Main.qml"));

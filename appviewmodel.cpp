@@ -6,12 +6,15 @@
 #include <QMessageBox>
 #include <QDateTime>
 
+// --- CONSTRUCTOR ---
+
 AppViewModel::AppViewModel(QObject *parent) : QObject(parent)
 {
     loadData();
 }
 
-// --- Property Getters ---
+// --- PROPERTY GETTERS ---
+
 QString AppViewModel::currentGoalText() const {
     return QString::fromStdString(m_currentGoal.description);
 }
@@ -25,8 +28,9 @@ QVariantList AppViewModel::subGoalsListModel() const {
     for (const auto& sg : m_subGoals) {
         QVariantMap map;
         map.insert("id", sg.id);
-        map.insert("name", QString::fromStdString(sg.description)); // QML expects "name"
-        map.insert("description", QString::fromStdString(sg.description)); // Also provide "description"
+        // QML model delegate often expects a "name" role for its text property.
+        map.insert("name", QString::fromStdString(sg.description));
+        map.insert("description", QString::fromStdString(sg.description));
         list.append(map);
     }
     return list;
@@ -37,8 +41,9 @@ QVariantList AppViewModel::currentTasksListModel() const {
     for (const auto& task : m_currentTasks) {
         QVariantMap map;
         map.insert("id", task.id);
-        map.insert("name", QString::fromStdString(task.description)); // QML expects "name"
-        map.insert("description", QString::fromStdString(task.description)); // Also provide "description"
+        // QML model delegate often expects a "name" role for its text property.
+        map.insert("name", QString::fromStdString(task.description));
+        map.insert("description", QString::fromStdString(task.description));
         map.insert("completed", task.completed);
         list.append(map);
     }
@@ -66,11 +71,6 @@ QVariantList AppViewModel::subGoalCompletionStatus() const
     return statusList;
 }
 
-void AppViewModel::updateSubGoalCompletionStatus()
-{
-    emit subGoalCompletionChanged();
-}
-
 int AppViewModel::selectedSubGoalId() const {
     return m_selectedSubGoalId;
 }
@@ -86,7 +86,14 @@ QString AppViewModel::selectedSubGoalName() const {
     return QString();
 }
 
-// --- Property Setters ---
+int AppViewModel::selectedTaskId() const
+{
+    return m_selectedTaskId;
+}
+
+
+// --- PROPERTY SETTERS ---
+
 void AppViewModel::setCurrentGoalText(const QString& text) {
     if (QString::fromStdString(m_currentGoal.description) != text) {
         m_currentGoal.description = text.toStdString();
@@ -105,30 +112,7 @@ void AppViewModel::setCurrentGoalDescription(const QString& description) {
     }
 }
 
-// --- Q_INVOKABLE Methods ---
-void AppViewModel::loadData() {
-    QString dataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    QDir dir(dataPath);
-    if (!dir.exists()) {
-        dir.mkpath(".");
-    }
-    QString filePath = dataPath + "/tasks.json";
-    m_taskManager.loadFromFile(filePath.toStdString());
-
-    updateGoalProperties();
-    updateSubGoalListModel();
-
-    // --- НОВАЯ ЛОГИКА ---
-    // Если список не пуст, выбираем первый SubGoal по умолчанию
-    if (!m_subGoals.empty()) {
-        selectSubGoal(m_subGoals.front().id);
-    }
-}
-
-void AppViewModel::saveData() {
-    m_taskManager.saveToFile(getTasksFilePath().toStdString());
-    qDebug() << "Data saved to" << getTasksFilePath();
-}
+// --- PUBLIC Q_INVOKABLE API for QML ---
 
 void AppViewModel::setMainGoal(const QString& name, const QString& description) {
     m_currentGoal.description = name.toStdString();
@@ -138,7 +122,8 @@ void AppViewModel::setMainGoal(const QString& name, const QString& description) 
     emit currentGoalChanged();
 }
 
-// --- SubGoal Methods ---
+// --- SubGoal Management ---
+
 int AppViewModel::addSubGoal(const QString& name) {
     if (name.isEmpty()) return 0;
 
@@ -148,13 +133,11 @@ int AppViewModel::addSubGoal(const QString& name) {
     saveData();
     updateSubGoalListModel();
 
-    // Находим ID последнего добавленного элемента
     int newId = 0;
     if (!m_subGoals.empty()) {
         newId = m_subGoals.back().id;
     }
 
-    // Если это был первый добавленный элемент, выбираем его
     if (m_subGoals.size() == 1) {
         selectSubGoal(newId);
     }
@@ -182,7 +165,6 @@ void AppViewModel::editSubGoal(int id, const QString& newName) {
 void AppViewModel::deleteSubGoal(int id) {
     if (m_subGoals.empty()) return;
 
-    // Находим индекс удаляемого элемента
     int indexToRemove = -1;
     for (int i = 0; i < m_subGoals.size(); ++i) {
         if (m_subGoals[i].id == id) {
@@ -191,38 +173,28 @@ void AppViewModel::deleteSubGoal(int id) {
         }
     }
 
-    if (indexToRemove == -1) return; // Элемент не найден
+    if (indexToRemove == -1) return;
 
-    // --- КЛЮЧЕВАЯ ЛОГИКА ВЫБОРА НОВОГО ЭЛЕМЕНТА ---
     int newIdToSelect = 0;
-    if (id == m_selectedSubGoalId) { // Если удаляем выбранный элемент
+    if (id == m_selectedSubGoalId) {
         if (m_subGoals.size() > 1) {
-            // Если удаляем не первый, выбираем предыдущий.
-            // Если удаляем первый, выбираем новый первый (который был вторым).
-            int newIndex = (indexToRemove > 0) ? (indexToRemove - 1) : 0;
-            // Получаем ID нового элемента ДО удаления старого
-            newIdToSelect = m_subGoals[newIndex].id;
-            // Если удаляли первый, а выбрали новый первый, ID может совпасть.
-            // Поэтому, если удаляем первый, то выбираем следующий за ним.
             if (indexToRemove == 0) {
                 newIdToSelect = m_subGoals[1].id;
+            } else {
+                newIdToSelect = m_subGoals[indexToRemove - 1].id;
             }
         }
     } else {
-        // Если удаляем НЕ выбранный элемент, то выделение остается на месте
         newIdToSelect = m_selectedSubGoalId;
     }
 
-    // Удаляем SubGoal из TaskManager
     m_taskManager.deleteSubGoal(id);
     saveData();
-    updateSubGoalListModel(); // Обновляем список m_subGoals
+    updateSubGoalListModel();
 
-    // Выбираем новый элемент или очищаем, если список пуст
     if (!m_subGoals.empty()) {
         selectSubGoal(newIdToSelect);
     } else {
-        // Список стал пустым
         m_selectedSubGoalId = 0;
         updateTasksListModel();
         emit selectedSubGoalChanged();
@@ -237,7 +209,6 @@ void AppViewModel::removeSubGoal(const QVariantMap& subGoalData) {
 }
 
 void AppViewModel::selectSubGoal(int id) {
-    // Проверяем, существует ли еще такой ID
     bool idExists = false;
     for(const auto& sg : m_subGoals) {
         if (sg.id == id) {
@@ -245,11 +216,11 @@ void AppViewModel::selectSubGoal(int id) {
             break;
         }
     }
-    // Если ID не существует (например, после удаления), но список не пуст, выбираем первый
+
     if (!idExists && !m_subGoals.empty()) {
         id = m_subGoals.front().id;
     } else if (m_subGoals.empty()) {
-        id = 0; // Список пуст
+        id = 0;
     }
 
 
@@ -258,11 +229,11 @@ void AppViewModel::selectSubGoal(int id) {
         qDebug() << "SubGoal selected:" << m_selectedSubGoalId;
         updateTasksListModel();
         emit selectedSubGoalChanged();
-        // emit subGoalsChanged(); // Этот сигнал лучше не трогать, чтобы избежать перерисовки всего списка
     }
 }
 
-// --- Task Methods ---
+// --- Task Management ---
+
 int AppViewModel::addTask(const QString& description) {
     return addTaskToCurrentSubGoal(description);
 }
@@ -282,7 +253,6 @@ int AppViewModel::addTaskToCurrentSubGoal(const QString& description) {
     saveData();
     updateTasksListModel();
 
-    // Находим ID последнего добавленного элемента
     int newTaskId = 0;
     if (!m_currentTasks.empty()) {
         newTaskId = m_currentTasks.back().id;
@@ -304,7 +274,7 @@ void AppViewModel::editTask(int id, const QString& newDescription) {
 void AppViewModel::completeTask(int id){
     m_taskManager.completeTask(id);
     saveData();
-    updateTasksListModel(); //Update the model to refresh the UI
+    updateTasksListModel();
 }
 
 void AppViewModel::deleteTask(int id) {
@@ -319,7 +289,147 @@ void AppViewModel::removeTask(const QVariantMap& taskData) {
     deleteTask(id);
 }
 
-// --- Private Helper Methods ---
+void AppViewModel::selectTask(int id)
+{
+    if (m_selectedTaskId != id) {
+        m_selectedTaskId = id;
+        emit selectedTaskChanged();
+    }
+}
+
+
+// --- DATA PERSISTENCE & MANAGEMENT ---
+
+void AppViewModel::loadData() {
+    QString filePath = getTasksFilePath();
+    m_taskManager.loadFromFile(filePath.toStdString());
+
+    updateGoalProperties();
+    updateSubGoalListModel();
+
+    if (!m_subGoals.empty()) {
+        selectSubGoal(m_subGoals.front().id);
+    }
+}
+
+void AppViewModel::saveData() {
+    m_taskManager.saveToFile(getTasksFilePath().toStdString());
+    qDebug() << "Data saved to" << getTasksFilePath();
+}
+
+void AppViewModel::clearAllData() {
+    m_taskManager = TaskManager();
+
+    Goal defaultGoal;
+    defaultGoal.id = 1;
+    defaultGoal.description = "My Main Goal";
+    defaultGoal.targetDate = "Set your target date";
+    m_taskManager.setGoal(defaultGoal);
+
+    SubGoal defaultSubGoal;
+    defaultSubGoal.description = "First Sub Goal";
+    m_taskManager.addSubGoal(defaultSubGoal);
+
+    m_selectedSubGoalId = 0;
+
+    updateGoalProperties();
+    updateSubGoalListModel();
+
+    if (!m_subGoals.empty()) {
+        selectSubGoal(m_subGoals[0].id);
+    } else {
+        m_selectedSubGoalId = 0;
+        updateTasksListModel();
+        emit selectedSubGoalChanged();
+    }
+
+    saveData();
+}
+
+QString AppViewModel::getCurrentDataAsJson() const {
+    QString tempPath = getTasksFilePath() + ".temp";
+    m_taskManager.saveToFile(tempPath.toStdString());
+
+    QFile file(tempPath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Failed to read temporary JSON data";
+        return QString();
+    }
+
+    QTextStream in(&file);
+    QString jsonData = in.readAll();
+    file.close();
+
+    QFile::remove(tempPath);
+    return jsonData;
+}
+
+void AppViewModel::loadDataFromJson(const QString& jsonData) {
+    try {
+        if (jsonData.isEmpty()) {
+            qDebug() << "Import cancelled: empty JSON data";
+            return;
+        }
+
+        qDebug() << "Loading data from JSON";
+
+        QString backupPath = getTasksFilePath() + ".backup";
+        m_taskManager.saveToFile(backupPath.toStdString());
+        qDebug() << "Created backup at:" << backupPath;
+
+        QString tempPath = getTasksFilePath() + ".import_temp";
+        QFile tempFile(tempPath);
+        if (!tempFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            qDebug() << "Failed to create temporary import file";
+            return;
+        }
+
+        QTextStream out(&tempFile);
+        out << jsonData;
+        tempFile.close();
+
+        m_taskManager.loadFromFile(tempPath.toStdString());
+        QFile::remove(tempPath);
+
+        m_selectedSubGoalId = 0;
+
+        updateGoalProperties();
+        updateSubGoalListModel();
+
+        if (!m_subGoals.empty()) {
+            selectSubGoal(m_subGoals[0].id);
+        } else {
+            m_selectedSubGoalId = 0;
+            updateTasksListModel();
+            emit selectedSubGoalChanged();
+        }
+
+        saveData();
+        qDebug() << "Import completed successfully";
+    } catch (const std::exception& e) {
+        qDebug() << "Import error:" << e.what();
+        // Restore from backup if import failed
+        QString backupPath = getTasksFilePath() + ".backup";
+        try {
+            m_taskManager.loadFromFile(backupPath.toStdString());
+            m_selectedSubGoalId = 0;
+            updateGoalProperties();
+            updateSubGoalListModel();
+            updateTasksListModel();
+            qDebug() << "Restored from backup after failed import";
+        } catch (const std::exception& restoreError) {
+            qDebug() << "Failed to restore from backup:" << restoreError.what();
+        }
+    }
+}
+
+// --- PRIVATE HELPER METHODS ---
+
+void AppViewModel::updateSubGoalCompletionStatus()
+{
+    emit subGoalCompletionChanged();
+}
+
 void AppViewModel::updateGoalProperties() {
     m_currentGoal = m_taskManager.getGoal();
     emit currentGoalChanged();
@@ -343,7 +453,6 @@ void AppViewModel::updateTasksListModel() {
     emit currentTasksChanged();
 }
 
-
 QString AppViewModel::getTasksFilePath() const {
     QString dataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QDir dir(dataPath);
@@ -351,43 +460,6 @@ QString AppViewModel::getTasksFilePath() const {
         dir.mkpath(".");
     }
     return dataPath + "/tasks.json";
-}
-
-
-void AppViewModel::clearAllData() {
-    // Clear all data and reset to defaults
-    m_taskManager = TaskManager(); // Reset to default state
-
-    // Set default goal
-    Goal defaultGoal;
-    defaultGoal.id = 1;
-    defaultGoal.description = "My Main Goal";
-    defaultGoal.targetDate = "Set your target date";
-    m_taskManager.setGoal(defaultGoal);
-
-    // Add default subgoal
-    SubGoal defaultSubGoal;
-    defaultSubGoal.description = "First Sub Goal";
-    m_taskManager.addSubGoal(defaultSubGoal);
-
-    // ВАЖНО: принудительно сбрасываем выбор
-    m_selectedSubGoalId = 0;
-
-    // Update UI
-    updateGoalProperties();
-    updateSubGoalListModel();
-
-    // Select the default subgoal
-    if (!m_subGoals.empty()) {
-        selectSubGoal(m_subGoals[0].id);
-    } else {
-        m_selectedSubGoalId = 0;
-        updateTasksListModel();
-        emit selectedSubGoalChanged();
-    }
-
-    // Save the cleared state
-    saveData();
 }
 
 QString AppViewModel::getDefaultDataPath() const {
@@ -402,132 +474,26 @@ QString AppViewModel::getDefaultExportFileName() const {
 }
 
 QString AppViewModel::getDefaultImportPath() const {
-    QString backupDir = getDefaultDataPath(); // Documents/VisionCompass_Backups
+    QString backupDir = getDefaultDataPath();
     QDir dir(backupDir);
 
     if (!dir.exists()) {
         qDebug() << "Backup directory does not exist:" << backupDir;
-        return backupDir; // Возвращаем путь к папке, даже если её нет
+        return backupDir;
     }
 
-    // Ищем все файлы с нужным паттерном
     QStringList nameFilters;
     nameFilters << "VisionCompass_backup_*.json";
     QFileInfoList backupFiles = dir.entryInfoList(nameFilters, QDir::Files, QDir::Time);
 
     if (backupFiles.isEmpty()) {
         qDebug() << "No backup files found in:" << backupDir;
-        return backupDir; // Возвращаем путь к папке
+        return backupDir;
     }
 
-    // Возвращаем путь к самому новому файлу
     QFileInfo latestFile = backupFiles.first();
     QString latestFilePath = latestFile.absoluteFilePath();
 
     qDebug() << "Latest backup file found:" << latestFilePath;
     return latestFilePath;
-}
-
-QString AppViewModel::getCurrentDataAsJson() const {
-    QString tempPath = getTasksFilePath() + ".temp";
-    m_taskManager.saveToFile(tempPath.toStdString());
-
-    QFile file(tempPath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "Failed to read temporary JSON data";
-        return QString();
-    }
-
-    QTextStream in(&file);
-    QString jsonData = in.readAll();
-    file.close();
-
-    // Clean up temp file
-    QFile::remove(tempPath);
-
-    return jsonData;
-}
-
-void AppViewModel::loadDataFromJson(const QString& jsonData) {
-    try {
-        if (jsonData.isEmpty()) {
-            qDebug() << "Import cancelled: empty JSON data";
-            return;
-        }
-
-        qDebug() << "Loading data from JSON";
-
-        // Create backup of current data before importing
-        QString backupPath = getTasksFilePath() + ".backup";
-        m_taskManager.saveToFile(backupPath.toStdString());
-        qDebug() << "Created backup at:" << backupPath;
-
-        // Save JSON to temporary file and load
-        QString tempPath = getTasksFilePath() + ".import_temp";
-        QFile tempFile(tempPath);
-        if (!tempFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            qDebug() << "Failed to create temporary import file";
-            return;
-        }
-
-        QTextStream out(&tempFile);
-        out << jsonData;
-        tempFile.close();
-
-        // Load from temporary file
-        m_taskManager.loadFromFile(tempPath.toStdString());
-
-        // Clean up temp file
-        QFile::remove(tempPath);
-
-        // ДОБАВЛЯЕМ: Принудительный сброс выбора перед обновлением
-        m_selectedSubGoalId = 0;
-
-        // Update UI
-        updateGoalProperties();
-        updateSubGoalListModel();
-
-        // Select first subgoal if available
-        if (!m_subGoals.empty()) {
-            selectSubGoal(m_subGoals[0].id);
-        } else {
-            m_selectedSubGoalId = 0;
-            updateTasksListModel();
-            emit selectedSubGoalChanged();
-        }
-
-        // Save the imported data
-        saveData();
-        qDebug() << "Import completed successfully";
-    } catch (const std::exception& e) {
-        qDebug() << "Import error:" << e.what();
-        // Restore from backup if import failed
-        QString backupPath = getTasksFilePath() + ".backup";
-        try {
-            m_taskManager.loadFromFile(backupPath.toStdString());
-
-            // ДОБАВЛЯЕМ: Принудительный сброс и при восстановлении из backup
-            m_selectedSubGoalId = 0;
-
-            updateGoalProperties();
-            updateSubGoalListModel();
-            updateTasksListModel();
-            qDebug() << "Restored from backup after failed import";
-        } catch (const std::exception& restoreError) {
-            qDebug() << "Failed to restore from backup:" << restoreError.what();
-        }
-    }
-}
-
-int AppViewModel::selectedTaskId() const
-{
-    return m_selectedTaskId;
-}
-
-void AppViewModel::selectTask(int id)
-{
-    if (m_selectedTaskId != id) {
-        m_selectedTaskId = id;
-        emit selectedTaskChanged();
-    }
 }

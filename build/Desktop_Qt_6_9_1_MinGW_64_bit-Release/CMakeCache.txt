@@ -132,7 +132,7 @@ CMAKE_INSTALL_MANDIR:PATH=
 CMAKE_INSTALL_OLDINCLUDEDIR:PATH=/usr/include
 
 //Install path prefix, prepended onto install directories.
-CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/task-manager
+CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/VisionCompass
 
 //Run-time variable data (LOCALSTATEDIR/run)
 CMAKE_INSTALL_RUNSTATEDIR:PATH=
@@ -194,7 +194,7 @@ CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 CMAKE_PROJECT_INCLUDE_BEFORE:FILEPATH=E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release/.qtc/package-manager/auto-setup.cmake
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=task-manager
+CMAKE_PROJECT_NAME:STATIC=VisionCompass
 
 //Value Computed by CMake
 CMAKE_PROJECT_VERSION:STATIC=0.1
@@ -352,15 +352,6 @@ Qt6GuiTools_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6GuiTools
 //The directory containing a CMake configuration file for Qt6Gui.
 Qt6Gui_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6Gui
 
-//The directory containing a CMake configuration file for Qt6LabsPlatformPrivate.
-Qt6LabsPlatformPrivate_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6LabsPlatformPrivate
-
-//The directory containing a CMake configuration file for Qt6LabsPlatform.
-Qt6LabsPlatform_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6LabsPlatform
-
-//The directory containing a CMake configuration file for Qt6Labs.
-Qt6Labs_DIR:PATH=Qt6Labs_DIR-NOTFOUND
-
 //The directory containing a CMake configuration file for Qt6NetworkPrivate.
 Qt6NetworkPrivate_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6NetworkPrivate
 
@@ -415,38 +406,11 @@ Qt6QmlWorkerScript_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QmlWorkerScript
 //The directory containing a CMake configuration file for Qt6Qml.
 Qt6Qml_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6Qml
 
-//The directory containing a CMake configuration file for Qt6QuickControls2ImplPrivate.
-Qt6QuickControls2ImplPrivate_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickControls2ImplPrivate
-
-//The directory containing a CMake configuration file for Qt6QuickControls2Impl.
-Qt6QuickControls2Impl_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickControls2Impl
-
 //The directory containing a CMake configuration file for Qt6QuickControls2Private.
 Qt6QuickControls2Private_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickControls2Private
 
 //The directory containing a CMake configuration file for Qt6QuickControls2.
 Qt6QuickControls2_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickControls2
-
-//The directory containing a CMake configuration file for Qt6QuickDialogs2Private.
-Qt6QuickDialogs2Private_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickDialogs2Private
-
-//The directory containing a CMake configuration file for Qt6QuickDialogs2QuickImplPrivate.
-Qt6QuickDialogs2QuickImplPrivate_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickDialogs2QuickImplPrivate
-
-//The directory containing a CMake configuration file for Qt6QuickDialogs2QuickImpl.
-Qt6QuickDialogs2QuickImpl_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickDialogs2QuickImpl
-
-//The directory containing a CMake configuration file for Qt6QuickDialogs2UtilsPrivate.
-Qt6QuickDialogs2UtilsPrivate_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickDialogs2UtilsPrivate
-
-//The directory containing a CMake configuration file for Qt6QuickDialogs2Utils.
-Qt6QuickDialogs2Utils_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickDialogs2Utils
-
-//The directory containing a CMake configuration file for Qt6QuickDialogs2.
-Qt6QuickDialogs2_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickDialogs2
-
-//The directory containing a CMake configuration file for Qt6QuickDialogs.
-Qt6QuickDialogs_DIR:PATH=Qt6QuickDialogs_DIR-NOTFOUND
 
 //The directory containing a CMake configuration file for Qt6QuickPrivate.
 Qt6QuickPrivate_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6QuickPrivate
@@ -478,6 +442,15 @@ Qt6ZlibPrivate_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6ZlibPrivate
 //The directory containing a CMake configuration file for Qt6.
 Qt6_DIR:PATH=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6
 
+//Value Computed by CMake
+VisionCompass_BINARY_DIR:STATIC=E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release
+
+//Value Computed by CMake
+VisionCompass_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+VisionCompass_SOURCE_DIR:STATIC=E:/Projects/C++/task-manager
+
 //Path to a program.
 Vulkan_GLSLANG_VALIDATOR_EXECUTABLE:FILEPATH=Vulkan_GLSLANG_VALIDATOR_EXECUTABLE-NOTFOUND
 
@@ -492,15 +465,6 @@ Vulkan_LIBRARY:FILEPATH=Vulkan_LIBRARY-NOTFOUND
 
 //Path to a program.
 WINDEPLOYQT_EXECUTABLE:FILEPATH=C:/Qt/6.9.1/mingw_64/bin/windeployqt.exe
-
-//Value Computed by CMake
-task-manager_BINARY_DIR:STATIC=E:/Projects/C++/task-manager/build/Desktop_Qt_6_9_1_MinGW_64_bit-Release
-
-//Value Computed by CMake
-task-manager_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-task-manager_SOURCE_DIR:STATIC=E:/Projects/C++/task-manager
 
 
 ########################
@@ -1633,6 +1597,6 @@ Vulkan_LIBRARY-ADVANCED:INTERNAL=1
 //linker supports push/pop state
 _CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
 //CMAKE_INSTALL_PREFIX during last run
-_GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=C:/Program Files (x86)/task-manager
+_GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=C:/Program Files (x86)/VisionCompass
 __qt_qml_macros_module_base_dir:INTERNAL=C:/Qt/6.9.1/mingw_64/lib/cmake/Qt6Qml
 

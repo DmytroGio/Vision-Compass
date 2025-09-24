@@ -238,7 +238,7 @@ Item {
         }
     }
 
-    // Методы для остановки анимаций
+    // Methods for stopping animations
     function stopAllAnimations() {
         unifiedPulseAnimation.stop()
         bigCircleOnlyAnimation.stop()
