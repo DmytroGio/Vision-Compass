@@ -3,31 +3,41 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window
 import QtQuick.Effects
-//import Qt.labs.platform 1.1 as Platform
 import com.visioncompass 1.0
 
 
 ApplicationWindow {
     id: mainWindow
     objectName: "mainWindow"
+
+    // Window Properties
     visible: true
     width: 1000
     height: 900
-
     minimumWidth: 600
     minimumHeight: 500
-
     title: "Vision Compass"
 
+    // Custom Properties for State Preservation
     property bool preserveTaskScrollPosition: false
     property real savedTaskScrollY: 0
     property bool preserveSubGoalScrollPosition: false
     property real savedSubGoalScrollX: 0
 
-    //flags: Qt.FramelessWindowHint
+    property bool allCurrentTasksCompleted: {
+        if (!AppViewModel.currentTasksListModel || AppViewModel.currentTasksListModel.length === 0) {
+            return false;
+        }
+        for (let i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
+            if (!AppViewModel.currentTasksListModel[i].completed) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-    Animations {
-        id: appAnimations
+    // Non-visual Components
+    Animations { id: appAnimations
         bigCircle: bigCircle
         bigCircleEffect: bigCircleEffect
         goalCircle: goalCircle
@@ -35,13 +45,11 @@ ApplicationWindow {
         taskListView: taskListView
         subGoalsList: subGoalsList
     }
+    Dialogs { id: dialogs }
+    FileManager { id: fileManager }
 
-    Dialogs {
-        id: dialogs
-    }
+    // --- LOGIC AND STATE MANAGEMENT ---
 
-
-    // Load data when the application starts
     Component.onCompleted: {
         AppViewModel.loadData()
         Qt.callLater(function() {
@@ -56,10 +64,9 @@ ApplicationWindow {
         target: AppViewModel
         function onSelectedSubGoalIdChanged() {
             Qt.callLater(function() {
-                // При смене SubGoal нужен скроллинг, так как это навигационное действие
+                // Scrolling is needed when changing SubGoal, as it's a navigation action
                 selectFirstTaskIfNeeded(true);
-
-                // Проверяем, есть ли задачи и все ли они выполнены
+                // Check if there are tasks and if all are completed
                 if (AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
                     var allCompleted = true;
                     for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
@@ -68,8 +75,7 @@ ApplicationWindow {
                             break;
                         }
                     }
-
-                    // Запускаем анимацию если все задачи выполнены
+                    // Start animation if all tasks are completed
                     if (allCompleted) {
                         appAnimations.startUnifiedPulseAnimation();
                     }
@@ -81,7 +87,7 @@ ApplicationWindow {
     Connections {
         target: AppViewModel
         function onSubGoalsListModelChanged() {
-            // Если мы сохранили позицию, восстанавливаем её
+            // If we saved the position, restore it
             if (preserveSubGoalScrollPosition && subGoalsList) {
                 Qt.callLater(function() {
                     subGoalsList.contentX = savedSubGoalScrollX
@@ -94,15 +100,14 @@ ApplicationWindow {
     Connections {
         target: AppViewModel
         function onCurrentTasksListModelChanged() {
-            // Если мы сохраняли позицию, восстанавливаем её
+            // If we saved the position, restore it
             if (preserveTaskScrollPosition && taskListView) {
                 Qt.callLater(function() {
                     taskListView.contentY = savedTaskScrollY
                     preserveTaskScrollPosition = false
                 })
             }
-
-            // Проверяем состояние задач с небольшой задержкой для корректного обновления
+            // Check the task state with a short delay for correct updates
             Qt.callLater(function() {
                 if (allCurrentTasksCompleted && AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
                     appAnimations.unifiedPulseAnimation.start();
@@ -110,6 +115,28 @@ ApplicationWindow {
             });
         }
     }
+
+    Connections {
+        target: fileManager
+        function onExportCompleted(success, message, actualPath) {
+            if (success) {
+                statusMessage.show("Export successful: " + actualPath, "#66BB6A")
+            } else {
+                statusMessage.show("Export failed: " + message, "#E95B5B")
+            }
+        }
+
+        function onImportCompleted(success, message, jsonData) {
+            if (success) {
+                AppViewModel.loadDataFromJson(jsonData)
+                statusMessage.show("Import successful!", "#66BB6A")
+            } else {
+                statusMessage.show("Import failed: " + message, "#E95B5B")
+            }
+        }
+    }
+
+    // --- JAVASCRIPT FUNCTIONS ---
 
     function saveSubGoalScrollPosition() {
         if (subGoalsList) {
@@ -125,25 +152,8 @@ ApplicationWindow {
         }
     }
 
-
-    property bool allCurrentTasksCompleted: {
-        if (!AppViewModel.currentTasksListModel || AppViewModel.currentTasksListModel.length === 0) {
-            return false;
-        }
-
-        for (let i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
-            if (!AppViewModel.currentTasksListModel[i].completed) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // Функция для автоматического скролла к выбранному элементу
     function scrollToSelectedItem() {
         if (!AppViewModel.selectedSubGoalId || !AppViewModel.subGoalsListModel) return;
-
-        // Находим индекс выбранного элемента
         var selectedIndex = -1;
         for (var i = 0; i < AppViewModel.subGoalsListModel.length; i++) {
             if (AppViewModel.subGoalsListModel[i].id === AppViewModel.selectedSubGoalId) {
@@ -153,24 +163,19 @@ ApplicationWindow {
         }
 
         if (selectedIndex === -1) return;
-
-        // Вычисляем позицию элемента
-        var itemWidth = 180; // Ширина элемента
-        var itemSpacing = 15; // Расстояние между элементами
+        var itemWidth = 180;
+        var itemSpacing = 15;
         var itemPosition = selectedIndex * (itemWidth + itemSpacing);
         var viewportWidth = subGoalsList.width;
 
-        // Вычисляем оптимальную позицию для центрирования элемента
+        // Calculate the optimal position to center the item
         var targetContentX = itemPosition - (viewportWidth - itemWidth) / 2;
-
-        // Ограничиваем позицию границами контента
+        // Limit the position to the content boundaries
         var maxContentX = Math.max(0, subGoalsList.contentWidth - viewportWidth);
         targetContentX = Math.max(0, Math.min(maxContentX, targetContentX));
 
-        // Прямое назначение без анимации для немедленного эффекта
+        // Direct assignment for an immediate effect, then animate for smoothness
         subGoalsList.contentX = targetContentX;
-
-        // Затем запускаем анимацию для плавности
         appAnimations.scrollAnimation.to = targetContentX;
         appAnimations.scrollAnimation.start();
     }
@@ -180,45 +185,30 @@ ApplicationWindow {
             var subGoalId = AppViewModel.subGoalsListModel[index].id;
             AppViewModel.selectSubGoal(subGoalId);
 
-            // Прямое центрирование после выбора
+            // Direct centering after selection
             Qt.callLater(function() {
-                // Вычисляем позицию элемента
-                var itemWidth = 180; // Ширина элемента
-                var itemSpacing = 15; // Расстояние между элементами
+                var itemWidth = 180;
+                var itemSpacing = 15;
                 var itemPosition = index * (itemWidth + itemSpacing);
                 var viewportWidth = subGoalsList.width;
-
-                // Вычисляем оптимальную позицию для центрирования элемента
                 var targetContentX = itemPosition - (viewportWidth - itemWidth) / 2;
-
-                // Ограничиваем позицию границами контента
                 var maxContentX = Math.max(0, subGoalsList.contentWidth - viewportWidth);
                 targetContentX = Math.max(0, Math.min(maxContentX, targetContentX));
-
-                // Устанавливаем позицию скролла
                 subGoalsList.contentX = targetContentX;
             });
         }
     }
 
     function selectFirstTaskIfNeeded(shouldScroll = true) {
-        // Сохраняем текущую позицию скролла
         if (taskListView) {
             taskListView.savedContentY = taskListView.contentY
         }
-
         if (AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
-            // Всегда выбираем первую задачу при запуске
             AppViewModel.selectTask(AppViewModel.currentTasksListModel[0].id);
-
-            // Прокручиваем к выбранной задаче ТОЛЬКО если это запрошено и задача не видна
             if (shouldScroll) {
-                Qt.callLater(function() {
-                    scrollToSelectedTask(0);
-                });
+                Qt.callLater(() => scrollToSelectedTask(0));
             }
         } else {
-            // Если задач нет, сбрасываем выбор
             AppViewModel.selectTask(0);
         }
     }
@@ -227,10 +217,7 @@ ApplicationWindow {
         if (!AppViewModel.currentTasksListModel || AppViewModel.currentTasksListModel.length === 0) {
             return;
         }
-
         var currentIndex = -1;
-
-        // Находим индекс текущей выбранной задачи
         for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
             if (AppViewModel.currentTasksListModel[i].id === AppViewModel.selectedTaskId) {
                 currentIndex = i;
@@ -239,7 +226,6 @@ ApplicationWindow {
         }
 
         var newIndex = currentIndex;
-
         if (direction === "down") {
             newIndex = (currentIndex + 1) % AppViewModel.currentTasksListModel.length;
         } else if (direction === "up") {
@@ -254,19 +240,13 @@ ApplicationWindow {
 
     function scrollToSelectedTask(taskIndex) {
         if (!taskListView || taskIndex < 0) return;
-
-        var taskHeight = 60; // Примерная высота одной задачи с отступами
+        var taskHeight = 60; // Approximate height of one task with margins
         var taskPosition = taskIndex * taskHeight;
         var viewportHeight = taskListView.height;
-
-        // Вычисляем оптимальную позицию для центрирования элемента
         var targetContentY = taskPosition - (viewportHeight - taskHeight) / 2;
-
-        // Ограничиваем позицию границами контента
         var maxContentY = Math.max(0, taskListView.contentHeight - viewportHeight);
         targetContentY = Math.max(0, Math.min(maxContentY, targetContentY));
 
-        // Плавная анимация скролла
         appAnimations.taskScrollAnimation.to = targetContentY;
         appAnimations.taskScrollAnimation.start();
     }
@@ -274,13 +254,8 @@ ApplicationWindow {
     function preserveScrollPosition(action, wasTaskCompleted = false) {
         var currentY = taskListView.contentY
         var selectedTaskId = AppViewModel.selectedTaskId
-
-        // Блокируем автоматическое обновление позиции
         taskListView.blockModelUpdate = true
-
         action()
-
-        // Запускаем анимацию только если задача была отмечена как выполненная (не снималась отметка)
         if (!wasTaskCompleted) {
             if (allCurrentTasksCompleted && AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
                 appAnimations.startUnifiedPulseAnimation()
@@ -288,173 +263,90 @@ ApplicationWindow {
                 appAnimations.startBigCircleOnlyAnimation()
             }
         }
-
-        // Восстанавливаем позицию после небольшой задержки
         Qt.callLater(function() {
             if (allCurrentTasksCompleted && AppViewModel.currentTasksListModel && AppViewModel.currentTasksListModel.length > 0) {
                 //goalCirclePulseAnimation.start();
             }
-
-            // Восстанавливаем позицию скролла
             taskListView.contentY = currentY
-
-            // Если был выбран конкретный task, убеждаемся что он остается выбранным
             if (selectedTaskId > 0) {
                 AppViewModel.selectTask(selectedTaskId)
             }
-
-            // Разблокируем обновления
             taskListView.blockModelUpdate = false
         });
     }
 
-       Shortcut {
-           sequence: "1"
-           onActivated: selectSubGoalByIndex(0)
-       }
-       Shortcut {
-           sequence: "2"
-           onActivated: selectSubGoalByIndex(1)
-       }
-       Shortcut {
-           sequence: "3"
-           onActivated: selectSubGoalByIndex(2)
-       }
-       Shortcut {
-           sequence: "4"
-           onActivated: selectSubGoalByIndex(3)
-       }
-       Shortcut {
-           sequence: "5"
-           onActivated: selectSubGoalByIndex(4)
-       }
-       Shortcut {
-           sequence: "6"
-           onActivated: selectSubGoalByIndex(5)
-       }
-       Shortcut {
-           sequence: "7"
-           onActivated: selectSubGoalByIndex(6)
-       }
-       Shortcut {
-           sequence: "8"
-           onActivated: selectSubGoalByIndex(7)
-       }
-       Shortcut {
-           sequence: "9"
-           onActivated: selectSubGoalByIndex(8)
-       }
+    function exportData() {
+        var jsonData = AppViewModel.getCurrentDataAsJson()
+        fileManager.exportToFile("", jsonData)
+    }
 
-       // Shift + T - создание новой Task
-       Shortcut {
-           sequence: "Shift+T"
-           onActivated: dialogs.addTaskDialog.open()
-       }
+    function importData() {
+        var filePath = AppViewModel.getDefaultImportPath()
+        fileManager.importFromFile(filePath)
+    }
 
-       // X - отметка выбранной Task как done/undone
-        Shortcut {
-          sequence: "X"
-          onActivated: {
-              if (AppViewModel.selectedTaskId > 0) {
-                  // Проверяем текущий статус перед изменением
-                  var wasCompleted = false
-                  for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
-                      if (AppViewModel.currentTasksListModel[i].id === AppViewModel.selectedTaskId) {
-                          wasCompleted = AppViewModel.currentTasksListModel[i].completed
-                          break
-                      }
-                  }
+    function showShortcuts() {
+        shortcutsOverlay.showShortcuts()
+    }
 
-                  preserveScrollPosition(function() {
-                      AppViewModel.completeTask(AppViewModel.selectedTaskId)
-                  }, wasCompleted) // передаем WAS completed (до изменения)
-              }
-          }
+    // --- SHORTCUTS ---
+
+    Shortcut { sequence: "1"; onActivated: selectSubGoalByIndex(0) }
+    Shortcut { sequence: "2"; onActivated: selectSubGoalByIndex(1) }
+    Shortcut { sequence: "3"; onActivated: selectSubGoalByIndex(2) }
+    Shortcut { sequence: "4"; onActivated: selectSubGoalByIndex(3) }
+    Shortcut { sequence: "5"; onActivated: selectSubGoalByIndex(4) }
+    Shortcut { sequence: "6"; onActivated: selectSubGoalByIndex(5) }
+    Shortcut { sequence: "7"; onActivated: selectSubGoalByIndex(6) }
+    Shortcut { sequence: "8"; onActivated: selectSubGoalByIndex(7) }
+    Shortcut { sequence: "9"; onActivated: selectSubGoalByIndex(8) }
+    Shortcut { sequence: "Shift+T"; onActivated: dialogs.addTaskDialog.open() }
+    Shortcut { sequence: "X"; onActivated: {
+            if (AppViewModel.selectedTaskId > 0) {
+                var wasCompleted = false
+                for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
+                    if (AppViewModel.currentTasksListModel[i].id === AppViewModel.selectedTaskId) {
+                        wasCompleted = AppViewModel.currentTasksListModel[i].completed
+                        break
+                    }
+                }
+                preserveScrollPosition(function() {
+                    AppViewModel.completeTask(AppViewModel.selectedTaskId)
+                }, wasCompleted)
+            }
         }
+    }
+    Shortcut { sequence: "I"; onActivated: dialogs.infoDialog.open() }
+    Shortcut { sequence: "D"; onActivated: dialogs.dataManagementDialog.open() }
+    Shortcut { sequence: "G"; onActivated: dialogs.editGoalDialog.open() }
+    Shortcut { sequence: "Ctrl+S"; onActivated: exportData() }
+    Shortcut { sequence: "Shift+S"; onActivated: dialogs.addSubGoalDialog.open() }
+    Shortcut { sequence: "Down"; onActivated: selectTaskByDirection("down") }
+    Shortcut { sequence: "Up"; onActivated: selectTaskByDirection("up") }
+    Shortcut { sequence: "Tab"; onActivated: selectTaskByDirection("down") }
+    Shortcut { sequence: "Shift+Tab"; onActivated: selectTaskByDirection("up") }
+    Shortcut { sequence: "F"; onActivated: {
+            var wasFullscreen = mainWindow.visibility === Window.FullScreen
+            mainWindow.visible = false
+            Qt.callLater(function() {
+                if (wasFullscreen) {
+                    mainWindow.visibility = Window.Windowed
+                } else {
+                    mainWindow.visibility = Window.FullScreen
+                }
+                mainWindow.visible = true
+            })
+        }
+    }
+    Shortcut { sequence: "Ctrl+Q"; onActivated: Qt.quit() }
 
-       // I - info окно
-       Shortcut {
-           sequence: "I"
-           onActivated: dialogs.infoDialog.open()
-       }
 
-       // D - data окно
-       Shortcut {
-           sequence: "D"
-           onActivated: dialogs.dataManagementDialog.open()
-       }
-
-       // G - edit Goal окно
-       Shortcut {
-           sequence: "G"
-           onActivated: dialogs.editGoalDialog.open()
-       }
-
-       // Ctrl + S - save
-       Shortcut {
-           sequence: "Ctrl+S"
-           onActivated: exportData()
-       }
-
-       // Shift + S - new Subgoal окно
-       Shortcut {
-           sequence: "Shift+S"
-           onActivated: dialogs.addSubGoalDialog.open()
-       }
-
-       // Up/Down для навигации по задачам
-       Shortcut {
-           sequence: "Down"
-           onActivated: selectTaskByDirection("down")
-       }
-
-       Shortcut {
-           sequence: "Up"
-           onActivated: selectTaskByDirection("up")
-       }
-
-       // Tab для циклической навигации по задачам
-       Shortcut {
-           sequence: "Tab"
-           onActivated: selectTaskByDirection("down")
-       }
-
-       // Shift + Tab для циклической навигации по задачам вверх
-       Shortcut {
-           sequence: "Shift+Tab"
-           onActivated: selectTaskByDirection("up")
-       }
-
-       // F - fullscreen toggle
-       Shortcut {
-           sequence: "F"
-           onActivated: {
-               var wasFullscreen = mainWindow.visibility === Window.FullScreen
-               mainWindow.visible = false
-
-               Qt.callLater(function() {
-                   if (wasFullscreen) {
-                       mainWindow.visibility = Window.Windowed
-                   } else {
-                       mainWindow.visibility = Window.FullScreen
-                   }
-                   mainWindow.visible = true
-               })
-           }
-       }
-
-       // Ctrl + Q - quit application
-       Shortcut {
-           sequence: "Ctrl+Q"
-           onActivated: Qt.quit()
-       }
-
+    // --- VISUAL TREE ---
 
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
 
-        // Единый фон для всего приложения
         Rectangle {
             anchors.fill: parent
             color: "#282828"
@@ -477,7 +369,6 @@ ApplicationWindow {
             }
         }
 
-        // Тень для большого круга
         MultiEffect {
             id: bigCircleEffect
             source: bigCircle
@@ -491,14 +382,12 @@ ApplicationWindow {
             z: -1
         }
 
-        // --- Top Section (half of big circle) ---
+        // --- Top Section (Goal and SubGoals) ---
         Item {
             id: topSection
             Layout.fillWidth: true
             Layout.preferredHeight: 450
 
-
-            // Red circle (Goal)
             Rectangle {
                 id: goalCircle
                 width: 400
@@ -516,35 +405,27 @@ ApplicationWindow {
                     Text {
                         id: goalNameText
                         text: AppViewModel.currentGoalText
+                        width: goalCircle.width * 0.8
                         font.pointSize: 20
                         font.bold: true
                         color: "white"
                         horizontalAlignment: Text.AlignHCenter
                         wrapMode: Text.WordWrap
-                        width: goalCircle.width * 0.8
                     }
                     Text {
                         id: goalDescriptionText
                         text: AppViewModel.currentGoalDescription
+                        width: goalCircle.width * 0.8
                         font.pointSize: 12
                         color: "white"
                         horizontalAlignment: Text.AlignHCenter
                         wrapMode: Text.WordWrap
-                        width: goalCircle.width * 0.8
                     }
                 }
 
-                // Button for editing the target
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: {
-                        if (isInsideCircle) {
-                            dialogs.editGoalDialog.open()
-                        }
-                    }
                     hoverEnabled: true
-
-                    // Проверяем, находится ли курсор внутри круга
                     property bool isInsideCircle: {
                         var centerX = width / 2
                         var centerY = height / 2
@@ -553,7 +434,11 @@ ApplicationWindow {
                         var dy = mouseY - centerY
                         return (dx * dx + dy * dy) <= (radius * radius)
                     }
-
+                    onClicked: {
+                        if (isInsideCircle) {
+                            dialogs.editGoalDialog.open()
+                        }
+                    }
                     onPositionChanged: {
                         if (isInsideCircle && !parent.color.toString().includes("#3F2F2F")) {
                             parent.color = "#3F2F2F"
@@ -561,12 +446,10 @@ ApplicationWindow {
                             parent.color = "#282828"
                         }
                     }
-
                     onExited: parent.color = "#282828"
                 }
             }
 
-            // Тень для красного круга
             MultiEffect {
                 id: goalCircleEffect
                 source: goalCircle
@@ -579,64 +462,54 @@ ApplicationWindow {
                 shadowBlur: 1.5
                 z: -1
             }
-            // Отображение SubGoals с использованием современного дизайна
+
             Rectangle {
                 id: subGoalsContainer
+                height: 160
+                color: "transparent"
                 anchors.bottom: parent.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.margins: 20
-                height: 160
-                color: "transparent"
 
                 ColumnLayout {
                     anchors.fill: parent
                     spacing: 10
 
-
-
-                    // Контейнер для горизонтального скролла SubGoals
                     Rectangle {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 120
                         color: "transparent"
 
-                        // Центрированный контейнер с ограниченной шириной
                         Item {
                             id: centeredContainer
-                            width: Math.min(parent.width, 5 * (180 + 15) - 15) // Максимум 5 слотов (180px + 15px spacing, минус последний spacing)
+                            width: Math.min(parent.width, 5 * (180 + 15) - 15) // Max 5 slots
                             height: parent.height
                             anchors.horizontalCenter: parent.horizontalCenter
 
                             ScrollView {
                                 id: subGoalsScrollView
                                 anchors.fill: parent
-                                anchors.bottomMargin: -10  // Место для скроллбара
-
+                                anchors.bottomMargin: -10
                                 clip: true
-
-                                // Отключаем вертикальный скроллбар
                                 ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-
-                                // Включаем горизонтальный скроллбар?? - это работает
                                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-                                // MouseArea для прокрутки колесиком мыши
                                 MouseArea {
                                     anchors.fill: parent
+                                    z: -1
+                                    propagateComposedEvents: true
                                     onWheel: {
                                         if (customScrollBar.visible &&
                                             wheel.y >= customScrollBar.y &&
                                             wheel.y <= (customScrollBar.y + customScrollBar.height)) {
                                             return;
                                         }
-
                                         var delta = wheel.angleDelta.y > 0 ? -30 : 30;
                                         subGoalsList.contentX = Math.max(0,
                                             Math.min(subGoalsList.contentWidth - subGoalsList.width,
-                                            subGoalsList.contentX + delta));
+                                                     subGoalsList.contentX + delta));
                                     }
-
                                     onPressed: {
                                         if (customScrollBar.visible &&
                                             mouse.y >= customScrollBar.y &&
@@ -644,33 +517,22 @@ ApplicationWindow {
                                             mouse.accepted = false;
                                         }
                                     }
-
-                                    propagateComposedEvents: true
-                                    z: -1
                                 }
 
                                 ListView {
                                     id: subGoalsList
                                     orientation: ListView.Horizontal
                                     anchors.fill: parent
-
                                     model: AppViewModel.subGoalsListModel
                                     spacing: 15
                                     clip: true
-
-                                    // Отступы от краев
                                     leftMargin: 5
                                     rightMargin: 5
-
-                                    // Сохранение позиции скролла
                                     property real savedContentX: 0
-
                                     property bool blockModelUpdate: false
 
                                     Component.onCompleted: {
-                                        // Принудительно устанавливаем начальную позицию
                                         contentX = 0
-                                        // Если есть выбранный SubGoal, центрируем его
                                         Qt.callLater(function() {
                                             if (AppViewModel.selectedSubGoalId > 0) {
                                                 scrollToSelectedItem()
@@ -678,42 +540,32 @@ ApplicationWindow {
                                         })
                                     }
 
-
                                     onModelChanged: {
                                         if (blockModelUpdate) return
-                                        // Восстанавливаем позицию после обновления модели
                                     }
 
                                     delegate: Item {
                                         width: 180
                                         height: 110
-
                                         property bool isSelected: modelData.id === AppViewModel.selectedSubGoalId
-
                                         property bool allTasksCompleted: {
                                             let completionStatus = AppViewModel.subGoalCompletionStatus;
                                             for (let i = 0; i < completionStatus.length; i++) {
                                                 if (completionStatus[i].subGoalId === modelData.id) {
-                                                    return completionStatus[i].allTasksCompleted && completionStatus[i].hasAnyTasks;
+                                                    return completionStatus[i].hasAnyTasks && completionStatus[i].allTasksCompleted;
                                                 }
                                             }
                                             return false;
                                         }
-
-                                        // Объединяем зоны наведения
                                         property bool isHovered: mainMouseArea.containsMouse || editButton.isButtonHovered || deleteButton.isButtonHovered
 
-                                        // Главная зона наведения
                                         MouseArea {
                                             id: mainMouseArea
                                             anchors.fill: parent
                                             hoverEnabled: true
-                                            onClicked: {
-                                                AppViewModel.selectSubGoal(modelData.id);
-                                            }
+                                            onClicked: { AppViewModel.selectSubGoal(modelData.id); }
                                         }
 
-                                        // Кнопки справа сверху от ячейки
                                         Row {
                                             anchors.top: subGoalRect.top
                                             anchors.right: subGoalRect.right
@@ -723,139 +575,77 @@ ApplicationWindow {
                                             visible: isHovered
                                             z: 15
 
-                                            // Кнопка редактирования
                                             Rectangle {
                                                 id: editButton
-                                                width: 20
-                                                height: 20
-                                                radius: 10
-                                                color: "#404040"  // Более тёмный фон
-
+                                                width: 20; height: 20
+                                                radius: 10; color: "#404040"
                                                 property bool isButtonHovered: editMouseArea.containsMouse
-
-                                                Text {
-                                                    text: "✎"
-                                                    anchors.centerIn: parent
-                                                    font.pointSize: 9
-                                                    color: "#FFFFFF"
-                                                    font.bold: true
-                                                }
-
+                                                Text { text: "✎"; anchors.centerIn: parent; font.pointSize: 9; color: "#FFFFFF"; font.bold: true }
                                                 MouseArea {
                                                     id: editMouseArea
-                                                    anchors.fill: parent
-                                                    hoverEnabled: true
-                                                    onClicked: {
-                                                        dialogs.editSubGoalDialog.openForEditing(modelData);
-                                                    }
-                                                    onEntered: parent.color = "#555555"  // Тёмный hover
+                                                    anchors.fill: parent; hoverEnabled: true
+                                                    onClicked: { dialogs.editSubGoalDialog.openForEditing(modelData); }
+                                                    onEntered: parent.color = "#555555"
                                                     onExited: parent.color = "#404040"
                                                 }
                                             }
-
-                                            // Кнопка удаления
                                             Rectangle {
                                                 id: deleteButton
-                                                width: 20
-                                                height: 20
-                                                radius: 10
-                                                color: "#404040"  // Более тёмный фон
+                                                width: 20; height: 20
+                                                radius: 10; color: "#404040"
                                                 visible: AppViewModel.subGoalsListModel.length > 1
-
                                                 property bool isButtonHovered: deleteMouseArea.containsMouse
-
-                                                Text {
-                                                    text: "✕"
-                                                    anchors.centerIn: parent
-                                                    font.pointSize: 9
-                                                    color: "#FFFFFF"
-                                                    font.bold: true
-                                                }
-
+                                                Text { text: "✕"; anchors.centerIn: parent; font.pointSize: 9; color: "#FFFFFF"; font.bold: true }
                                                 MouseArea {
                                                     id: deleteMouseArea
-                                                    anchors.fill: parent
-                                                    hoverEnabled: true
+                                                    anchors.fill: parent; hoverEnabled: true
                                                     onClicked: {
                                                         dialogs.confirmationDialog.open();
                                                         dialogs.confirmationDialog.subGoalToRemove = modelData;
                                                     }
-                                                    onEntered: parent.color = "#555555"  // Тёмный hover
+                                                    onEntered: parent.color = "#555555"
                                                     onExited: parent.color = "#404040"
                                                 }
                                             }
                                         }
 
-                                        // Основная ячейка subgoal
                                         Rectangle {
                                             id: subGoalRect
+                                            width: 180; height: 80
+                                            radius: 15; border.width: 0
                                             anchors.bottom: parent.bottom
                                             anchors.horizontalCenter: parent.horizontalCenter
-                                            width: 180
-                                            height: 80
-                                            radius: 15
-                                            border.width: 0
 
-                                            // Базовый цвет для subgoals
-                                            color: {
-                                                if (isSelected) {
-                                                    return "transparent"; // Будет использоваться градиент
-                                                } else if (isHovered) {
-                                                    return "#4A4A43";
-                                                } else {
-                                                    return "#323232";
-                                                }
-                                            }
+                                            color: isSelected ? "transparent" : (isHovered ? "#4A4A43" : "#323232")
 
-                                            // Градиент для выбранной subgoal (и выполненной, и невыполненной)
                                             Rectangle {
                                                 anchors.fill: parent
                                                 radius: parent.radius
                                                 visible: isSelected
                                                 gradient: Gradient {
-                                                    GradientStop {
-                                                        position: 0.0
-                                                        color: "#5B5B49"
-                                                    }
-                                                    GradientStop {
-                                                        position: 1.0
-                                                        color: "#323232"
-                                                    }
+                                                    GradientStop { position: 0.0; color: "#5B5B49" }
+                                                    GradientStop { position: 1.0; color: "#323232" }
                                                 }
                                             }
-
-                                            // Нумерация шортката
                                             Text {
                                                 text: (index + 1).toString()
-                                                anchors.bottom: parent.bottom
-                                                anchors.right: parent.right
-                                                anchors.bottomMargin: 5
-                                                anchors.rightMargin: 12
-                                                font.pointSize: 9
-                                                font.bold: true
-                                                color: "#FFFFFF"
-                                                visible: index < 9
-                                                z: 10
+                                                anchors.bottom: parent.bottom; anchors.right: parent.right
+                                                anchors.bottomMargin: 5; anchors.rightMargin: 12
+                                                font.pointSize: 9; font.bold: true
+                                                color: "#FFFFFF"; visible: index < 9; z: 10
                                             }
-
-                                            // Основное содержимое SubGoal
                                             RowLayout {
                                                 anchors.fill: parent
                                                 anchors.margins: 12
                                                 spacing: 10
-
                                                 ColumnLayout {
                                                     Layout.fillWidth: true
                                                     Layout.fillHeight: true
                                                     spacing: 2
-
                                                     Text {
                                                         text: modelData.name || "Unnamed SubGoal"
-                                                        color: "#FFFFFF"
-                                                        font.pointSize: 10
-                                                        font.bold: true
-                                                        Layout.fillWidth: true
-                                                        Layout.alignment: Qt.AlignCenter
+                                                        color: "#FFFFFF"; font.pointSize: 10; font.bold: true
+                                                        Layout.fillWidth: true; Layout.alignment: Qt.AlignCenter
                                                         horizontalAlignment: Text.AlignHCenter
                                                         wrapMode: Text.WordWrap
                                                         maximumLineCount: 2
@@ -864,48 +654,34 @@ ApplicationWindow {
                                                 }
                                             }
                                         }
-
-                                        // Эффект тени для subgoal
                                         MultiEffect {
                                             source: subGoalRect
                                             anchors.fill: subGoalRect
-                                            shadowEnabled: true
-                                            shadowOpacity: 0.5
+                                            shadowEnabled: true; shadowOpacity: 0.5
                                             shadowColor: allTasksCompleted ? "#E95B5B" : "#000000"
-                                            //shadowHorizontalOffset: 3
                                             shadowVerticalOffset: 2
-                                            shadowBlur: allTasksCompleted ? 0.5 : 0.5
+                                            shadowBlur: 0.5
                                             z: -1
                                         }
                                     }
                                 }
-                                // Минималистичный горизонтальный скроллбар
                                 Rectangle {
                                     id: customScrollBar
                                     anchors.left: parent.left
                                     anchors.right: parent.right
                                     anchors.bottom: parent.bottom
-                                    height: 6
-                                    color: "transparent"
-                                    radius: 2
-
+                                    height: 6; color: "transparent"; radius: 2
                                     visible: subGoalsList.contentWidth > subGoalsList.width
 
-                                    // MouseArea для всей зоны скроллбара
                                     MouseArea {
-                                        anchors.fill: parent
-                                        hoverEnabled: true
+                                        anchors.fill: parent; hoverEnabled: true
                                         onWheel: {
                                             if (subGoalsList.contentWidth > subGoalsList.width) {
                                                 var delta = wheel.angleDelta.y > 0 ? -30 : 30;
-                                                subGoalsList.contentX = Math.max(0,
-                                                    Math.min(subGoalsList.contentWidth - subGoalsList.width,
-                                                    subGoalsList.contentX + delta));
+                                                subGoalsList.contentX = Math.max(0, Math.min(subGoalsList.contentWidth - subGoalsList.width, subGoalsList.contentX + delta));
                                             }
                                         }
-
                                         onClicked: {
-                                            // Клик по зоне скроллбара для перемещения ползунка
                                             if (subGoalsList.contentWidth > subGoalsList.width) {
                                                 var ratio = mouse.x / width;
                                                 subGoalsList.contentX = ratio * (subGoalsList.contentWidth - subGoalsList.width);
@@ -917,49 +693,33 @@ ApplicationWindow {
                                         id: scrollHandle
                                         height: parent.height
                                         width: {
-                                            if (subGoalsList.contentWidth <= subGoalsList.width) {
-                                                return parent.width;
-                                            }
+                                            if (subGoalsList.contentWidth <= subGoalsList.width) return parent.width;
                                             var ratio = subGoalsList.width / subGoalsList.contentWidth;
-                                            var minWidth = 20;
-                                            return Math.max(minWidth, parent.width * ratio);
+                                            return Math.max(20, parent.width * ratio);
                                         }
-                                        y: 0
-                                        radius: 2
+                                        y: 0; radius: 2
+                                        property real maxX: parent.width - width
+                                        x: 0
 
                                         Component.onCompleted: {
                                             x = Qt.binding(function() {
-                                                if (subGoalsList.contentWidth <= subGoalsList.width) {
-                                                    return 0;
-                                                }
+                                                if (subGoalsList.contentWidth <= subGoalsList.width) return 0;
                                                 var ratio = subGoalsList.contentX / (subGoalsList.contentWidth - subGoalsList.width);
                                                 return Math.max(0, Math.min(maxX, ratio * maxX));
                                             })
                                         }
 
-                                        property real maxX: parent.width - width
-                                        x: 0
-
                                         color: scrollMouseArea.pressed ? "#888888" : (scrollMouseArea.containsMouse ? "#AAAAAA" : "#666666")
                                         opacity: scrollMouseArea.pressed ? 1.0 : (scrollMouseArea.containsMouse ? 0.8 : 0.5)
 
-                                        Behavior on opacity {
-                                            NumberAnimation { duration: 200 }
-                                        }
-
-                                        Behavior on color {
-                                            ColorAnimation { duration: 200 }
-                                        }
+                                        Behavior on opacity { NumberAnimation { duration: 200 } }
+                                        Behavior on color { ColorAnimation { duration: 200 } }
 
                                         MouseArea {
                                             id: scrollMouseArea
-                                            anchors.fill: parent
-                                            hoverEnabled: true
-                                            drag.target: parent
-                                            drag.axis: Drag.XAxis
-                                            drag.minimumX: 0
-                                            drag.maximumX: parent.maxX
-
+                                            anchors.fill: parent; hoverEnabled: true
+                                            drag.target: parent; drag.axis: Drag.XAxis
+                                            drag.minimumX: 0; drag.maximumX: parent.maxX
                                             onPositionChanged: {
                                                 if (drag.active && subGoalsList.contentWidth > subGoalsList.width) {
                                                     var ratio = parent.x / parent.maxX
@@ -971,84 +731,46 @@ ApplicationWindow {
                                 }
                             }
                         }
-                }   }
+                    }
+                }
             }
 
-            // Кнопка добавления SubGoal (справа сверху на желтой области)
             Item {
                 id: addSubGoalButtonTop
-                width: 50
-                height: 50
-                x: parent.width / 2 + 210
-                y: 180
-
+                width: 50; height: 50
+                x: parent.width / 2 + 210; y: 180
                 Rectangle {
                     id: mainButton
-                    anchors.fill: parent
-                    color: "#383838"
-                    radius: 25
-
-                    Text {
-                        text: "+"
-                        anchors.centerIn: parent
-                        anchors.verticalCenterOffset: -2
-                        font.pointSize: 18
-                        font.bold: true
-                        color: "#F3C44A"
-                    }
+                    anchors.fill: parent; color: "#383838"; radius: 25
+                    Text { text: "+"; anchors.centerIn: parent; anchors.verticalCenterOffset: -2; font.pointSize: 18; font.bold: true; color: "#F3C44A" }
                 }
-
                 MultiEffect {
-                    source: mainButton
-                    anchors.fill: mainButton
-                    shadowEnabled: true
-                    shadowOpacity: 0.5
-                    shadowColor: "#000000"
-                    //shadowHorizontalOffset: 3
-                    shadowVerticalOffset: 3
-                    shadowBlur: 0.8
-                    z: -1
+                    source: mainButton; anchors.fill: mainButton; z: -1
+                    shadowEnabled: true; shadowOpacity: 0.5; shadowColor: "#000000"
+                    shadowVerticalOffset: 3; shadowBlur: 0.8
                 }
-
                 MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        dialogs.addSubGoalDialog.open()
-                    }
-                    hoverEnabled: true
+                    anchors.fill: parent; hoverEnabled: true
+                    onClicked: { dialogs.addSubGoalDialog.open() }
                     onEntered: mainButton.color = "#4A4A43"
                     onExited: mainButton.color = "#383838"
                 }
             }
 
-            // Data Management Menu Button
             Item {
                 id: dataMenuButton
-                width: 50
-                height: 50
-                x: parent.width / 2 - 310
-                y: 180
-
+                width: 50; height: 50
+                x: parent.width / 2 - 310; y: 180
                 Rectangle {
                     id: dataButton
-                    anchors.fill: parent
+                    anchors.fill: parent; radius: 25
                     color: dataMouseArea.containsMouse ? "#4A4A43" : "#383838"
-                    radius: 25
-
-                    Behavior on color {
-                        ColorAnimation { duration: 150 }
-                    }
-
+                    Behavior on color { ColorAnimation { duration: 150 } }
                     Image {
                         id: saveIcon
                         source: "icons/Save_Icon.svg"
-                        width: 24
-                        height: 24
-                        anchors.centerIn: parent
-                        fillMode: Image.PreserveAspectFit
-                        sourceSize: Qt.size(24, 24)
-
-                        // Создаем эффект изменения яркости для имитации изменения цвета
+                        width: 24; height: 24; anchors.centerIn: parent
+                        fillMode: Image.PreserveAspectFit; sourceSize: Qt.size(24, 24)
                         layer.enabled: true
                         layer.effect: MultiEffect {
                             brightness: dataMouseArea.containsMouse ? 0.3 : 0.0
@@ -1056,52 +778,30 @@ ApplicationWindow {
                         }
                     }
                 }
-
                 MultiEffect {
-                    source: dataButton
-                    anchors.fill: dataButton
-                    shadowEnabled: true
-                    shadowOpacity: 0.5
-                    shadowColor: "#000000"
-                    shadowVerticalOffset: 3
-                    shadowBlur: 0.8
-                    z: -1
+                    source: dataButton; anchors.fill: dataButton; z: -1
+                    shadowEnabled: true; shadowOpacity: 0.5; shadowColor: "#000000"
+                    shadowVerticalOffset: 3; shadowBlur: 0.8
                 }
-
                 MouseArea {
                     id: dataMouseArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onClicked: {
-                        dialogs.dataManagementDialog.open()
-                    }
+                    anchors.fill: parent; hoverEnabled: true
+                    onClicked: { dialogs.dataManagementDialog.open() }
                 }
             }
 
-            // Info Button
             Item {
                 id: infoButton
-                width: 50
-                height: 50
-                x: parent.width / 2 - 230
-                y: 180
-
+                width: 50; height: 50
+                x: parent.width / 2 - 230; y: 180
                 Rectangle {
                     id: infoButtonRect
-                    anchors.fill: parent
-                    color: "#383838"
-                    radius: 25
-
+                    anchors.fill: parent; color: "#383838"; radius: 25
                     Image {
                         id: infoIcon
                         source: "icons/Info_Icon.svg"
-                        width: 24
-                        height: 24
-                        anchors.centerIn: parent
-                        fillMode: Image.PreserveAspectFit
-                        sourceSize: Qt.size(24, 24)
-
-                        // Создаем эффект изменения яркости для имитации изменения цвета
+                        width: 24; height: 24; anchors.centerIn: parent
+                        fillMode: Image.PreserveAspectFit; sourceSize: Qt.size(24, 24)
                         layer.enabled: true
                         layer.effect: MultiEffect {
                             brightness: infoMouseArea.containsMouse ? 0.3 : 0.0
@@ -1109,38 +809,22 @@ ApplicationWindow {
                         }
                     }
                 }
-
                 MultiEffect {
-                    source: infoButtonRect
-                    anchors.fill: infoButtonRect
-                    shadowEnabled: true
-                    shadowOpacity: 0.5
-                    shadowColor: "#000000"
-                    shadowVerticalOffset: 3
-                    shadowBlur: 0.8
-                    z: -1
+                    source: infoButtonRect; anchors.fill: infoButtonRect; z: -1
+                    shadowEnabled: true; shadowOpacity: 0.5; shadowColor: "#000000"
+                    shadowVerticalOffset: 3; shadowBlur: 0.8
                 }
-
                 MouseArea {
                     id: infoMouseArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onClicked: {
-                        dialogs.infoDialog.open()
-                    }
-                    onEntered: {
-                        infoButtonRect.color = "#4A4A43"
-                    }
-                    onExited: {
-                        infoButtonRect.color = "#383838"
-                    }
+                    anchors.fill: parent; hoverEnabled: true
+                    onClicked: { dialogs.infoDialog.open() }
+                    onEntered: { infoButtonRect.color = "#4A4A43" }
+                    onExited: { infoButtonRect.color = "#383838" }
                 }
             }
-
-
         }
 
-        // --- Нижняя секция (Задачи) ---
+        // --- Bottom Section (Tasks) ---
         Rectangle {
             id: bottomSection
             Layout.fillWidth: true
@@ -1154,270 +838,143 @@ ApplicationWindow {
                 anchors.margins: 20
                 spacing: 15
 
-                // Кнопка Add Task в правом верхнем углу секции задач
                 Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 60
 
                     Rectangle {
                         id: addTaskButton
-                        width: 50
-                        height: 50
+                        width: 50; height: 50
                         anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.horizontalCenterOffset: 235  // Смещение вправо от центра
-                        anchors.top: parent.top
-                        anchors.topMargin: 5
-                        color: "#383838"
-                        radius: 25
-
-                        Text {
-                            text: "+"
-                            anchors.centerIn: parent
-                            anchors.verticalCenterOffset: -2
-                            font.pointSize: 18
-                            font.bold: true
-                            color: "#FFFFFF"
-                        }
-
+                        anchors.horizontalCenterOffset: 235
+                        anchors.top: parent.top; anchors.topMargin: 5
+                        color: "#383838"; radius: 25
+                        Text { text: "+"; anchors.centerIn: parent; anchors.verticalCenterOffset: -2; font.pointSize: 18; font.bold: true; color: "#FFFFFF" }
                         MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                dialogs.addTaskDialog.open()  // Убираем preserveScrollPosition отсюда
-                            }
-                            hoverEnabled: true
+                            anchors.fill: parent; hoverEnabled: true
+                            onClicked: { dialogs.addTaskDialog.open() }
                             onEntered: parent.color = "#4A4A43"
                             onExited: parent.color = "#383838"
                         }
                     }
-
                     MultiEffect {
-                        source: addTaskButton
-                        anchors.fill: addTaskButton
-                        shadowEnabled: true
-                        shadowOpacity: 0.5
-                        shadowColor: "#000000"
-                        shadowVerticalOffset: 3
-                        shadowBlur: 0.8
-                        z: -1
+                        source: addTaskButton; anchors.fill: addTaskButton; z: -1
+                        shadowEnabled: true; shadowOpacity: 0.5; shadowColor: "#000000"
+                        shadowVerticalOffset: 3; shadowBlur: 0.8
                     }
                 }
 
-                // Список задач
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     color: "transparent"
 
-                    // MouseArea для прокрутки колесиком мыши
                     MouseArea {
                         anchors.fill: parent
+                        z: -1; propagateComposedEvents: true
                         onWheel: {
-                            // Прокрутка вертикального скроллбара колесиком мыши
                             var delta = wheel.angleDelta.y > 0 ? -30 : 30;
-                            var newContentY = Math.max(0,
-                                Math.min(taskListView.contentHeight - taskListView.height,
-                                taskListView.contentY + delta));
-
-                            // ИСПРАВЛЕНИЕ: Принудительно ограничиваем значение
+                            var newContentY = Math.max(0, Math.min(taskListView.contentHeight - taskListView.height, taskListView.contentY + delta));
                             if (taskListView.contentHeight > taskListView.height) {
                                 taskListView.contentY = newContentY;
                             }
                         }
-                        // Пропускаем клики через MouseArea к элементам ниже
-                        propagateComposedEvents: true
-                        z: -1
                     }
 
                     ListView {
                         id: taskListView
-                        anchors.fill: parent
-                        anchors.rightMargin: 15 // Место для скроллбара
+                        anchors.fill: parent; anchors.rightMargin: 15
                         model: AppViewModel.currentTasksListModel
-                        spacing: 10
-                        clip: true
-
-                        // Сохранение позиции скролла
+                        spacing: 10; clip: true
                         property real savedContentY: 0
                         property bool blockModelUpdate: false
-
-                        onModelChanged: {
-                            if (blockModelUpdate) return
-
-                            // Не восстанавливаем позицию автоматически при каждом изменении модели
-                            // Позиция будет восстановлена в preserveScrollPosition
-                        }
-
-                        // Сохраняем позицию перед изменением модели
-                        onContentYChanged: {
-                            savedContentY = contentY
-                        }
+                        onModelChanged: { if (blockModelUpdate) return }
+                        onContentYChanged: { savedContentY = contentY }
 
                         delegate: Rectangle {
                             id: taskItem
-                            width: 600
-                            height: Math.max(50, taskContent.implicitHeight + 16)
+                            width: 600; height: Math.max(50, taskContent.implicitHeight + 16)
                             anchors.horizontalCenter: parent ? parent.horizontalCenter : undefined
-                            radius: 12
-                            border.color: "#444444"
-                            border.width: 1
+                            radius: 12; border.color: "#444444"; border.width: 1
                             opacity: 1.0
-
                             property bool isSelected: modelData.id === AppViewModel.selectedTaskId
-
-                            // Объединяем зоны наведения как в subgoals
                             property bool isHovered: mainTaskMouseArea.containsMouse || editTaskButton.isButtonHovered || deleteTaskButton.isButtonHovered
+                            color: isSelected ? "#404040" : (isHovered ? "#353535" : "#2D2D2D")
 
-                            // Цвет фона в зависимости от состояния
-                            color: {
-                                if (isSelected) return "#404040"
-                                if (isHovered) return "#353535"
-                                return "#2D2D2D"
-                            }
-
-                            // Главная зона наведения для всей ячейки
                             MouseArea {
                                 id: mainTaskMouseArea
                                 anchors.fill: parent
-                                onClicked: {
-                                    AppViewModel.selectTask(modelData.id)
-                                }
+                                onClicked: { AppViewModel.selectTask(modelData.id) }
                             }
-
                             HoverHandler {
                                 id: taskHoverHandler
                                 onHoveredChanged: {
-                                    // Это обновит свойство isHovered
                                     taskItem.isHovered = Qt.binding(function() {
                                         return taskHoverHandler.hovered || editTaskButton.isButtonHovered || deleteTaskButton.isButtonHovered
                                     })
                                 }
                             }
 
-                            // Основное содержимое задачи
                             RowLayout {
                                 id: taskContent
-                                anchors.fill: parent
-                                anchors.margins: 8
-                                spacing: 10
-
-                                // Иконка задачи
+                                anchors.fill: parent; anchors.margins: 8; spacing: 10
                                 Rectangle {
-                                    width: 30
-                                    height: 30
+                                    width: 30; height: 30
                                     color: modelData.completed ? "#2D2D2D" : "#383838"
-                                    radius: 8
+                                    radius: 8; border.width: modelData.completed ? 0 : 1
                                     border.color: modelData.completed ? "#F3C44A" : "#707070"
-                                    border.width: modelData.completed ? 0 : 1
-
                                     property bool isSelected: modelData.id === AppViewModel.selectedTaskId
-
                                     Rectangle {
-                                        anchors.fill: parent
-                                        radius: parent.radius
+                                        anchors.fill: parent; radius: parent.radius
                                         color: modelData.completed ? "#F3C44A" : "transparent"
                                         visible: modelData.completed
                                     }
-
                                     MouseArea {
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        z: 100
-                                        propagateComposedEvents: true
-
+                                        anchors.fill: parent; hoverEnabled: true
+                                        z: 100; propagateComposedEvents: true
                                         onClicked: {
                                             AppViewModel.selectTask(modelData.id)
-
-                                            // Проверяем текущий статус перед изменением
                                             var wasCompleted = modelData.completed
-
                                             preserveScrollPosition(function() {
                                                 AppViewModel.completeTask(modelData.id)
-                                            }, wasCompleted) // передаем WAS completed (до изменения)
+                                            }, wasCompleted)
                                         }
-
-                                        onEntered: { /* ничего не делаем */ }
-                                        onExited: { /* ничего не делаем */ }
                                     }
                                 }
 
-                                // Текст задачи
                                 ColumnLayout {
-                                    Layout.fillWidth: true
-                                    spacing: 2
-
+                                    Layout.fillWidth: true; spacing: 2
                                     Text {
-                                        color: "#FFFFFF"
-                                        font.pointSize: 10
-                                        Layout.fillWidth: true
-                                        wrapMode: Text.WordWrap
+                                        color: "#FFFFFF"; font.pointSize: 10
+                                        Layout.fillWidth: true; wrapMode: Text.WordWrap
                                         textFormat: Text.RichText
                                         text: modelData.completed ? "<s>" + modelData.name + "</s>" : modelData.name
-                                        // Делаем текст прозрачным для мыши
-                                        MouseArea {
-                                            anchors.fill: parent
-                                            enabled: false
-                                        }
+                                        MouseArea { anchors.fill: parent; enabled: false }
                                     }
                                 }
 
-                                // Кнопка редактирования задачи
                                 Item {
                                     id: editTaskButton
-                                    width: 25
-                                    height: 25
-                                    visible: isHovered
-
+                                    width: 25; height: 25; visible: isHovered
                                     property bool isButtonHovered: editTaskMouseArea.containsMouse
-
-                                    Text {
-                                        text: "✎"
-                                        anchors.centerIn: parent
-                                        font.pointSize: 12
-                                        color: "#CCCCCC"
-                                        font.bold: true
-                                    }
-
+                                    Text { text: "✎"; anchors.centerIn: parent; font.pointSize: 12; color: "#CCCCCC"; font.bold: true }
                                     MouseArea {
                                         id: editTaskMouseArea
-                                        anchors.centerIn: parent
-                                        width: 20
-                                        height: 20
-                                        hoverEnabled: true
-                                        onClicked: {
-                                            preserveScrollPosition(function() {
-                                                dialogs.editTaskDialog.openForEditing(modelData)
-                                            })
-                                        }
+                                        anchors.centerIn: parent; width: 20; height: 20; hoverEnabled: true
+                                        onClicked: { preserveScrollPosition(() => dialogs.editTaskDialog.openForEditing(modelData)) }
                                         onEntered: parent.children[0].color = "#FFFFFF"
                                         onExited: parent.children[0].color = "#CCCCCC"
                                     }
                                 }
-
-                                // Кнопка удаления
                                 Item {
                                     id: deleteTaskButton
-                                    width: 25
-                                    height: 25
-                                    visible: isHovered
-
+                                    width: 25; height: 25; visible: isHovered
                                     property bool isButtonHovered: deleteTaskMouseArea.containsMouse
-
-                                    Text {
-                                        text: "✕"
-                                        anchors.centerIn: parent
-                                        font.pointSize: 12
-                                        color: "#CCCCCC"
-                                        font.bold: true
-                                    }
-
+                                    Text { text: "✕"; anchors.centerIn: parent; font.pointSize: 12; color: "#CCCCCC"; font.bold: true }
                                     MouseArea {
                                         id: deleteTaskMouseArea
-                                        anchors.centerIn: parent
-                                        width: 20
-                                        height: 20
-                                        hoverEnabled: true
-                                        onClicked: {
-                                            preserveScrollPosition(function() {
+                                        anchors.centerIn: parent; width: 20; height: 20; hoverEnabled: true
+                                        onClicked: { preserveScrollPosition(() => {
                                                 dialogs.taskConfirmationDialog.open()
                                                 dialogs.taskConfirmationDialog.taskToRemove = modelData
                                             })
@@ -1430,140 +987,67 @@ ApplicationWindow {
                         }
                     }
 
-                    // Минималистичный вертикальный скроллбар
                     Rectangle {
                         id: customVerticalScrollBar
-                        anchors.top: parent.top
-                        anchors.right: parent.right
-                        width: 6
-                        height: Math.min(parent.height, mainWindow.height - topSection.height - 120)
-                        color: "transparent"
-                        radius: 3
-
+                        anchors.top: parent.top; anchors.right: parent.right
+                        width: 6; height: Math.min(parent.height, mainWindow.height - topSection.height - 120)
+                        color: "transparent"; radius: 3
                         visible: taskListView.contentHeight > taskListView.height
 
                         Rectangle {
                             id: verticalScrollHandle
-                            width: parent.width
-                            // Адаптивная высота
+                            width: parent.width; radius: 3
                             height: {
-                                if (taskListView.contentHeight <= taskListView.height) {
-                                    return parent.height;
-                                }
+                                if (taskListView.contentHeight <= taskListView.height) return parent.height;
                                 var ratio = taskListView.height / taskListView.contentHeight;
-                                var minHeight = 20;
-                                return Math.max(minHeight, parent.height * ratio);
+                                return Math.max(20, parent.height * ratio);
                             }
-                            x: 0
-                            radius: 3
+                            x: 0; y: 0; property real maxY: parent.height - height
 
                             Component.onCompleted: {
                                 y = Qt.binding(function() {
-                                    if (taskListView.contentHeight <= taskListView.height) {
-                                        return 0;
-                                    }
-
+                                    if (taskListView.contentHeight <= taskListView.height) return 0;
                                     var ratio = taskListView.contentY / (taskListView.contentHeight - taskListView.height);
                                     var calculatedY = ratio * maxY;
-
                                     return Math.max(0, Math.min(maxY, calculatedY));
                                 })
                             }
 
-                            property real maxY: parent.height - height
-                            y: 0
-
                             color: verticalScrollMouseArea.pressed ? "#888888" : (verticalScrollMouseArea.containsMouse ? "#AAAAAA" : "#666666")
                             opacity: verticalScrollMouseArea.pressed ? 1.0 : (verticalScrollMouseArea.containsMouse ? 0.8 : 0.5)
 
-                            Behavior on opacity {
-                                NumberAnimation { duration: 200 }
-                            }
-
-                            Behavior on color {
-                                ColorAnimation { duration: 200 }
-                            }
+                            Behavior on opacity { NumberAnimation { duration: 200 } }
+                            Behavior on color { ColorAnimation { duration: 200 } }
 
                             MouseArea {
                                 id: verticalScrollMouseArea
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                drag.target: parent
-                                drag.axis: Drag.YAxis
-                                drag.minimumY: 0
-                                drag.maximumY: parent.maxY
-
+                                anchors.fill: parent; hoverEnabled: true
+                                drag.target: parent; drag.axis: Drag.YAxis
+                                drag.minimumY: 0; drag.maximumY: parent.maxY
                                 onPositionChanged: {
                                     if (drag.active && taskListView.contentHeight > taskListView.height) {
                                         var ratio = Math.max(0, Math.min(1, parent.y / parent.maxY));
                                         var newContentY = ratio * (taskListView.contentHeight - taskListView.height);
-
-                                        taskListView.contentY = Math.max(0,
-                                            Math.min(taskListView.contentHeight - taskListView.height, newContentY));
+                                        taskListView.contentY = Math.max(0, Math.min(taskListView.contentHeight - taskListView.height, newContentY));
                                     }
                                 }
                             }
                         }
                     }
                 }
-
             }
         }
     }
 
-    FileManager {
-        id: fileManager
+    // --- OVERLAYS AND POPUPS ---
 
-        onExportCompleted: function(success, message, actualPath) {
-            if (success) {
-                // Показать успешное сообщение
-                statusMessage.show("Export successful: " + actualPath, "#66BB6A")
-            } else {
-                // Показать ошибку
-                statusMessage.show("Export failed: " + message, "#E95B5B")
-            }
-        }
-
-        onImportCompleted: function(success, message, jsonData) {
-            if (success) {
-                AppViewModel.loadDataFromJson(jsonData)
-                statusMessage.show("Import successful!", "#66BB6A")
-            } else {
-                statusMessage.show("Import failed: " + message, "#E95B5B")
-            }
-        }
-    }
-
-    function exportData() {
-        var jsonData = AppViewModel.getCurrentDataAsJson()
-        // Передаем пустую строку, чтобы fileManager сам создал путь в VisionCompass_Backups
-        fileManager.exportToFile("", jsonData)
-    }
-
-    function importData() {
-        // getDefaultImportPath() теперь возвращает полный путь к последнему файлу
-        var filePath = AppViewModel.getDefaultImportPath()
-        fileManager.importFromFile(filePath)
-    }
-
-    function showShortcuts() {
-        shortcutsOverlay.showShortcuts()
-    }
-
-    // Компонент для показа статус сообщений
     Rectangle {
         id: statusMessage
-        visible: false
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
+        width: Math.min(parent.width - 40, 400); height: 60
+        anchors.top: parent.top; anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 20
-        width: Math.min(parent.width - 40, 400)
-        height: 60
-        color: "#2D2D2D"
-        radius: 10
-        border.width: 2
-        z: 1000
-
+        color: "#2D2D2D"; radius: 10; border.width: 2
+        visible: false; z: 1000
         property string messageText: ""
         property color messageColor: "#66BB6A"
 
@@ -1577,458 +1061,165 @@ ApplicationWindow {
 
         Text {
             anchors.centerIn: parent
-            text: statusMessage.messageText
-            color: statusMessage.messageColor
-            font.pointSize: 11
-            font.bold: true
-            wrapMode: Text.WordWrap
-            width: parent.width - 20
-            horizontalAlignment: Text.AlignHCenter
+            text: statusMessage.messageText; color: statusMessage.messageColor
+            font.pointSize: 11; font.bold: true; wrapMode: Text.WordWrap
+            width: parent.width - 20; horizontalAlignment: Text.AlignHCenter
         }
 
-        Timer {
-            id: hideTimer
-            interval: 4000
-            onTriggered: statusMessage.visible = false
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: statusMessage.visible = false
-        }
+        Timer { id: hideTimer; interval: 4000; onTriggered: statusMessage.visible = false }
+        MouseArea { anchors.fill: parent; onClicked: statusMessage.visible = false }
     }
 
-    // Shortcuts Overlay
     Rectangle {
         id: shortcutsOverlay
         anchors.fill: parent
-        color: "transparent"
-        visible: false
-        opacity: 0.0
-        z: 2000
-
+        color: "transparent"; visible: false; opacity: 0.0; z: 2000
 
         function showShortcuts() {
-            visible = true
-            opacity = 1.0
-            fadeOutTimer.start()
+            visible = true; opacity = 1.0; fadeOutTimer.start()
         }
 
-        Behavior on opacity {
-            NumberAnimation {
-                duration: 1500
-                easing.type: Easing.OutCubic
-            }
-        }
+        Behavior on opacity { NumberAnimation { duration: 1500; easing.type: Easing.OutCubic } }
+        Timer { id: fadeOutTimer; interval: 7000; onTriggered: { shortcutsOverlay.opacity = 0.0 } }
+        onOpacityChanged: { if (opacity <= 0.0 && visible) { Qt.callLater(() => shortcutsOverlay.visible = false) } }
 
-        Timer {
-            id: fadeOutTimer
-            interval: 7000
-            onTriggered: {
-                shortcutsOverlay.opacity = 0.0
-            }
-        }
-
-        onOpacityChanged: {
-            if (opacity <= 0.0 && visible) {
-                Qt.callLater(function() {
-                    shortcutsOverlay.visible = false
-                })
-            }
-        }
-
-        // Goal shortcut hint
         Rectangle {
-            x: goalCircle.x + goalCircle.width / 2 - width / 2
-            y: goalCircle.y + goalCircle.height - 70
-            width: 45
-            height: 30
-            color: "#2D2D2D"
-            border.color: "#F3C44A"
-            border.width: 1
-            radius: 4
-            opacity: shortcutsOverlay.opacity
-
-            Text {
-                text: "G"
-                anchors.centerIn: parent
-                color: "#F3C44A"
-                font.pointSize: 12
-            }
+            x: goalCircle.x + goalCircle.width / 2 - width / 2; y: goalCircle.y + goalCircle.height - 70
+            width: 45; height: 30; color: "#2D2D2D"; border.color: "#F3C44A"; border.width: 1; radius: 4; opacity: shortcutsOverlay.opacity
+            Text { text: "G"; anchors.centerIn: parent; color: "#F3C44A"; font.pointSize: 12 }
         }
-
-        // SubGoal numbers hint (single text)
         Rectangle {
-            x: subGoalsContainer.x + subGoalsContainer.width / 2 - width / 2
-            y: subGoalsContainer.y + 25
-            width: 50
-            height: 30
-            color: "#2D2D2D"
-            border.color: "#F3C44A"
-            border.width: 1
-            radius: 4
-            opacity: shortcutsOverlay.opacity
-
-            Text {
-                text: "1-9"
-                anchors.centerIn: parent
-                color: "#F3C44A"
-                font.pointSize: 12
-            }
+            x: subGoalsContainer.x + subGoalsContainer.width / 2 - width / 2; y: subGoalsContainer.y + 25
+            width: 50; height: 30; color: "#2D2D2D"; border.color: "#F3C44A"; border.width: 1; radius: 4; opacity: shortcutsOverlay.opacity
+            Text { text: "1-9"; anchors.centerIn: parent; color: "#F3C44A"; font.pointSize: 12 }
         }
-
-        // Add SubGoal button hint
         Rectangle {
-            x: addSubGoalButtonTop.x + addSubGoalButtonTop.width / 2 - width / 2
-            y: addSubGoalButtonTop.y - height
-            width: 70
-            height: 30
-            color: "#2D2D2D"
-            border.color: "#F3C44A"
-            border.width: 1
-            radius: 4
-            opacity: shortcutsOverlay.opacity
-
-            Text {
-                text: "Shift+S"
-                anchors.centerIn: parent
-                color: "#F3C44A"
-                font.pointSize: 11
-            }
+            x: addSubGoalButtonTop.x + addSubGoalButtonTop.width / 2 - width / 2; y: addSubGoalButtonTop.y - height
+            width: 70; height: 30; color: "#2D2D2D"; border.color: "#F3C44A"; border.width: 1; radius: 4; opacity: shortcutsOverlay.opacity
+            Text { text: "Shift+S"; anchors.centerIn: parent; color: "#F3C44A"; font.pointSize: 11 }
         }
-
-        // Add Task button hint
         Rectangle {
-            x: addTaskButton.x + addTaskButton.width / 2 - width / 4
-            y: addTaskButton.y + 460
-            width: 70
-            height: 30
-            color: "#2D2D2D"
-            border.color: "#F3C44A"
-            border.width: 1
-            radius: 4
-            opacity: shortcutsOverlay.opacity
-
-            Text {
-                text: "Shift+T"
-                anchors.centerIn: parent
-                color: "#F3C44A"
-                font.pointSize: 11
-            }
+            x: addTaskButton.x + addTaskButton.width / 2 - width / 4; y: addTaskButton.y + 460
+            width: 70; height: 30; color: "#2D2D2D"; border.color: "#F3C44A"; border.width: 1; radius: 4; opacity: shortcutsOverlay.opacity
+            Text { text: "Shift+T"; anchors.centerIn: parent; color: "#F3C44A"; font.pointSize: 11 }
         }
-
-        // Data button hint
         Rectangle {
-            x: dataMenuButton.x + dataMenuButton.width / 2 - width / 2
-            y: dataMenuButton.y - height
-            width: 30
-            height: 30
-            color: "#2D2D2D"
-            border.color: "#F3C44A"
-            border.width: 1
-            radius: 4
-            opacity: shortcutsOverlay.opacity
-
-            Text {
-                text: "D"
-                anchors.centerIn: parent
-                color: "#F3C44A"
-                font.pointSize: 12
-            }
+            x: dataMenuButton.x + dataMenuButton.width / 2 - width / 2; y: dataMenuButton.y - height
+            width: 30; height: 30; color: "#2D2D2D"; border.color: "#F3C44A"; border.width: 1; radius: 4; opacity: shortcutsOverlay.opacity
+            Text { text: "D"; anchors.centerIn: parent; color: "#F3C44A"; font.pointSize: 12 }
         }
-
-        // Info button hint
         Rectangle {
-            x: infoButton.x + infoButton.width / 2 - width / 2
-            y: infoButton.y - height
-            width: 30
-            height: 30
-            color: "#2D2D2D"
-            border.color: "#F3C44A"
-            border.width: 0.5
-            radius: 4
-            opacity: shortcutsOverlay.opacity
-
-            Text {
-                text: "I"
-                anchors.centerIn: parent
-                color: "#F3C44A"
-                font.pointSize: 12
-            }
+            x: infoButton.x + infoButton.width / 2 - width / 2; y: infoButton.y - height
+            width: 30; height: 30; color: "#2D2D2D"; border.color: "#F3C44A"; border.width: 0.5; radius: 4; opacity: shortcutsOverlay.opacity
+            Text { text: "I"; anchors.centerIn: parent; color: "#F3C44A"; font.pointSize: 12 }
         }
-
-        // X shortcut hint (centered with offset)
         Rectangle {
-            x: parent.width / 2 - 300
-            y: bottomSection.y + 30
-            width: 150
-            height: 30
-            color: "#2D2D2D"
-            border.color: "#F3C44A"
-            border.width: 1
-            radius: 4
-            opacity: shortcutsOverlay.opacity
-
-            Text {
-                text: "X - done/undone"
-                anchors.centerIn: parent
-                color: "#F3C44A"
-                font.pointSize: 11
-            }
+            x: parent.width / 2 - 300; y: bottomSection.y + 30
+            width: 150; height: 30; color: "#2D2D2D"; border.color: "#F3C44A"; border.width: 1; radius: 4; opacity: shortcutsOverlay.opacity
+            Text { text: "X - done/undone"; anchors.centerIn: parent; color: "#F3C44A"; font.pointSize: 11 }
         }
-
-        // Task navigation hint (above task list)
         Rectangle {
-            x: parent.width / 2 - width / 2
-            y: bottomSection.y + 30
-            width: 220
-            height: 30
-            color: "#2D2D2D"
-            border.color: "#F3C44A"
-            border.width: 1
-            radius: 4
-            opacity: shortcutsOverlay.opacity
-
-            Text {
-                text: "Tab Shift+Tab / ↑ ↓ - Navigate"
-                anchors.centerIn: parent
-                color: "#F3C44A"
-                font.pointSize: 11
-            }
+            x: parent.width / 2 - width / 2; y: bottomSection.y + 30
+            width: 220; height: 30; color: "#2D2D2D"; border.color: "#F3C44A"; border.width: 1; radius: 4; opacity: shortcutsOverlay.opacity
+            Text { text: "Tab Shift+Tab / ↑ ↓ - Navigate"; anchors.centerIn: parent; color: "#F3C44A"; font.pointSize: 11 }
         }
-
-        // Ctrl+S save hint (upper left, above Data button)
         Rectangle {
-            x: parent.width / 2 - 450
-            y: 50
-            width: 150
-            height: 30
-            color: "#2D2D2D"
-            border.color: "#F3C44A"
-            border.width: 1
-            radius: 4
-            opacity: shortcutsOverlay.opacity
-
-            Text {
-                text: "Ctrl+S - Save"
-                anchors.centerIn: parent
-                color: "#F3C44A"
-                font.pointSize: 11
-            }
+            x: parent.width / 2 - 450; y: 50
+            width: 150; height: 30; color: "#2D2D2D"; border.color: "#F3C44A"; border.width: 1; radius: 4; opacity: shortcutsOverlay.opacity
+            Text { text: "Ctrl+S - Save"; anchors.centerIn: parent; color: "#F3C44A"; font.pointSize: 11 }
         }
-
-        // F fullscreen hint
         Rectangle {
-            x: parent.width / 2 - 450
-            y: 90
-            width: 150
-            height: 30
-            color: "#2D2D2D"
-            border.color: "#F3C44A"
-            border.width: 1
-            radius: 4
-            opacity: shortcutsOverlay.opacity
-
-            Text {
-                text: "F - Fullscreen"
-                anchors.centerIn: parent
-                color: "#F3C44A"
-                font.pointSize: 11
-            }
+            x: parent.width / 2 - 450; y: 90
+            width: 150; height: 30; color: "#2D2D2D"; border.color: "#F3C44A"; border.width: 1; radius: 4; opacity: shortcutsOverlay.opacity
+            Text { text: "F - Fullscreen"; anchors.centerIn: parent; color: "#F3C44A"; font.pointSize: 11 }
         }
-
-        // Ctrl+Q quit hint (upper right, symmetric to Ctrl+S)
         Rectangle {
-            x: parent.width / 2 + 300
-            y: 50
-            width: 150
-            height: 30
-            color: "#2D2D2D"
-            border.color: "#F3C44A"
-            border.width: 1
-            radius: 4
-            opacity: shortcutsOverlay.opacity
-
-            Text {
-                text: "Ctrl+Q - Quit"
-                anchors.centerIn: parent
-                color: "#F3C44A"
-                font.pointSize: 11
-            }
+            x: parent.width / 2 + 300; y: 50
+            width: 150; height: 30; color: "#2D2D2D"; border.color: "#F3C44A"; border.width: 1; radius: 4; opacity: shortcutsOverlay.opacity
+            Text { text: "Ctrl+Q - Quit"; anchors.centerIn: parent; color: "#F3C44A"; font.pointSize: 11 }
         }
     }
 
-    // Загрузочный экран
     Rectangle {
         id: splashScreen
-        anchors.fill: parent
-        color: "#282828"
-        visible: showSplashScreen
-        opacity: showSplashScreen ? 1.0 : 0.0
-        z: 10000
+        anchors.fill: parent; color: "#282828"
+        visible: showSplashScreen; opacity: showSplashScreen ? 1.0 : 0.0; z: 10000
 
-        // Общий контейнер для кругов с анимацией скейла
         Item {
             id: splashContainer
-            anchors.centerIn: parent
-            width: 300
-            height: 300
-
-            property real globalScale: 1.0
-            scale: globalScale
-
-            // Анимация общего скейла
+            anchors.centerIn: parent; width: 300; height: 300
+            property real globalScale: 1.0; scale: globalScale
             SequentialAnimation on globalScale {
-                running: splashScreen.visible && splashScreen.opacity > 0
-                loops: 1
+                running: splashScreen.visible && splashScreen.opacity > 0; loops: 1
                 PauseAnimation { duration: 1500 }
-                NumberAnimation {
-                    from: 1.0
-                    to: 1.8
-                    duration: 800
-                    easing.type: Easing.OutCubic
-                }
+                NumberAnimation { from: 1.0; to: 1.8; duration: 800; easing.type: Easing.OutCubic }
             }
-
-            // Желтый внешний круг
             Rectangle {
                 id: outerCircle
-                width: 300
-                height: 300
-                radius: width / 2
-                color: "transparent"
-                border.color: "#F3C44A"
-                border.width: 4
-                anchors.centerIn: parent
-                opacity: 0.6
-
+                width: 300; height: 300; radius: width / 2; color: "transparent"
+                border.color: "#F3C44A"; border.width: 4; anchors.centerIn: parent; opacity: 0.6
                 SequentialAnimation on scale {
-                    running: splashScreen.visible && splashScreen.opacity > 0
-                    loops: Animation.Infinite
+                    running: splashScreen.visible && splashScreen.opacity > 0; loops: Animation.Infinite
                     NumberAnimation { from: 1.0; to: 1.15; duration: 800; easing.type: Easing.OutCubic }
                     NumberAnimation { from: 1.15; to: 1.0; duration: 800; easing.type: Easing.InCubic }
                 }
-
                 SequentialAnimation on opacity {
-                    running: splashScreen.visible && splashScreen.opacity > 0
-                    loops: Animation.Infinite
+                    running: splashScreen.visible && splashScreen.opacity > 0; loops: Animation.Infinite
                     NumberAnimation { from: 0.6; to: 0.9; duration: 800; easing.type: Easing.OutCubic }
                     NumberAnimation { from: 0.9; to: 0.6; duration: 800; easing.type: Easing.InCubic }
                 }
             }
-
             MultiEffect {
                 id: outerCircleEffect
-                source: outerCircle
-                anchors.fill: outerCircle
-                shadowEnabled: true
-                shadowOpacity: 0.8
-                shadowColor: "#F3C44A"
-                shadowHorizontalOffset: 0
-                shadowVerticalOffset: 0
-                shadowBlur: 15.0
-
-                // Анимация блюра для внешнего круга
-                property real blurAmount: 0.0
-                blurEnabled: true
-                blur: blurAmount
-
+                source: outerCircle; anchors.fill: outerCircle; z: -1
+                shadowEnabled: true; shadowOpacity: 0.8; shadowColor: "#F3C44A"
+                shadowHorizontalOffset: 0; shadowVerticalOffset: 0; shadowBlur: 15.0
+                property real blurAmount: 0.0; blurEnabled: true; blur: blurAmount
                 SequentialAnimation on blurAmount {
-                    running: splashScreen.visible && splashScreen.opacity > 0
-                    loops: 1
+                    running: splashScreen.visible && splashScreen.opacity > 0; loops: 1
                     PauseAnimation { duration: 1200 }
-                    NumberAnimation {
-                        from: 0.0
-                        to: 1.0
-                        duration: 1100
-                        easing.type: Easing.OutCubic
-                    }
+                    NumberAnimation { from: 0.0; to: 1.0; duration: 1100; easing.type: Easing.OutCubic }
                 }
-
-                z: -1
             }
-
-            // Красный внутренний круг
             Rectangle {
                 id: innerCircle
-                width: 200
-                height: 200
-                radius: width / 2
-                color: "transparent"
-                border.color: "#E95B5B"
-                border.width: 3
-                anchors.centerIn: parent
-                opacity: 0.5
-
+                width: 200; height: 200; radius: width / 2; color: "transparent"
+                border.color: "#E95B5B"; border.width: 3; anchors.centerIn: parent; opacity: 0.5
                 SequentialAnimation on scale {
-                    running: splashScreen.visible && splashScreen.opacity > 0
-                    loops: Animation.Infinite
+                    running: splashScreen.visible && splashScreen.opacity > 0; loops: Animation.Infinite
                     PauseAnimation { duration: 400 }
                     NumberAnimation { from: 1.0; to: 1.2; duration: 800; easing.type: Easing.OutCubic }
                     NumberAnimation { from: 1.2; to: 1.0; duration: 800; easing.type: Easing.InCubic }
                 }
-
                 SequentialAnimation on opacity {
-                    running: splashScreen.visible && splashScreen.opacity > 0
-                    loops: Animation.Infinite
+                    running: splashScreen.visible && splashScreen.opacity > 0; loops: Animation.Infinite
                     PauseAnimation { duration: 400 }
                     NumberAnimation { from: 0.5; to: 0.8; duration: 800; easing.type: Easing.OutCubic }
                     NumberAnimation { from: 0.8; to: 0.5; duration: 800; easing.type: Easing.InCubic }
                 }
             }
-
             MultiEffect {
                 id: innerCircleEffect
-                source: innerCircle
-                anchors.fill: innerCircle
-                shadowEnabled: true
-                shadowOpacity: 0.7
-                shadowColor: "#E95B5B"
-                shadowHorizontalOffset: 0
-                shadowVerticalOffset: 0
-                shadowBlur: 12.0
-
-                // Анимация блюра для внутреннего круга
-                property real blurAmount: 0.0
-                blurEnabled: true
-                blur: blurAmount
-
+                source: innerCircle; anchors.fill: innerCircle; z: -1
+                shadowEnabled: true; shadowOpacity: 0.7; shadowColor: "#E95B5B"
+                shadowHorizontalOffset: 0; shadowVerticalOffset: 0; shadowBlur: 12.0
+                property real blurAmount: 0.0; blurEnabled: true; blur: blurAmount
                 SequentialAnimation on blurAmount {
-                    running: splashScreen.visible && splashScreen.opacity > 0
-                    loops: 1
+                    running: splashScreen.visible && splashScreen.opacity > 0; loops: 1
                     PauseAnimation { duration: 1400 }
-                    NumberAnimation {
-                        from: 0.0
-                        to: 1.0
-                        duration: 900
-                        easing.type: Easing.OutCubic
-                    }
+                    NumberAnimation { from: 0.0; to: 1.0; duration: 900; easing.type: Easing.OutCubic }
                 }
-
-                z: -1
             }
         }
-
         Behavior on opacity {
             NumberAnimation {
-                duration: 500
-                easing.type: Easing.OutCubic
-                onFinished: {
-                    if (splashScreen.opacity === 0) {
-                        showSplashScreen = false
-                    }
-                }
+                duration: 500; easing.type: Easing.OutCubic
+                onFinished: { if (splashScreen.opacity === 0) { showSplashScreen = false } }
             }
         }
-
         Timer {
-            id: splashTimer
-            interval: 2000
-            running: true
-            repeat: false
-            onTriggered: {
-                splashScreen.opacity = 0.0
-            }
+            id: splashTimer; interval: 2000; running: true; repeat: false
+            onTriggered: { splashScreen.opacity = 0.0 }
         }
     }
 }
