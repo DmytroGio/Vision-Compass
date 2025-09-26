@@ -23,7 +23,7 @@ Item {
         dialogWidth: 350
         property var subGoalToRemove: null
 
-        // Добавляем обработку клавиш на уровне диалога
+        // Add key handling at the dialog level
         onOpened: {
             forceActiveFocus()
         }
@@ -70,7 +70,7 @@ Item {
         buttons: [
             {
                 text: "Delete",
-                color: "#E95B5B",  // Красный цвет для кнопки удаления
+                color: "#E95B5B",
                 textColor: "#FFFFFF",
                 onClicked: function() {
                     if (confirmationDialog.subGoalToRemove) {
@@ -81,7 +81,7 @@ Item {
             },
             {
                 text: "Cancel",
-                color: "#2D2D2D",  // Более тусклый цвет для отмены
+                color: "#2D2D2D",
                 textColor: "#AAAAAA"
             }
         ]
@@ -122,7 +122,7 @@ Item {
                         id: subGoalNameInput
                         anchors.fill: parent
                         anchors.margins: 12
-                        anchors.rightMargin: 60 // Место для счетчика
+                        anchors.rightMargin: 60 // Space for the meter
                         color: "#FFFFFF"
                         font.pointSize: 11
                         verticalAlignment: TextInput.AlignVCenter
@@ -322,7 +322,7 @@ Item {
         dialogWidth: 350
         property var taskToRemove: null
 
-        // Добавляем обработку клавиш на уровне диалога
+        // Add key handling at the dialog level
         onOpened: {
             forceActiveFocus()
         }
@@ -369,7 +369,7 @@ Item {
         buttons: [
             {
                 text: "Delete",
-                color: "#E95B5B",  // Красный цвет для кнопки удаления
+                color: "#E95B5B",
                 textColor: "#FFFFFF",
                 onClicked: function() {
                     if (taskConfirmationDialog.taskToRemove) {
@@ -380,7 +380,7 @@ Item {
             },
             {
                 text: "Cancel",
-                color: "#2D2D2D",  // Более тусклый цвет для отмены
+                color: "#2D2D2D",
                 textColor: "#AAAAAA"
             }
         ]
@@ -479,7 +479,7 @@ Item {
                                 var newTaskId = AppViewModel.addTask(textInput.text.trim());
                                 if (newTaskId > 0) {
                                     AppViewModel.selectTask(newTaskId);
-                                    // Плавно скроллим к новой задаче от текущей позиции
+                                    // Smoothly scroll to a new task from the current position
                                     Qt.callLater(function() {
                                         for (var i = 0; i < AppViewModel.currentTasksListModel.length; i++) {
                                             if (AppViewModel.currentTasksListModel[i].id === newTaskId) {
@@ -558,12 +558,12 @@ Item {
 
                         onAccepted: {
                             if (text.trim() !== "" && editTaskDialog.taskToEdit && text.length <= 75) {
-                                // Сохраняем позицию перед редактированием
+                                // Save position before editing
                                 mainWindow.saveTaskScrollPosition();
 
                                 AppViewModel.editTask(editTaskDialog.taskToEdit.id, text.trim());
                                 AppViewModel.selectTask(editTaskDialog.taskToEdit.id);
-                                // Не скроллим
+                                // No scrolling
                                 editTaskDialog.close();
                             }
                         }
@@ -602,12 +602,12 @@ Item {
                         if (contentLoader && contentLoader.item) {
                             let textInput = contentLoader.item.children[1].children[0];
                             if (textInput && textInput.text && textInput.text.trim() !== "" && editTaskDialog.taskToEdit && textInput.text.length <= 75) {
-                                // Сохраняем позицию перед редактированием
+                                // Save position before editing
                                 mainWindow.saveTaskScrollPosition();
 
                                 AppViewModel.editTask(editTaskDialog.taskToEdit.id, textInput.text.trim());
                                 AppViewModel.selectTask(editTaskDialog.taskToEdit.id);
-                                // Не скроллим, оставляем текущую позицию
+                                // No scrolling
                                 editTaskDialog.close();
                             }
                         }
@@ -626,6 +626,38 @@ Item {
     CustomDialog {
         id: editGoalDialog
         dialogWidth: 550
+
+        function openForEditing() {
+            open();
+            Qt.callLater(function() {
+                let nameField = findChildByObjectName(editGoalDialog, "goalNameInput");
+                let descField = findChildByObjectName(editGoalDialog, "goalDescInput");
+                if (nameField && descField) {
+                    nameField.text = AppViewModel.currentGoalText || "";
+                    descField.text = AppViewModel.currentGoalDescription || "";
+                    nameField.selectAll();
+                    nameField.forceActiveFocus();
+                }
+            });
+        }
+
+        function findChildByObjectName(parent, objectName) {
+            if (!parent) return null;
+            if (parent.objectName === objectName) return parent;
+
+            if (parent.children) {
+                for (let i = 0; i < parent.children.length; i++) {
+                    let result = findChildByObjectName(parent.children[i], objectName);
+                    if (result) return result;
+                }
+            }
+
+            if (parent.contentItem) {
+                return findChildByObjectName(parent.contentItem, objectName);
+            }
+
+            return null;
+        }
 
         content: Component {
             ColumnLayout {
@@ -658,7 +690,7 @@ Item {
                         verticalAlignment: TextInput.AlignVCenter
                         selectByMouse: true
                         clip: true
-                        text: AppViewModel.currentGoalText
+                        text: ""
                         maximumLength: 45
 
                         onAccepted: {
@@ -713,7 +745,7 @@ Item {
                         verticalAlignment: TextInput.AlignVCenter
                         selectByMouse: true
                         clip: true
-                        text: AppViewModel.currentGoalDescription
+                        text: ""
                         maximumLength: 135
 
                         onAccepted: {
@@ -1008,7 +1040,7 @@ Item {
                 // Open Folder Button
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 40 // Такая же высота как кнопка Close
+                    Layout.preferredHeight: 40 // Same height as the Close button
                     color: "#383838"
                     radius: 10
 

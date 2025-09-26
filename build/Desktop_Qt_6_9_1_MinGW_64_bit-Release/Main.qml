@@ -318,7 +318,7 @@ ApplicationWindow {
     }
     Shortcut { sequence: "I"; onActivated: dialogs.infoDialog.open() }
     Shortcut { sequence: "D"; onActivated: dialogs.dataManagementDialog.open() }
-    Shortcut { sequence: "G"; onActivated: dialogs.editGoalDialog.open() }
+    Shortcut { sequence: "G"; onActivated: dialogs.editGoalDialog.openForEditing() }
     Shortcut { sequence: "Ctrl+S"; onActivated: exportData() }
     Shortcut { sequence: "Shift+S"; onActivated: dialogs.addSubGoalDialog.open() }
     Shortcut { sequence: "Down"; onActivated: selectTaskByDirection("down") }
@@ -436,7 +436,7 @@ ApplicationWindow {
                     }
                     onClicked: {
                         if (isInsideCircle) {
-                            dialogs.editGoalDialog.open()
+                            dialogs.editGoalDialog.openForEditing()
                         }
                     }
                     onPositionChanged: {
