@@ -138,3 +138,6 @@ To see the global goals of life and plan according to them.
 
 ## 2025-09-22
 - Discussing the design and testing on other devices. Processing feedback.
+
+## 2025-09-27
+- Preparation and formatting of the release version. Finalization of the presentation design.
