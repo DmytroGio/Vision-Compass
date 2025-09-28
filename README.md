@@ -1,61 +1,64 @@
-# 🧭 Vision Compass (Qt + C++)
+# Vision Compass
 
-A minimalist **goal and task navigation tool** built with **C++** and **Qt**. 
-Unify your goals and objectives without losing context.
+A minimalist goal and task navigation tool built with C++ and Qt6.
 
----
+![Vision Compass Preview](previews/00_VisualCompass_GitHub.png)
 
-## ✨ Features
+## Overview
 
-### Main Application View
+Vision Compass helps you organize goals and tasks without losing context. Set main objectives, break them into manageable stages, and track progress systematically.
 
-![Intro image](previews/00_VisualCompass_GitHub.png)
+**Key Features:**
+- Hierarchical goal organization
+- Task management by stages  
+- Context-aware navigation
+- Clean, distraction-free interface
 
-### 01. Main Application View
+## Screenshots
 
-![Main application view screenshot](previews/01_App_View_GitHub.png)
+### Main Interface
+![Main application view](previews/01_App_View_GitHub.png)
 
-### 02. Popups
-
+### Dialog Windows
 ![Popups](previews/02_App_Popups_View_GitHub.png)
 
-### Design and ideology
+## Design
 
-[https://www.behance.net/gallery/234615767/VisionCompass-Software-Design]
----
+Complete design concept: [VisionCompass on Behance](https://www.behance.net/gallery/234615767/VisionCompass-Software-Design)
 
-## 🛠️ Build & Setup
+## Build Instructions
 
-The project uses **CMake** and requires **Qt6** components (Widgets, Qml, Quick, QuickControls2).
+### Requirements
+- Qt6 (Widgets, Qml, Quick, QuickControls2)
+- CMake 3.16+
+- C++17 compatible compiler
 
-### 🔧 With CMake (Cross-Platform)
-
+### Using CMake
 ```bash
-git clone [https://github.com/DmytroGio/vision-compass.git](https://github.com/DmytroGio/vision-compass.git)
+git clone https://github.com/DmytroGio/vision-compass.git
 cd vision-compass
 mkdir build && cd build
 cmake ..
 cmake --build .
+```
 
-🧱 With Qt Creator (Recommended)
-Open CMakeLists.txt in Qt Creator (Qt 6.9+ recommended).
+### Using Qt Creator
+1. Open `CMakeLists.txt` in Qt Creator
+2. Configure Project
+3. Build and Run
 
-Click Configure Project, then Build, and finally Run.
+## Usage
 
-Click Configure Project
+1. Launch the application
+2. Set your main goal
+3. Add sub-goals (stages)
+4. Select a sub-goal to manage tasks
+5. Track progress and iterate
 
-Click Build and then Run
+## Contributing
 
-🚀 Usage
-Launch the application.
+Issues, suggestions, and pull requests are welcome.
 
-Set your main goal.
+## License
 
-Add sub-goals (stages).
-
-Select a sub-goal to add and complete tasks.
-
-📄 License & Notes
-License: MIT License.
-
-Notes: Contributions and suggestions are welcome.
+MIT License
