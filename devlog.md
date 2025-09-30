@@ -141,3 +141,6 @@ To see the global goals of life and plan according to them.
 
 ## 2025-09-27
 - Preparation and formatting of the release version. Finalization of the presentation design.
+
+## 2025-09-30
+- Work on portfolio presentation and design development. Publication on additional platforms.
