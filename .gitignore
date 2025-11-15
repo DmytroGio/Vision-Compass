@@ -73,7 +73,8 @@ CMakeLists.txt.user* # Qt Creator's user-specific CMake settings
 /out/
 
 # --- Other VS/Windows specific files ---
-*.vs/               # .vs folder created by Visual Studio for project settings/cache
+.vs/               # .vs folder created by Visual Studio for project settings/cache
+.vscode/
 *.vc                # Visual C++ cache files
 *.sdf               # Visual C++ CodeSense database (older VS)
 *.idb               # Intermediate Debugging Information
