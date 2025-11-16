@@ -108,3 +108,7 @@ CMakeLists.txt.user* # Qt Creator's user-specific CMake settings
  # Matches any directory starting with 'build' at the root level, e.g., 'build', 'build-debug', 'build-release'
 **/build/
 **/build-*/
+build*/
+build/
+build-*/
+Desktop_Qt_*/
